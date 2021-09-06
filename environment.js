@@ -8,6 +8,7 @@ let dbPassword;
 dbHost = "localhost";
 dbName = "xana";
 dbPort = 3306;
+dbPassword = "helloworld";
 dbConnections = 10;
 dbUser = "root";
 
