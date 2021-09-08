@@ -21,6 +21,9 @@ app.use('/api/user', userRouter)
 const adminRouter = require('./routes/admin.route')
 app.use('/api/admin', adminRouter)
 
+const reportRouter = require('./routes/report.route')
+app.use('/api/reports', reportRouter)
+
 const testRouter = require('./routes/test.route')
 app.use('/api/test', testRouter)
 

@@ -1,3 +1,3 @@
-const testModel = {};
+const testModel = {}
 
-module.exports = testModel;
+module.exports = testModel

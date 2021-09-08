@@ -1,3 +1,3 @@
-const adminModel = {};
+const adminModel = {}
 
-module.exports = adminModel;
+module.exports = adminModel
