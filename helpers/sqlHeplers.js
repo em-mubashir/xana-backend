@@ -1,4 +1,4 @@
-const connection = require("../config/mysql");
+const connection = require('../config/mysql')
 
 const sqlHelper = {
   /*
@@ -11,7 +11,7 @@ const sqlHelper = {
       sqlState: err.sqlState,
       index: err.index,
       sql: err.sql,
-    });
+    })
   },
 
   consoleSQLResult(result) {
@@ -24,8 +24,8 @@ const sqlHelper = {
       message: result.message,
       protocol41: result.protocol41,
       changedRows: result.changedRows,
-    };
+    }
   },
-};
+}
 
-module.exports = sqlHelper;
+module.exports = sqlHelper

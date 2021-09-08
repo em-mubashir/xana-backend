@@ -1,16 +1,16 @@
-let dbHost;
-let dbName;
-let dbPort;
-let dbConnections;
-let dbUser;
-let dbPassword;
+let dbHost
+let dbName
+let dbPort
+let dbConnections
+let dbUser
+let dbPassword
 
-dbHost = "localhost";
-dbName = "xana";
-dbPort = 3306;
-dbPassword = "helloworld";
-dbConnections = 10;
-dbUser = "root";
+dbHost = 'localhost'
+dbName = 'xana'
+dbPort = 3306
+dbPassword = 'root'
+dbConnections = 10
+dbUser = 'root'
 
 module.exports = {
   dbHost,
@@ -19,4 +19,4 @@ module.exports = {
   dbConnections,
   dbUser,
   dbPassword,
-};
+}
