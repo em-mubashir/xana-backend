@@ -1,10 +1,11 @@
 const express = require('express')
 const userRouter = express.Router()
 const userModel = require('../models/user.model')
-const sqlHelper = require('../helpers/sqlHeplers')
+// const sqlHelper = require('../helpers/sqlHeplers')
 const jwt = require('jsonwebtoken')
-const { body, validationResult, errors } = require('express-validator')
+const { body, validationResult } = require('express-validator')
 
+// POST /api/user/register/gmail
 userRouter.post(
   '/register/gmail',
   [
@@ -39,6 +40,7 @@ userRouter.post(
   }
 )
 
+// POST /api/user/register
 userRouter.post(
   '/register',
   [
@@ -75,6 +77,7 @@ userRouter.post(
   }
 )
 
+// GET /api/user/confirmation/:token
 userRouter.get('/confirmation/:token', async (req, res) => {
   try {
     const user = jwt.verify(req.params.token, 'xanaCoding')
@@ -96,6 +99,7 @@ userRouter.get('/confirmation/:token', async (req, res) => {
   }
 })
 
+// POST /api/user/login
 userRouter.post(
   '/login',
   [body('password').not().isEmpty(), body('email').not().isEmpty()],
@@ -135,7 +139,7 @@ userRouter.post(
   }
 )
 
-// GET /api/user/profile
+// GET /api/user/profile/:id
 userRouter.get('/profile/:id', (req, res) => {
   userModel
     .getProfile(req.params.id)
@@ -156,6 +160,34 @@ userRouter.get('/profile/:id', (req, res) => {
         message: err.message,
       })
     })
+})
+
+// PUT /api/user/profile/:id/edit
+userRouter.put('/profile/:id/edit', (req, res) => {
+  const errors = validationResult(req)
+  if (!errors.isEmpty()) {
+    return res.status(422).jsonp(errors.array())
+  } else {
+    userModel
+      .updateProfile(req.params.id, req.body)
+      .then((userObj) => {
+        res.json({
+          data: userObj,
+          success: true,
+          message: 'User updated successfully',
+        })
+        console.log('UpdateProfile ::>> res', userObj)
+      })
+      .catch((err) => {
+        console.log('UpdateProfile ::>> err', err)
+        // console.log(sqlHelper.consoleSQLException(err))
+        res.json({
+          data: err,
+          success: false,
+          message: err.message,
+        })
+      })
+  }
 })
 
 module.exports = userRouter

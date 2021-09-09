@@ -124,6 +124,45 @@ const userModel = {
         }
       )
     }),
+
+  updateProfile: (userId, userData) =>
+    new Promise(async (resolve, reject) => {
+      // User validation Check
+      con.query(
+        `select * from xana.users where id='${userId}' LIMIT 1`,
+        async (err, res) => {
+          console.log(res)
+          if (res.length === 0) {
+            return reject(new Error('User not exists'))
+          } else if (err) {
+            return reject(new Error('Something went wrong', err))
+          } else {
+            const name = userData.name || res.name
+            const mobile = userData.mobile || null
+            const image = userData.image || null
+            const address = userData.address || null
+            const password = userData.password
+              ? await bcrypt.hash(`${userData.password}`, 10)
+              : null
+
+            const sql = `UPDATE xana.users SET name='${name}',mobile='${mobile}',password='${password}',image='${image}', address='${address}' WHERE id='${userId}'`
+
+            con.query(sql, (err, res) => {
+              if (res) {
+                // console.log(res.affectedRows)
+                if (res.affectedRows > 0) {
+                  console.log('updated')
+                  return resolve(res)
+                }
+              } else {
+                // console.log('err', err)
+                return reject(new Error('Something went wrong', err))
+              }
+            })
+          }
+        }
+      )
+    }),
 }
 
 module.exports = userModel
