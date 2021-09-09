@@ -3,11 +3,11 @@ const reportRouter = express.Router()
 const reportModel = require('../models/report.model')
 const sqlHelper = require('../helpers/sqlHeplers')
 
-reportRouter.get('/:email', (req, res) => {
-  const email = req.params.email
-  if (email) {
+reportRouter.get('/:id', (req, res) => {
+  const userId = req.params.id
+  if (userId) {
     reportModel
-      .getAllReports(email)
+      .getAllReports(userId)
       .then((reports) => {
         const message =
           reports.length > 0
@@ -25,18 +25,18 @@ reportRouter.get('/:email', (req, res) => {
         res.json({
           data: err,
           success: false,
-          message: sqlHelper.consoleSQLException(err),
+          message: err.message,
         })
       })
   }
 })
 
 reportRouter.get('/', (req, res) => {
-  const email = req.query.email
+  const userId = req.query.userId
   const orderId = req.query.orderId
-  if (email && orderId) {
+  if (userId && orderId) {
     reportModel
-      .getReport(email, orderId)
+      .getReport(userId, orderId)
       .then((report) => {
         const message =
           report.length > 0 ? 'Report fetched successfully' : 'No reports found'
@@ -50,7 +50,7 @@ reportRouter.get('/', (req, res) => {
       .catch((err) => {
         console.log('getReport ::>> err', err)
         res.json({
-          data: {},
+          data: err,
           success: false,
           message: sqlHelper.consoleSQLException(err),
         })

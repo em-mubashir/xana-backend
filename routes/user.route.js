@@ -7,7 +7,11 @@ const { body, validationResult, errors } = require('express-validator')
 
 userRouter.post(
   '/register/gmail',
-  [body('name').not().isEmpty(), body('email').not().isEmpty()],
+  [
+    body('name').not().isEmpty(),
+    body('email').not().isEmpty(),
+    body('image').not().isEmpty(),
+  ],
   (req, res) => {
     const errors = validationResult(req)
     if (!errors.isEmpty()) {
@@ -19,16 +23,16 @@ userRouter.post(
           res.json({
             data: userObj,
             success: true,
-            message: 'Admin inserted successfully',
+            message: 'User added successfully',
           })
           console.log('register ::>> res', userObj)
         })
         .catch((err) => {
           console.log('register ::>> err', err)
-          res.json({
+          res.status(400).json({
             data: err,
             success: false,
-            message: sqlHelper.consoleSQLException(err),
+            message: err.message,
           })
         })
     }
@@ -60,10 +64,11 @@ userRouter.post(
         })
         .catch((err) => {
           console.log('register ::>> err', err)
+          // console.log(sqlHelper.consoleSQLException(err))
           res.json({
             data: err,
             success: false,
-            message: sqlHelper.consoleSQLException(err),
+            message: err.message,
           })
         })
     }
@@ -104,9 +109,9 @@ userRouter.post(
         .then((userObj) => {
           console.log('register ::>> res', userObj)
           res.json({
-            data: userObj,
+            data: userObj.data,
             success: true,
-            message: 'Admin logged in successfully',
+            message: 'User logged in successfully',
           })
         })
         .catch((err) => {
@@ -121,12 +126,36 @@ userRouter.post(
             res.json({
               data: err,
               success: false,
-              message: sqlHelper.consoleSQLException(err),
+              // message: sqlHelper.consoleSQLException(err),
+              message: err.message,
             })
           }
         })
     }
   }
 )
+
+// GET /api/user/profile
+userRouter.get('/profile/:id', (req, res) => {
+  userModel
+    .getProfile(req.params.id)
+    .then((userObj) => {
+      console.log('getProfile ::>> res', userObj)
+      res.json({
+        data: userObj,
+        success: true,
+        message: 'User Profile Fetched successfully',
+      })
+    })
+    .catch((err) => {
+      console.log('getProfile ::>> err', err)
+      res.json({
+        data: err,
+        success: false,
+        // message: sqlHelper.consoleSQLException(err),
+        message: err.message,
+      })
+    })
+})
 
 module.exports = userRouter
