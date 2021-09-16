@@ -1,22 +1,41 @@
 const con = require("../config/mysql");
-const bcrypt = require("bcrypt");
+const crypto = require("crypto");
 const jwt = require("jsonwebtoken");
 var nodemailer = require("nodemailer");
 const { use } = require("../routes/user.route");
 require("colors");
 
+const mycrypto = {
+  encrypt: (password) => {
+    const cipher = crypto.createCipher("aes192", process.env.HASH_KEY);
+    let hashedPassword = cipher.update(`${password}`, "utf8", "hex");
+    hashedPassword += cipher.final("hex");
+    return hashedPassword;
+  },
+
+  decrypt: (hashed) => {
+    const decipher = crypto.createDecipher("aes192", process.env.HASH_KEY);
+    let decrypted = decipher.update(`${hashed}`, "hex", "utf8");
+    decrypted += decipher.final("utf8");
+    return decrypted;
+  },
+};
 const userModel = {
   register: (user) =>
     new Promise(async (resolve, reject) => {
       console.log("user", user);
       // Email duplication check
+
       con.query(
         `select * from xana.users where email='${user.email}' LIMIT 1`,
         async (err, res) => {
           if (res !== undefined && res.length !== 0) {
             return reject(new Error("Email already exists", err));
           } else {
-            const hashedPassword = await bcrypt.hash(`${user.password}`, 10);
+            // const hashedPassword = await bcrypt.hash(`${user.password}`, 10);
+            const hashedPassword = await mycrypto.encrypt(user.password);
+            console.log("hashedPassword", hashedPassword);
+
             const sql = `INSERT into xana.users (name, email, mobile, password, roleId_fk) values ('${user.name}','${user.email}','${user.mobile}','${hashedPassword}',1)`;
             con.query(sql, (err, res) => {
               console.log("res", res);
@@ -134,10 +153,17 @@ const userModel = {
                 return reject(new Error("Email not verified"));
               }
               const { password: hashedPassword } = res[0];
-              const validPass = await bcrypt.compare(
-                user.password,
-                hashedPassword
-              );
+              // = await bcrypt.compare(
+              //   user.password,
+              //   hashedPassword
+              // );
+              let validPass = 0;
+              const decrypted = await mycrypto.decrypt(hashedPassword);
+              if (decrypted === user.password) {
+                validPass = true;
+              } else {
+                validPass = false;
+              }
               if (validPass) {
                 return resolve({ data: res, valid: true });
               } else {
@@ -216,8 +242,9 @@ const userModel = {
             const address = userData.address || null;
             const password =
               userData.password || null
-                ? await bcrypt.hash(`${userData.password}`, 10)
-                : null;
+                ? await mycrypto.encrypt(userData.password)
+                : // await bcrypt.hash(`${userData.password}`, 10)
+                  null;
 
             const sql = `UPDATE xana.users SET name='${name}',mobile='${mobile}',password='${password}',image='${image}', address='${address}' WHERE id='${userId}'`;
 
@@ -365,7 +392,8 @@ const userModel = {
 
   updatePassword: async (password, userId) =>
     await new Promise(async (resolve, reject) => {
-      const hashedPassword = await bcrypt.hash(`${password}`, 10);
+      const hashedPassword = await mycrypto.encrypt(user.password);
+      // await bcrypt.hash(`${password}`, 10);
       con.query(
         `UPDATE xana.users SET password = '${hashedPassword}', token=null WHERE id=${userId}`,
         (err, res) => {

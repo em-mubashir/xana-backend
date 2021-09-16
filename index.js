@@ -27,7 +27,7 @@ app.use("/api/reports", reportRouter);
 const testRouter = require("./routes/test.route");
 app.use("/api/test", testRouter);
 
-var port = process.env.PORT || 5112;
+var port = process.env.PORT || 5000;
 app.get("/", (req, res) => {
   res.status(200).send(`Welcome to Xana`);
 });
