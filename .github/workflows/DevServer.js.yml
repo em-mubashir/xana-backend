@@ -29,7 +29,6 @@ jobs:
 #         username: ${{ secrets.DEV_SERVER_SSH_USERNAME }}
 #         port: ${{ secrets.DEV_SERVER_SSH_PORT }}
 #         key: ${{ secrets.DEV_SERVER_SSH_KEY }}
-    - name: executing remote ssh commands using password
     - uses: actions/checkout@v2
     - name: Use Node.js 12.18.3
       uses: actions/setup-node@v2
