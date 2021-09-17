@@ -1,0 +1,29 @@
+# This workflow will do a clean install of node dependencies, build the source code and run tests across different versions of node
+name: DEVServer CI
+on:
+  push:
+    branches: [ dev ]
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@master
+    - name: copy file via ssh password
+      uses: appleboy/scp-action@master
+      with:
+        host: ${{ secrets.DEV_SERVER_SSH_HOST }}
+        username: ${{ secrets.DEV_SERVER_SSH_USERNAME }}
+        port: ${{ secrets.DEV_SERVER_SSH_PORT }}
+        key: ${{ secrets.DEV_SERVER_SSH_KEY }}
+        source: "*"
+        target: "/home/ubuntu/xana/backend"
+
+    - name: executing remote ssh commands using password
+      uses: appleboy/ssh-action@master
+      with:
+        host: ${{ secrets.DEV_SERVER_SSH_HOST }}
+        username: ${{ secrets.DEV_SERVER_SSH_USERNAME }}
+        port: ${{ secrets.DEV_SERVER_SSH_PORT }}
+        key: ${{ secrets.DEV_SERVER_SSH_KEY }}
+        script: sudo /home/ubuntu/xana/start.sh backend
