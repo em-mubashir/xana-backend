@@ -26,4 +26,4 @@ jobs:
         username: ${{ secrets.DEV_SERVER_SSH_USERNAME }}
         port: ${{ secrets.DEV_SERVER_SSH_PORT }}
         key: ${{ secrets.DEV_SERVER_SSH_KEY }}
-        script: sudo /home/ubuntu/xana/start.sh backend
+        script: /home/ubuntu/xana/start.sh backend
