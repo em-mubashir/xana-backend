@@ -22,15 +22,20 @@ jobs:
         source: "*"
         target: "/home/ubuntu/xana/backend"
 
+#     - name: executing remote ssh commands using password
+#       uses: appleboy/ssh-action@master
+#       with:
+#         host: ${{ secrets.DEV_SERVER_SSH_HOST }}
+#         username: ${{ secrets.DEV_SERVER_SSH_USERNAME }}
+#         port: ${{ secrets.DEV_SERVER_SSH_PORT }}
+#         key: ${{ secrets.DEV_SERVER_SSH_KEY }}
     - name: executing remote ssh commands using password
-      uses: appleboy/ssh-action@master
+    - uses: actions/checkout@v2
+    - name: Use Node.js 12.18.3
+      uses: actions/setup-node@v2
       with:
-        host: ${{ secrets.DEV_SERVER_SSH_HOST }}
-        username: ${{ secrets.DEV_SERVER_SSH_USERNAME }}
-        port: ${{ secrets.DEV_SERVER_SSH_PORT }}
-        key: ${{ secrets.DEV_SERVER_SSH_KEY }}
-        script: |
-           npm i 
-           cd /home/ubuntu/xana/
-           docker volume prune
-           docker-compose -f "/home/ubuntu/xana/docker-compose.yml" up -d --build 
+        node-version: 12.18.3
+        cache: 'npm'
+    - run: npm ci
+    - run: npm run build --if-present
+    - run: npm test
