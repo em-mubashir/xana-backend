@@ -27,7 +27,7 @@ jobs:
         port: ${{ secrets.DEV_SERVER_SSH_PORT }}
         key: ${{ secrets.DEV_SERVER_SSH_KEY }}
         script: |
-          - npm i 
-          - cd /home/ubuntu/xana/
-          - docker volume prune
-          - docker-compose -f "/home/ubuntu/xana/docker-compose.yml" up -d --build 
+           npm i 
+           cd /home/ubuntu/xana/
+           docker volume prune
+           docker-compose -f "/home/ubuntu/xana/docker-compose.yml" up -d --build 
