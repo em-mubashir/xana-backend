@@ -5,9 +5,9 @@ const testModel = {
       console.log("userId ::>>", userId);
       con.query(
         `INSERT INTO xana.test_info 
-        (testName, userId, firstName, lastName, dob, passportNo, testName, testManufacturer, testDescription, testPerformance, testAuthorization, sampleDate, resultDate, result) 
+        (testName, userId, manufacturer, description, performance, authorization) 
         VALUES 
-        (1, ${data.userId}, '${data.firstName}','${data.lastName}', STR_TO_DATE('${data.dob}','%d-%m-%Y'), '${data.passportNo}', '${data.testName}', '${data.testManufacturer}', '${data.testDescription}', '${data.testPerformance}', '${data.testAuthorization}', STR_TO_DATE('${data.sampleDate}','%d-%m-%Y'), STR_TO_DATE('${data.resultDate}','%d-%m-%Y'), '${data.result}' ) `,
+        ('${testObj.testName}', ${testObj.userId}, '${testObj.manufacturer}','${testObj.description}', '${testObj.performance}', '${testObj.authorization}'`,
         (err, res) => {
           if (res) {
             if (res.affectedRows > 0) {
