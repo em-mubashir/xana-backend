@@ -23,11 +23,13 @@ userRouter.post(
       userModel
         .register(req.body)
         .then((userObj) => {
-          res.json({
-            data: userObj,
-            success: true,
-            message: "User inserted successfully",
-          });
+          res.status(301).redirect("xanamedtech://chat/Eri");
+
+          // res.json({
+          //   data: userObj,
+          //   success: true,
+          //   message: "User inserted successfully",
+          // });
           console.log("register ::>> res", userObj);
         })
         .catch((err) => {
@@ -46,11 +48,7 @@ userRouter.post(
 // POST /api/user/register
 userRouter.post(
   "/register/gmail",
-  [
-    body("name").not().isEmpty(),
-    body("email").not().isEmpty(),
-    body("image").not().isEmpty(),
-  ],
+  [body("name").not().isEmpty(), body("email").not().isEmpty()],
   (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -81,18 +79,6 @@ userRouter.post(
 // GET /api/user/confirmation/:token
 userRouter.get("/confirmation/:token", auth, async (req, res) => {
   try {
-    // const user = jwt.verify(req.params.token, process.env.JWT_KEY);
-    // let user = {};
-    // jwt.verify(req.params.token, process.env.JWT_KEY, (err, decoded) => {
-    //   if (err) {
-    //     res.status(401).send({
-    //       message: err.name,
-    //       success: false,
-    //     });
-    //   } else {
-    //     user = decoded;
-    //   }
-    // });
     userModel
       .verifyEmail(req.user)
       .then(() => {

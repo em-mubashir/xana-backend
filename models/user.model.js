@@ -25,105 +25,86 @@ const userModel = {
     new Promise(async (resolve, reject) => {
       console.log("user", user);
       // Email duplication check
-      con.getConnection(function (err, connection) {
-        if (err) connection.rollback(new Error("Something went wrong", err));
-        connection.beginTransaction(function (err) {
-          if (err) return reject("Something went wrong", err);
-          connection.query(
-            `select * from xana.users where email='${user.email}' LIMIT 1`,
-            async (err, res) => {
-              if (err) {
-                connection.rollback(function () {
-                  return reject(new Error("Something went wrong", err));
-                });
-              } else if (res !== undefined && res.length !== 0) {
-                return reject(new Error("Email already exists", err));
-              } else {
-                const hashedPassword = await mycrypto.encrypt(user.password);
-                const sql = `INSERT into xana.users (name, email, mobile, password, roleId_fk) values ('${user.name}','${user.email}','${user.mobile}','${hashedPassword}',1)`;
-                connection.query(sql, (err, res) => {
-                  console.log("res", res);
-                  if (res) {
-                    if (res.affectedRows > 0) {
-                      const emailToken = jwt.sign(
-                        {
-                          id: `${res.insertId}`,
-                          email: user.email,
-                        },
-                        process.env.JWT_KEY,
-                        {
-                          expiresIn: "3h",
-                        }
-                      );
-                      const url = `${process.env.URL}/api/user/confirmation/${emailToken}`;
-                      const transporter = nodemailer.createTransport({
-                        service: "gmail",
-                        host: "smtp.gmail.com",
-                        auth: {
-                          user: "mmm28800@gmail.com",
-                          pass: "  1310125897819  ",
-                        },
-                        // host: "mail.codistan.org",
-                        // port: 465,
-                        // secure: true, // true for 465, false for other ports
-                        // auth: {
-                        //   user: "malik.mubashir@codistan.org",
-                        //   pass: "Mailk@Mubashir321",
-                        // },
-                      });
-                      console.log("user.email :>>", user.email);
-                      const mailOptions = {
-                        from: "malik.mubashir@codistan.org", // sender address
-                        to: user.email, // list of receivers
-                        subject: "Email verification", // Subject line
-                        html: `<p>${url}</p>`, // plain text body
-                      };
-                      transporter.sendMail(mailOptions, function (err, info) {
-                        if (err) {
-                          console.log(err);
-                          connection.rollback(function () {
-                            return reject("Something went wrong", err);
-                          });
-                          return reject(new Error("Something went wrong", err));
-                        } else {
-                          console.log("info: >>>>> " + info);
-                          connection.commit(function (err) {
-                            if (err) {
-                              connection.rollback(function () {
-                                return reject("Something went wrong", err);
-                              });
-                            }
-                            return resolve(res);
-                          });
-                        }
-                      });
+
+      con.query(
+        `select * from users where email='${user.email}' LIMIT 1`,
+        async (err, res) => {
+          if (res !== undefined && res.length !== 0) {
+            return reject(new Error("Email already exists", err));
+          } else {
+            // const hashedPassword = await bcrypt.hash(`${user.password}`, 10);
+            const hashedPassword = await mycrypto.encrypt(user.password);
+            console.log("hashedPassword", hashedPassword);
+
+            const sql = `INSERT into users (name, email, mobile, password, roleId_fk) values ('${user.name}','${user.email}','${user.mobile}','${hashedPassword}',1)`;
+            con.query(sql, (err, res) => {
+              console.log("res", res);
+              if (res) {
+                if (res.affectedRows > 0) {
+                  const emailToken = jwt.sign(
+                    {
+                      id: `${res.insertId}`,
+                      email: user.email,
+                    },
+                    process.env.JWT_KEY,
+                    {
+                      expiresIn: "3h",
                     }
-                  } else {
-                    console.log("err", err);
-                    connection.rollback(function () {
-                      return reject("Something went wrong", err);
-                    });
-                    return reject(new Error("Something went wrong", err));
-                  }
-                });
+                  );
+                  const url = `${process.env.URL}/api/user/confirmation/${emailToken}`;
+                  const transporter = nodemailer.createTransport({
+                    service: "gmail",
+                    host: "smtp.gmail.com",
+                    auth: {
+                      user: "mmm28800@gmail.com",
+                      pass: "  1310125897819  ",
+                    },
+                    // host: "mail.codistan.org",
+                    // port: 465,
+                    // secure: true, // true for 465, false for other ports
+                    // auth: {
+                    //   user: "malik.mubashir@codistan.org",
+                    //   pass: "Mailk@Mubashir321",
+                    // },
+                  });
+                  console.log("user.email :>>", user.email);
+                  const mailOptions = {
+                    from: "malik.mubashir@codistan.org", // sender address
+                    to: user.email, // list of receivers
+                    subject: "Email verification", // Subject line
+                    html: `<p>${url}</p>`, // plain text body
+                  };
+                  transporter.sendMail(mailOptions, function (err, info) {
+                    if (err) {
+                      console.log(err);
+                      return reject(new Error("Something went wrong", err));
+                    } else {
+                      console.log("info: >>>>> " + info);
+                      return resolve(res);
+                    }
+                  });
+                }
+              } else {
+                console.log("err", err);
+                return reject(new Error("Something went wrong", err));
               }
-            }
-          );
-        });
-      });
+            });
+          }
+        }
+      );
     }),
 
   registerGmail: async (user) => {
     await new Promise((resolve, reject) => {
       // Email duplication check
       con.query(
-        `select * from xana.users where email='${user.email}' LIMIT 1`,
+        `select * from users where email='${user.email}' LIMIT 1`,
         (err, res) => {
           if (res) {
             if (res.length !== 0) {
               return reject("Email already exists");
             } else {
-              const sql = `INSERT into xana.users (name, email, roleId_fk, image, confirmed) values ('${user.name}','${user.email}',1, '${user.image}', 1)`;
+              const sql = `INSERT into users (name, email, roleId_fk, confirmed) values ('${user.name}','${user.email}',1, 1)`;
               con.query(sql, (err, res) => {
                 if (res) {
                   console.log(`Affected Rows: ${res.affectedRows}`.yellow.bold);
@@ -150,7 +131,7 @@ const userModel = {
   verifyEmail: (user) =>
     new Promise((resolve, reject) => {
       con.query(
-        `Update xana.users SET confirmed=1 where id='${user.id}'`,
+        `Update users SET confirmed=1 where id='${user.id}'`,
         (err, res) => {
           if (res) {
             return resolve(res);
@@ -164,7 +145,7 @@ const userModel = {
   login: (user) =>
     new Promise((resolve, reject) => {
       con.query(
-        `select * from xana.users where email='${user.email}' LIMIT 1`,
+        `select * from users where email='${user.email}' LIMIT 1`,
         async (err, res) => {
           if (res) {
             if (res.length !== 0) {
@@ -172,6 +153,10 @@ const userModel = {
                 return reject(new Error("Email not verified"));
               }
               const { password: hashedPassword } = res[0];
+              // = await bcrypt.compare(
+              //   user.password,
+              //   hashedPassword
+              // );
               let validPass = 0;
               const decrypted = await mycrypto.decrypt(hashedPassword);
               if (decrypted === user.password) {
@@ -207,7 +192,7 @@ const userModel = {
   loginGmail: (user) =>
     new Promise((resolve, reject) => {
       con.query(
-        `select * from xana.users where email='${user.email}' LIMIT 1`,
+        `select * from users where email='${user.email}' LIMIT 1`,
         async (err, res) => {
           if (res) {
             return res.length !== 0
@@ -224,7 +209,7 @@ const userModel = {
     new Promise((resolve, reject) => {
       if (!isNaN(userId)) {
         con.query(
-          `select * from xana.users where id='${userId}' LIMIT 1`,
+          `select * from users where id='${userId}' LIMIT 1`,
           (err, res) => {
             if (res.length !== 0) {
               return resolve(res);
@@ -243,7 +228,7 @@ const userModel = {
     new Promise(async (resolve, reject) => {
       // User validation Check
       con.query(
-        `select * from xana.users where id='${userId}' LIMIT 1`,
+        `select * from users where id='${userId}' LIMIT 1`,
         async (err, res) => {
           console.log(res);
           if (res.length === 0) {
@@ -258,9 +243,10 @@ const userModel = {
             const password =
               userData.password || null
                 ? await mycrypto.encrypt(userData.password)
-                : null;
+                : // await bcrypt.hash(`${userData.password}`, 10)
+                  null;
 
-            const sql = `UPDATE xana.users SET name='${name}',mobile='${mobile}',password='${password}',image='${image}', address='${address}' WHERE id='${userId}'`;
+            const sql = `UPDATE users SET name='${name}',mobile='${mobile}',password='${password}',image='${image}', address='${address}' WHERE id='${userId}'`;
 
             con.query(sql, (err, res) => {
               if (res) {
@@ -279,103 +265,85 @@ const userModel = {
       );
     }),
 
-  sendForgotPasswordMail: (user) =>
-    new Promise(async (resolve, reject) => {
+  sendForgotPasswordMail: async (user) =>
+    await new Promise((resolve, reject) => {
       console.log("user email: ", user.email);
-      con.getConnection(function (err, connection) {
-        if (err) connection.rollback(new Error("Something went wrong", err));
-        connection.beginTransaction(function (err) {
-          if (err) return reject("Something went wrong", err);
-          connection.query(
-            `select * from xana.users where email='${user.email}' LIMIT 1`,
-            async (err, res) => {
-              if (res) {
-                if (res.length === 0) {
-                  return reject(new Error("Email not registered"));
+      // Email duplication check
+      con.query(
+        `select * from users where email='${user.email}' LIMIT 1`,
+        async (err, res) => {
+          if (res) {
+            if (res.length === 0) {
+              return reject(new Error("Email not registered"));
+            } else {
+              const userId = res[0]["id"];
+              const emailToken = jwt.sign(
+                {
+                  id: userId,
+                  email: user.email,
+                },
+                process.env.JWT_KEY,
+                {
+                  expiresIn: "3h",
+                }
+              );
+              const url = `${process.env.URL}/api/user/reset-password/${emailToken}`;
+              const transporter = nodemailer.createTransport({
+                service: "gmail",
+                host: "smtp.gmail.com",
+                auth: {
+                  user: "mmm28800@gmail.com",
+                  pass: "  1310125897819  ",
+                },
+                // host: "mail.codistan.org",
+                // port: 465,
+                // secure: true, // true for 465, false for other ports
+                // auth: {
+                //   user: "malik.mubashir@codistan.org",
+                //   pass: "Mailk@Mubashir321",
+                // },
+              });
+              const mailOptions = {
+                from: "mmm28800@gmail.com", // sender address
+                to: user.email, // list of receivers
+                subject: "Password reset Link", // Subject line
+                html: `<p>${url}</p>`, // plain text body
+              };
+              transporter.sendMail(mailOptions, function (err, info) {
+                if (err) {
+                  console.log(err);
+                  return reject(new Error("Something went wrong", err));
                 } else {
-                  const userId = res[0]["id"];
-                  const emailToken = jwt.sign(
-                    {
-                      id: userId,
-                      email: user.email,
-                    },
-                    process.env.JWT_KEY,
-                    {
-                      expiresIn: "3h",
+                  console.log("in else");
+                  con.query(
+                    `UPDATE users SET token = '${emailToken}' WHERE id=${userId} `,
+                    (err, res) => {
+                      console.log("res::", res);
+                      console.log("err::", err);
+                      if (err) {
+                        console.log(err);
+                        return reject(new Error("Something went wrong"));
+                      } else {
+                        console.log("info: " + info);
+                        return resolve(res);
+                      }
                     }
                   );
-                  const url = `${process.env.URL}/api/user/reset-password/${emailToken}`;
-                  const transporter = nodemailer.createTransport({
-                    service: "gmail",
-                    host: "smtp.gmail.com",
-                    auth: {
-                      user: "mmm28800@gmail.com",
-                      pass: "  1310125897819  ",
-                    },
-                    // host: "mail.codistan.org",
-                    // port: 465,
-                    // secure: true, // true for 465, false for other ports
-                    // auth: {
-                    //   user: "malik.mubashir@codistan.org",
-                    //   pass: "Mailk@Mubashir321",
-                    // },
-                  });
-                  const mailOptions = {
-                    from: "mmm28800@gmail.com", // sender address
-                    to: user.email, // list of receivers
-                    subject: "Password reset Link", // Subject line
-                    html: `<p>${url}</p>`, // plain text body
-                  };
-                  transporter.sendMail(mailOptions, async (err, info) => {
-                    if (err) {
-                      console.log(err);
-                      connection.query("ROLLBACK");
-                      return reject(new Error("Something went wrong", err));
-                    } else {
-                      connection.query(
-                        `UPDATE xana.users SET token = '${emailToken}' WHERE id=${userId} `,
-                        async (err, res) => {
-                          console.log("res::", res);
-                          console.log("err::", err);
-                          if (err) {
-                            console.log(err);
-                            connection.rollback(function () {
-                              return reject("Something went wrong", err);
-                            });
-                            return reject(new Error("Something went wrong"));
-                          } else {
-                            console.log("info: " + info);
-                            connection.commit(function (err) {
-                              if (err) {
-                                connection.rollback(function () {
-                                  return reject("Something went wrong", err);
-                                });
-                              }
-                              return resolve(res);
-                            });
-                          }
-                        }
-                      );
-                    }
-                  });
                 }
-              } else {
-                console.log(err);
-                connection.rollback(function () {
-                  return reject("Something went wrong", err);
-                });
-                return reject(new Error("Something went wrong", err));
-              }
+              });
             }
-          );
-        });
-      });
+          } else {
+            console.log(err);
+            return reject(new Error("Something went wrong", err));
+          }
+        }
+      );
     }),
 
   resetPasswordVerify: async (user, token, password) =>
     await new Promise((resolve, reject) => {
       con.query(
-        `select * from xana.users where id='${user.id}' LIMIT 1`,
+        `select * from users where id='${user.id}' LIMIT 1`,
         async (err, res) => {
           if (res) {
             console.log(`${res[0]["token"]}`.green);
@@ -384,7 +352,7 @@ const userModel = {
             } else {
               if (token === res[0]["token"]) {
                 con.query(
-                  `UPDATE xana.users SET token=null WHERE id=${user.id}`,
+                  `UPDATE users SET token=null WHERE id=${user.id}`,
                   (err, res) => {
                     if (res) {
                       console.log(res);
@@ -424,16 +392,34 @@ const userModel = {
 
   updatePassword: async (password, userId) =>
     await new Promise(async (resolve, reject) => {
-      const hashedPassword = await mycrypto.encrypt(user.password);
+      console.log("password", password);
+      console.log("userId", userId);
+      const hashedPassword = await mycrypto.encrypt(password);
       // await bcrypt.hash(`${password}`, 10);
       con.query(
-        `UPDATE xana.users SET password = '${hashedPassword}', token=null WHERE id=${userId}`,
-        (err, res) => {
-          if (res) {
-            return resolve(res);
-          } else {
+        `select * from users where id='${userId}' LIMIT 1`,
+        (error, result) => {
+          if (error) {
+            console.log("error", error);
             return reject(
-              new Error("Something went wrong while updating password", err)
+              new Error("Something went wrong while updating password", error)
+            );
+          } else {
+            con.query(
+              `UPDATE users SET password = '${hashedPassword}', token=null WHERE id=${userId}`,
+              (err, res) => {
+                if (res) {
+                  return resolve(res);
+                } else {
+                  console.log("error", err);
+                  return reject(
+                    new Error(
+                      "Something went wrong while updating password",
+                      err
+                    )
+                  );
+                }
+              }
             );
           }
         }

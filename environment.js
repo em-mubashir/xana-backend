@@ -5,12 +5,12 @@ let dbConnections;
 let dbUser;
 let dbPassword;
 
-dbHost = "localhost";
+dbHost = "xana";
 dbName = "xana";
 dbPort = 3306;
-dbPassword = "root";
 dbConnections = 10;
 dbUser = "root";
+dbPassword = "root";
 
 module.exports = {
   dbHost,

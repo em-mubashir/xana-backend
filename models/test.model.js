@@ -1,13 +1,12 @@
+const con = require("../config/mysql");
 const testModel = {
   addNew: (testObj, userId) =>
     new Promise(async (resolve, reject) => {
       console.log("testObj ::>>", testObj);
       console.log("userId ::>>", userId);
+
       con.query(
-        `INSERT INTO xana.test_info 
-        (testName, userId, firstName, lastName, dob, passportNo, testName, testManufacturer, testDescription, testPerformance, testAuthorization, sampleDate, resultDate, result) 
-        VALUES 
-        (1, ${data.userId}, '${data.firstName}','${data.lastName}', STR_TO_DATE('${data.dob}','%d-%m-%Y'), '${data.passportNo}', '${data.testName}', '${data.testManufacturer}', '${data.testDescription}', '${data.testPerformance}', '${data.testAuthorization}', STR_TO_DATE('${data.sampleDate}','%d-%m-%Y'), STR_TO_DATE('${data.resultDate}','%d-%m-%Y'), '${data.result}' ) `,
+        `INSERT INTO test_info (userId, test_name, test_manufacturer, test_description, test_performance, test_authorisation) VALUES ('${userId}', '${testObj.testName}','${testObj.Manufacturer}', '${testObj.Description}', '${testObj.Performance}', '${testObj.Authorisation}')`,
         (err, res) => {
           if (res) {
             if (res.affectedRows > 0) {

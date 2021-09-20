@@ -3,11 +3,11 @@ const reportRouter = express.Router();
 const reportModel = require("../models/report.model");
 const sqlHelper = require("../helpers/sqlHeplers");
 
-reportRouter.get("/:id", (req, res) => {
+reportRouter.get("/user/:id", (req, res) => {
   const userId = req.params.id;
   if (userId) {
     reportModel
-      .getAllReports(userId)
+      .getAllReports()
       .then((reports) => {
         const message =
           reports.length > 0
@@ -31,7 +31,7 @@ reportRouter.get("/:id", (req, res) => {
   }
 });
 
-reportRouter.get("/", (req, res) => {
+reportRouter.get("/user/", (req, res) => {
   const userId = req.query.userId;
   const orderId = req.query.orderId;
   if (userId && orderId) {
@@ -66,7 +66,7 @@ reportRouter.get("/", (req, res) => {
   }
 });
 
-reportRouter.post("/", (req, res) => {
+reportRouter.post("/user/add-report", (req, res) => {
   reportModel
     .postReports(req.body)
     .then((userObj) => {
