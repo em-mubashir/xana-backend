@@ -23,13 +23,11 @@ userRouter.post(
       userModel
         .register(req.body)
         .then((userObj) => {
-          res.status(301).redirect("xanamedtech://chat/Eri");
-
-          // res.json({
-          //   data: userObj,
-          //   success: true,
-          //   message: "User inserted successfully",
-          // });
+          res.json({
+            data: userObj,
+            success: true,
+            message: "User inserted successfully",
+          });
           console.log("register ::>> res", userObj);
         })
         .catch((err) => {
@@ -82,10 +80,11 @@ userRouter.get("/confirmation/:token", auth, async (req, res) => {
     userModel
       .verifyEmail(req.user)
       .then(() => {
-        res.json({
-          success: true,
-          message: "User verified successfully",
-        });
+        res.status(301).redirect("xanamedtech://chat/Eri");
+        // res.json({
+        //   success: true,
+        //   message: "User verified successfully",
+        // });
       })
       .catch((err) => {
         res.json({
