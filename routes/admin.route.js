@@ -45,7 +45,7 @@ adminRouter.post(
       return res.status(422).jsonp(errors.array());
     } else {
       adminModel
-        .Adminlogin(req.body)
+        .adminLogin(req.body)
         .then((userObj) => {
           console.log("login ::>> res", userObj);
           res.json({
@@ -77,24 +77,29 @@ adminRouter.post(
 
 adminRouter.post(
   "/admin-singup",
-  [body("password").not().isEmpty(), body("email").not().isEmpty()],
+  [
+    body("name").not().isEmpty(),
+    body("password").not().isEmpty(),
+    body("email").not().isEmpty(),
+    body("mobile").not().isEmpty().isNumeric(),
+  ],
   (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       return res.status(422).jsonp(errors.array());
     } else {
       adminModel
-        .Adminlogin(req.body)
+        .adminSignup(req.body)
         .then((userObj) => {
-          console.log("login ::>> res", userObj);
+          console.log("signup ::>> res", userObj);
           res.json({
             data: userObj.data,
             success: true,
-            message: "Admin logged in successfully",
+            message: "Admin signed up  successfully",
           });
         })
         .catch((err) => {
-          console.log("login ::>> err", err);
+          console.log("signup ::>> err", err);
           if (err.valid === false) {
             console.log("false");
             res.json({

@@ -25,7 +25,6 @@ const userModel = {
     new Promise(async (resolve, reject) => {
       console.log("user", user);
       // Email duplication check
-
       con.query(
         `select * from users where email='${user.email}' LIMIT 1`,
         async (err, res) => {
@@ -35,7 +34,6 @@ const userModel = {
             // const hashedPassword = await bcrypt.hash(`${user.password}`, 10);
             const hashedPassword = await mycrypto.encrypt(user.password);
             console.log("hashedPassword", hashedPassword);
-
             const sql = `INSERT into users (name, email, mobile, password, roleId_fk) values ('${user.name}','${user.email}','${user.mobile}','${hashedPassword}',1)`;
             con.query(sql, (err, res) => {
               console.log("res", res);
