@@ -145,7 +145,7 @@ const userModel = {
   login: (user) =>
     new Promise((resolve, reject) => {
       con.query(
-        `select * from users where email='${user.email}' LIMIT 1`,
+        `select * from users where email='${user.email}' AND roleId_fk=1 LIMIT 1`,
         async (err, res) => {
           if (res) {
             if (res.length !== 0) {

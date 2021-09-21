@@ -2,7 +2,34 @@ const express = require("express");
 const testRouter = express.Router();
 const testModel = require("../models/test.model");
 const auth = require("../middlewares/auth");
+const multer = require("multer");
+
 const { body, validationResult, errors } = require("express-validator");
+// multer file store start
+const storage = multer.diskStorage({
+  destination(req, file, cb) {
+    cb(null, "./uploads/testImages/");
+  },
+  filename(req, file, cb) {
+    cb(null, `test-${Date.now()}${file.originalname}`);
+  },
+});
+const fileFilter = (req, file, cb) => {
+  if (file.mimetype === "image/jpeg" || file.mimetype === "image/png") {
+    cb(null, true);
+  } else {
+    cb(new Error("file have different extension"), false);
+  }
+};
+const upload = multer({
+  storage: storage,
+  limits: {
+    fileSize: 1024 * 1024 * 5,
+  },
+  fileFilter: fileFilter,
+});
+
+// multer file store ends
 
 testRouter.post(
   "/create-new",
@@ -39,6 +66,27 @@ testRouter.post(
           });
         });
     }
+  }
+);
+
+testRouter.put(
+  "/upload-test-image",
+  upload.single("testImage"),
+  auth,
+  (req, res) => {
+    console.log(req.file);
+    console.log(req.body.testId);
+    testModel
+      .saveImage(req.file.path, req.body.testId)
+      .then((fileObj) => {
+        console.log("image stored ", fileObj);
+        res
+          .status(200)
+          .send({ success: true, message: "Image stored successfully" });
+      })
+      .catch((err) => {
+        res.status(500).send({ success: false, message: err });
+      });
   }
 );
 

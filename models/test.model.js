@@ -19,6 +19,22 @@ const testModel = {
         }
       );
     }),
+
+  saveImage: (path, id) =>
+    new Promise((resolve, reject) => {
+      console.log("path", path);
+      con.query(
+        `UPDATE test_info set image_path = '${path}' where id=${id}`,
+        (err, res) => {
+          if (err) {
+            console.log("error", err);
+            return reject(new Error(err));
+          } else {
+            return resolve(res);
+          }
+        }
+      );
+    }),
 };
 
 module.exports = testModel;
