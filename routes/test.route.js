@@ -36,10 +36,10 @@ testRouter.post(
   auth,
   [
     body("testName").not().isEmpty(),
-    body("Manufacturer").not().isEmpty(),
-    body("Description").not().isEmpty(),
-    body("Performance").not().isEmpty(),
-    body("Authorisation").not().isEmpty(),
+    body("manufacturer").not().isEmpty(),
+    body("description").not().isEmpty(),
+    body("performance").not().isEmpty(),
+    body("authorization").not().isEmpty(),
   ],
   (req, res) => {
     const errors = validationResult(req);

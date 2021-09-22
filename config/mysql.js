@@ -17,4 +17,8 @@ const transaction = mysql.createPool({
   database: dbName,
 });
 
+transaction.getConnection(function(err, connection){})
+
+
+
 module.exports = transaction;
