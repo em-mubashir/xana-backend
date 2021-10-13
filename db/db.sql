@@ -24,18 +24,6 @@ SET time_zone = "+00:00";
 -- --------------------------------------------------------
 
 --
--- Table structure for table `qr_codes`
---
-
-CREATE TABLE `qr_codes` (
-  `id` bigint NOT NULL,
-  `qr_code` text NOT NULL,
-  `date_created` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
--- --------------------------------------------------------
-
---
 -- Table structure for table `reports`
 --
 
@@ -53,19 +41,18 @@ CREATE TABLE `reports` (
   `testAuthorization` varchar(45) DEFAULT NULL,
   `sampleDate` date DEFAULT NULL,
   `resultDate` date DEFAULT NULL,
-  `result` varchar(45) DEFAULT NULL,
-  `status` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL DEFAULT 'pending'
+  `result` varchar(45) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
 -- Dumping data for table `reports`
 --
 
-INSERT INTO `reports` (`reportId`, `userId`, `firstName`, `lastName`, `dob`, `passportNo`, `testName`, `testManufacturer`, `testDescription`, `testPerformance`, `testAuthorization`, `sampleDate`, `resultDate`, `result`, `status`) VALUES
-(1, 3, 'Hamza', 'Latif', '2002-01-02', 1812354, 'Sinopharm', 'Xana Companies', '2 doses of sinopharm', 'Test is valid for 6 months', 'Aroynd the globe', '2021-01-01', '2021-01-03', 'negative', ''),
-(2, 3, 'Hamid', 'Ayub', '2001-03-10', 41244521, 'Sinopharm', 'Xana Companies', '2 doses of sinopharm', 'Test is valid for 6 months', 'Aroynd the globe', '2021-02-06', '2021-02-08', 'negative', ''),
-(3, 4, 'Abdul', 'Rafay', '1998-05-17', 87944521, 'Sinopharm', 'Xana Companies', '2 doses of sinopharm', 'Test is valid for 6 months', 'Aroynd the globe', '2021-05-06', '2021-05-08', 'negative', ''),
-(4, 4, 'Abdul', 'Rafay', '1998-05-17', 87944521, 'Sinopharm', 'Xana Companies', '2 doses of sinopharm', 'Test is valid for 6 months', 'Aroynd the globe', '2021-05-06', '2021-05-08', 'negative', '');
+INSERT INTO `reports` (`reportId`, `userId`, `firstName`, `lastName`, `dob`, `passportNo`, `testName`, `testManufacturer`, `testDescription`, `testPerformance`, `testAuthorization`, `sampleDate`, `resultDate`, `result`) VALUES
+(1, 3, 'Hamza', 'Latif', '2002-01-02', 1812354, 'Sinopharm', 'Xana Companies', '2 doses of sinopharm', 'Test is valid for 6 months', 'Aroynd the globe', '2021-01-01', '2021-01-03', 'negative'),
+(2, 3, 'Hamid', 'Ayub', '2001-03-10', 41244521, 'Sinopharm', 'Xana Companies', '2 doses of sinopharm', 'Test is valid for 6 months', 'Aroynd the globe', '2021-02-06', '2021-02-08', 'negative'),
+(3, 4, 'Abdul', 'Rafay', '1998-05-17', 87944521, 'Sinopharm', 'Xana Companies', '2 doses of sinopharm', 'Test is valid for 6 months', 'Aroynd the globe', '2021-05-06', '2021-05-08', 'negative'),
+(4, 4, 'Abdul', 'Rafay', '1998-05-17', 87944521, 'Sinopharm', 'Xana Companies', '2 doses of sinopharm', 'Test is valid for 6 months', 'Aroynd the globe', '2021-05-06', '2021-05-08', 'negative');
 
 -- --------------------------------------------------------
 
@@ -85,27 +72,6 @@ CREATE TABLE `roles` (
 INSERT INTO `roles` (`id`, `role_name`) VALUES
 (1, 'user'),
 (2, 'admin');
-
--- --------------------------------------------------------
-
---
--- Table structure for table `sessions`
---
-
-CREATE TABLE `sessions` (
-  `id` int NOT NULL,
-  `session_id` text NOT NULL,
-  `user_id` bigint NOT NULL,
-  `session_token` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci,
-  `ip` varchar(500) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
---
--- Dumping data for table `sessions`
---
-
-INSERT INTO `sessions` (`id`, `session_id`, `user_id`, `session_token`, `ip`) VALUES
-(56, 'ku6volnn7gtv5k08e8w', 87, 'eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJwYXlsb2FkIjo4NywiaWF0IjoxNjMzMDAyNzY0LCJleHAiOjE2NjQ1NjAzNjR9.RLSsNoZ4rJaLpVHaOSui_Eob7n9-PWG9_dxNcQUZpztpj_7b9XYuGnAU_3w4kt_mf6FZo0PrzJQu41JGAMEpQuyav5D_nHi_-FEQsBeAGyCmeUe6yxQKWhoRoC30bm_mx9P44hJ9AQLc4PfFVJgSWtUh82-Nk691EjRvPcHH5QI', NULL);
 
 -- --------------------------------------------------------
 
@@ -152,22 +118,7 @@ CREATE TABLE `users` (
 INSERT INTO `users` (`id`, `name`, `email`, `mobile`, `password`, `roleId_fk`, `address`, `image`, `code`, `confirmed`) VALUES
 (3, 'Salman Ahmed', 'salman123@gmail.com', NULL, NULL, 1, NULL, NULL, NULL, 0),
 (4, 'Abdul Rafay', 'rafay@gmail.com', NULL, NULL, 1, NULL, NULL, NULL, 0),
-(62, 'get setgo', 'getsetgo.gsg3@gmail.com', 'null', 'null', 1, 'null', 'null', 'null', 1),
-(71, 'Beenish Khan', 'beenishkhan603@gmail.com', 'null', '17f34411d3349c8e67778db10c2e0150', 1, 'null', 'null', NULL, 1),
-(72, 'farhana', 'fabacek476@tinilalo.com', '03030302141', 'b4bdf2d388f361a006fa60ee25dc3ac2', 1, 'null', 'null', 'null', 1),
-(73, 'Farhana Aijaz', 'farhanaaijaz888@gmail.com', 'null', 'b4bdf2d388f361a006fa60ee25dc3ac2', 1, 'null', 'null', NULL, 1),
-(74, 'farhana', 'farhanaaijaz76@gmail.com', '12345678912', 'b4bdf2d388f361a006fa60ee25dc3ac2', 1, 'null', 'null', 'null', 1),
-(75, 'Farhana', 'kahipad274@secbuf.com', '123123123456', 'b4bdf2d388f361a006fa60ee25dc3ac2', 1, 'null', 'null', 'null', 1),
-(76, 'Humera Nooreen', 'humeranooreen1048@gmail.com', '03349108549', '0fb109b77a2cf103e79fb02bc4460abf', 1, 'null', 'null', NULL, 1),
-(77, 'Humera Nooreen', 'noor1234bibi@gmail.com', '03349108549', '8ba54e20f8803e04f82970ae60a6af0d', 1, 'null', 'null', 'null', 0),
-(78, 'Ali', 'humma7890bibi@ail.com', '03349108549', '2d74c807601424b15a9716ca4eacb838', 1, 'null', 'null', 'null', 0),
-(79, 'Maha', 'nomangul685@gmail.com', '03335545232', 'c43cd98546c19dd4f09b0156f85cd0a1', 1, 'null', 'null', 'null', 0),
-(80, 'Talha', 'kkaabbeess@gmail.com', '03122983872', '83833630ef8365327bb0283a65f9991d', 1, 'null', 'null', 'null', 0),
-(81, 'Humera', 'Asimsaqlain@gmail.com', '03349108549', 'b04f352c82af7af5ff3560c32172f87a', 1, 'null', 'null', 'null', 0),
-(82, 'farhi', 'mishalraza102@gmail.com', '12345678998', 'b4bdf2d388f361a006fa60ee25dc3ac2', 1, 'null', 'null', 'null', 1),
-(83, 'ABC', 'tadori8914@secbuf.com', '123123123423', 'b4bdf2d388f361a006fa60ee25dc3ac2', 1, 'null', 'null', 'null', 1),
-(86, 'Saim Danish', 'saim.danish1@gmail.com', 'null', 'null', 1, 'null', 'null', 'null', 1),
-(87, 'Hammad Safi', 'rokiw84675@bio123.net', 'null', 'null', 1, 'null', 'null', '5088', 1);
+(62, 'get setgo', 'getsetgo.gsg3@gmail.com', 'null', 'null', 1, 'null', 'null', 'null', 1);
 
 -- --------------------------------------------------------
 
@@ -186,12 +137,6 @@ CREATE TABLE `user_test_pivot` (
 --
 
 --
--- Indexes for table `qr_codes`
---
-ALTER TABLE `qr_codes`
-  ADD PRIMARY KEY (`id`);
-
---
 -- Indexes for table `reports`
 --
 ALTER TABLE `reports`
@@ -203,13 +148,6 @@ ALTER TABLE `reports`
 --
 ALTER TABLE `roles`
   ADD PRIMARY KEY (`id`);
-
---
--- Indexes for table `sessions`
---
-ALTER TABLE `sessions`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `user_id_fk_f` (`user_id`);
 
 --
 -- Indexes for table `test_info`
@@ -239,12 +177,6 @@ ALTER TABLE `user_test_pivot`
 --
 
 --
--- AUTO_INCREMENT for table `qr_codes`
---
-ALTER TABLE `qr_codes`
-  MODIFY `id` bigint NOT NULL AUTO_INCREMENT;
-
---
 -- AUTO_INCREMENT for table `reports`
 --
 ALTER TABLE `reports`
@@ -257,12 +189,6 @@ ALTER TABLE `roles`
   MODIFY `id` bigint NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
--- AUTO_INCREMENT for table `sessions`
---
-ALTER TABLE `sessions`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=57;
-
---
 -- AUTO_INCREMENT for table `test_info`
 --
 ALTER TABLE `test_info`
@@ -272,7 +198,7 @@ ALTER TABLE `test_info`
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` bigint NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=88;
+  MODIFY `id` bigint NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=63;
 
 --
 -- AUTO_INCREMENT for table `user_test_pivot`
@@ -289,12 +215,6 @@ ALTER TABLE `user_test_pivot`
 --
 ALTER TABLE `reports`
   ADD CONSTRAINT `userId` FOREIGN KEY (`userId`) REFERENCES `users` (`id`);
-
---
--- Constraints for table `sessions`
---
-ALTER TABLE `sessions`
-  ADD CONSTRAINT `user_id_fk_f` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT;
 
 --
 -- Constraints for table `test_info`

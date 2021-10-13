@@ -38,7 +38,7 @@ const userModel = {
             // const hashedPassword = await bcrypt.hash(`${user.password}`, 10);
             const hashedPassword = await mycrypto.encrypt(user.password);
             console.log("hashedPassword", hashedPassword);
-            const sql = `INSERT into users (name, email, mobile, password, roleId_fk) values ('${user.name}','${user.email}','${user.mobile}','${hashedPassword}',1)`;
+            const sql = `INSERT into users (first_name,last_name, email, mobile, password, roleId_fk) values ('${user.firstName}','${user.lastName}','${user.email}','${user.mobile}','${hashedPassword}',1)`;
             con.query(sql, (err, res) => {
               console.log("res", res);
               if (res) {
@@ -53,8 +53,7 @@ const userModel = {
                       expiresIn: "3h",
                     }
                   );
-                  // const url = `${process.env.URL}/api/user/confirmation/${emailToken}`;
-                  const url = `https://xanamedtech.page.link/tobR?token=${emailToken}`;
+                  const url = `https://xanamedtec.page.link/?link=http://13.125.14.138?token=${emailToken}&apn=com.xanamedtec`;
                   const transporter = nodemailer.createTransport({
                     service: "gmail",
                     host: "smtp.gmail.com",
@@ -75,7 +74,7 @@ const userModel = {
                     from: "malik.mubashir@codistan.org", // sender address
                     to: user.email, // list of receivers
                     subject: "Email verification", // Subject line
-                    html: `<p>${url}</p>`, // plain text body
+                    html: `<a href="${url}">Verify Email</a>`, // plain text body
                   };
                   transporter.sendMail(mailOptions, function (err, info) {
                     if (err) {
@@ -107,7 +106,7 @@ const userModel = {
             if (res.length !== 0) {
               return reject("User already exists");
             } else {
-              const sql = `INSERT into users (name, email, roleId_fk, confirmed) values ('${user.name}','${user.email}',1, 1)`;
+              const sql = `INSERT into users (first_name,last_name, email, roleId_fk, confirmed) values ('${user.firstName}','${user.lastName}','${user.email}',1, 1)`;
               con.query(sql, (err, res) => {
                 if (res) {
                   console.log(`Affected Rows: ${res.affectedRows}`.yellow.bold);
@@ -240,6 +239,8 @@ const userModel = {
         con.query(
           `select * from users where id='${userId}' LIMIT 1`,
           (err, res) => {
+            console.log("err", err);
+            console.log("res", res);
             if (res.length !== 0) {
               return resolve(res);
             } else {
@@ -293,7 +294,6 @@ const userModel = {
         }
       );
     }),
-
   resendCode: (email) =>
     new Promise((resolve, reject) => {
       console.log("email", email);
@@ -340,7 +340,6 @@ const userModel = {
         }
       });
     }),
-
   sendForgotPasswordMail: async (user) =>
     await new Promise((resolve, reject) => {
       console.log("user email: ", user.email);
