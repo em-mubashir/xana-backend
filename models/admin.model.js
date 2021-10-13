@@ -88,7 +88,7 @@ const adminModel = {
         `select * from users where email='${user.email}' LIMIT 1`,
         async (err, res) => {
           if (res !== undefined && res.length !== 0) {
-            return reject(new Error("Email already exists", err));
+            return reject(new Error("User already exists", err));
           } else {
             const hashedPassword = await mycrypto.encrypt(user.password);
             console.log("hashedPassword", hashedPassword);

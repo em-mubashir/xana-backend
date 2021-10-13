@@ -26,7 +26,8 @@ userRouter.post(
           res.json({
             data: userObj,
             success: true,
-            message: "User inserted successfully",
+            message:
+              "A verification link has been sent to your email. Please verify your account in order to login",
           });
           console.log("register ::>> res", userObj);
         })
@@ -80,11 +81,10 @@ userRouter.get("/confirmation/:token", auth, async (req, res) => {
     userModel
       .verifyEmail(req.user)
       .then(() => {
-        res.status(301).redirect("xanamedtech://chat/Eri");
-        // res.json({
-        //   success: true,
-        //   message: "User verified successfully",
-        // });
+        res.json({
+          success: true,
+          message: "User verified successfully",
+        });
       })
       .catch((err) => {
         res.json({
@@ -261,12 +261,37 @@ userRouter.post(
 );
 
 // POST /api/user/:id/reset-password
-userRouter.get("/reset-password/:token", auth, async (req, res) => {
+userRouter.get("/reset-password/:token", async (req, res) => {
   userModel
-    .resetPasswordVerify(req.user, req.params.token, req.body.password)
+    .resetPasswordVerify(req.params.token)
     .then((userObj) => {
       console.log("userObj : resetPassword :>> ", userObj);
-      res.status(301).redirect("xanamedtech://chat/Eri?id=" + req.user.id);
+      res.json({
+        success: true,
+        data: userObj[0].id,
+        message: "Code Verified Successfully",
+      });
+    })
+    .catch((err) => {
+      res.json({
+        success: false,
+        error: err,
+        message: err.message,
+      });
+    });
+});
+
+// POST /api/user/resend-code
+userRouter.post("/resend-code", async (req, res) => {
+  userModel
+    .resendCode(req.body.email)
+    .then((userObj) => {
+      console.log("Code sent res :>> ", userObj);
+      res.json({
+        success: true,
+        data: userObj,
+        message: "Code Sent Successfully",
+      });
     })
     .catch((err) => {
       res.json({
