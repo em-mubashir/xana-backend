@@ -1,5 +1,6 @@
 const con = require("../config/mysql");
 const crypto = require("crypto");
+const QRCode = require("qrcode");
 
 const mycrypto = {
   encrypt: (password) => {
@@ -88,7 +89,7 @@ const adminModel = {
         `select * from users where email='${user.email}' LIMIT 1`,
         async (err, res) => {
           if (res !== undefined && res.length !== 0) {
-            return reject(new Error("Email already exists", err));
+            return reject(new Error("User already exists", err));
           } else {
             const hashedPassword = await mycrypto.encrypt(user.password);
             console.log("hashedPassword", hashedPassword);
@@ -105,6 +106,59 @@ const adminModel = {
           }
         }
       );
+    }),
+  updateReportStatus: (status) =>
+    new Promise((resolve, reject) => {
+      con.query(
+        `update reports set status = '${status.status}' where reportId = ${status.id}`,
+        (err, res) => {
+          if (res) {
+            return resolve(res);
+          } else {
+            console.log("err", err);
+            return reject(new Error("Something went wrong", err));
+          }
+        }
+      );
+    }),
+
+  generateQr: (qrObj) =>
+    new Promise(async (resolve, reject) => {
+      console.log(qrObj);
+      let generatedQr = [];
+      for (let i = 0; i < qrObj.length; i++) {
+        await QRCode.toDataURL(JSON.stringify(qrObj[i]), {
+          errorCorrectionLevel: "H",
+          margin: 1,
+          color: {
+            dark: "#000000",
+            light: "#ffffff",
+          },
+        })
+          .then((url) => {
+            generatedQr.push(url);
+          })
+          .catch((err) => {
+            console.error(err);
+            return reject(err);
+          });
+      }
+      console.log("generatedQr :: >>", generatedQr);
+      generatedQr.map((item) => {
+        console.log("item", item);
+      });
+      // con.query(
+      //   `insert into qr_codes (qr_code) values ?`[generatedQr.map((i) => [i])],
+      //   (err, res) => {
+      //     if (res) {
+      //       console.log(res);
+      //       return resolve(res);
+      //     } else {
+      //       console.log("err", err);
+      //       return reject(new Error("Something went wrong", err));
+      //     }
+      //   }
+      // );
     }),
 };
 

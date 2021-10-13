@@ -3,6 +3,13 @@ const adminRouter = express.Router();
 const adminModel = require("../models/admin.model");
 const { body, validationResult, errors } = require("express-validator");
 
+/**
+ * Get All Reports
+ * @retuns reportsObj
+ * @type GET
+ * @required access_token
+ * @route [http://192.168.18.14/api/admin/all-reports]
+ */
 adminRouter.get("/all-reports", (req, res) => {
   adminModel
     .getAllReports()
@@ -19,6 +26,13 @@ adminRouter.get("/all-reports", (req, res) => {
     });
 });
 
+/**
+ * Forgot password
+ * @type GET
+ * @retuns reportsObj
+ * @required access_token
+ * @route [http://192.168.18.14:5000/api/admin/report-detail/:id]
+ */
 adminRouter.get("/report-detail/:id", (req, res) => {
   const reportId = req.params.id;
   adminModel
@@ -36,6 +50,13 @@ adminRouter.get("/report-detail/:id", (req, res) => {
     });
 });
 
+/**
+ * Admin Login
+ * @type POST
+ * @retuns userObj
+ * @params password,email
+ * @route [http://192.168.18.14/api/admin/login]
+ */
 adminRouter.post(
   "/login",
   [body("password").not().isEmpty(), body("email").not().isEmpty()],
@@ -66,7 +87,6 @@ adminRouter.post(
             res.json({
               data: err,
               success: false,
-              // message: sqlHelper.consoleSQLException(err),
               message: err.message,
             });
           }
@@ -75,6 +95,13 @@ adminRouter.post(
   }
 );
 
+/**
+ * Admin Signup
+ * @type POST
+ * @retuns reportsObj
+ * @params name,password,email,mobile
+ * @route [http://192.168.18.14/api/admin/admin-singup]
+ */
 adminRouter.post(
   "/admin-singup",
   [
@@ -110,7 +137,6 @@ adminRouter.post(
             res.json({
               data: err,
               success: false,
-              // message: sqlHelper.consoleSQLException(err),
               message: err.message,
             });
           }
@@ -118,5 +144,88 @@ adminRouter.post(
     }
   }
 );
+
+/**
+ * Update report status
+ * @type PUT
+ * @retuns reportsObj
+ * @params status,id
+ * @required accessToken
+ * @route [http://192.168.18.14/api/admin/update-report-status]
+ */
+adminRouter.put(
+  "/update-report-status",
+  [body("status").not().isEmpty(), body("id").not().isEmpty()],
+  (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(422).jsonp(errors.array());
+    } else {
+      adminModel
+        .updateReportStatus(req.body)
+        .then((reportsObj) => {
+          console.log("update report status ::>> res", reportsObj);
+          res.json({
+            data: reportsObj.data,
+            success: true,
+            message: "Status updated  successfully",
+          });
+        })
+        .catch((err) => {
+          console.log("update report ::>> err", err);
+          if (err.valid === false) {
+            console.log("false");
+            res.json({
+              success: false,
+              message: err.message,
+            });
+          } else {
+            res.json({
+              data: err,
+              success: false,
+              message: err.message,
+            });
+          }
+        });
+    }
+  }
+);
+
+/**
+ * Generate Qr Code
+ * @type POST
+ * @retuns Obj
+ * @required accessToken
+//  * @params status,id
+ * @route [http://192.168.18.14/api/admin/generate-qr]
+ */
+adminRouter.post("/generate-qr", (req, res) => {
+  adminModel
+    .generateQr(req.body)
+    .then((userObj) => {
+      console.log("generate Qr ::>> res", userObj);
+      res.json({
+        data: userObj.data,
+        success: true,
+        message: "Qr Codes Generated successfully",
+      });
+    })
+    .catch((err) => {
+      console.log("generate Qr  ::>> err", err);
+      if (err.valid === false) {
+        console.log("false");
+        res.json({
+          success: false,
+          message: err.message,
+        });
+      } else {
+        res.json({
+          data: err,
+          success: false,
+          message: err.message,
+        });
+      }
+    });
+});
 
 module.exports = adminRouter;

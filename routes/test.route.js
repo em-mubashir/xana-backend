@@ -1,7 +1,6 @@
 const express = require("express");
 const testRouter = express.Router();
 const testModel = require("../models/test.model");
-const auth = require("../middlewares/auth");
 const multer = require("multer");
 
 const { body, validationResult, errors } = require("express-validator");
@@ -30,10 +29,15 @@ const upload = multer({
 });
 
 // multer file store ends
-
+/**
+ * GET reports of user
+ * @retuns reportsObj
+ * @type GET
+ * @required access_token
+ * @route [http://192.168.18.14/api/reports/user]
+ */
 testRouter.post(
   "/create-new",
-  auth,
   [
     body("testName").not().isEmpty(),
     body("Manufacturer").not().isEmpty(),
@@ -68,26 +72,27 @@ testRouter.post(
     }
   }
 );
-
-testRouter.put(
-  "/upload-test-image",
-  upload.single("testImage"),
-  auth,
-  (req, res) => {
-    console.log(req.file);
-    console.log(req.body.testId);
-    testModel
-      .saveImage(req.file.path, req.body.testId)
-      .then((fileObj) => {
-        console.log("image stored ", fileObj);
-        res
-          .status(200)
-          .send({ success: true, message: "Image stored successfully" });
-      })
-      .catch((err) => {
-        res.status(500).send({ success: false, message: err });
-      });
-  }
-);
+/**
+ * GET reports of user
+ * @retuns reportsObj
+ * @type GET
+ * @required access_token
+ * @route [http://192.168.18.14/api/reports/user]
+ */
+testRouter.put("/upload-test-image", upload.single("testImage"), (req, res) => {
+  console.log(req.file);
+  console.log(req.body.testId);
+  testModel
+    .saveImage(req.file.path, req.body.testId)
+    .then((fileObj) => {
+      console.log("image stored ", fileObj);
+      res
+        .status(200)
+        .send({ success: true, message: "Image stored successfully" });
+    })
+    .catch((err) => {
+      res.status(500).send({ success: false, message: err });
+    });
+});
 
 module.exports = testRouter;

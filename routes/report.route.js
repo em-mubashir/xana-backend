@@ -3,11 +3,18 @@ const reportRouter = express.Router();
 const reportModel = require("../models/report.model");
 const sqlHelper = require("../helpers/sqlHeplers");
 
-reportRouter.get("/user/:id", (req, res) => {
-  const userId = req.params.id;
+/**
+ * GET reports of user
+ * @returns reportsObj
+ * @type GET
+ * @required access_token
+ * @route [http://192.168.18.14/api/reports/user]
+ */
+reportRouter.get("/user", (req, res) => {
+  const userId = req.user;
   if (userId) {
     reportModel
-      .getAllReports()
+      .getAllReports(userId)
       .then((reports) => {
         const message =
           reports.length > 0
@@ -31,6 +38,14 @@ reportRouter.get("/user/:id", (req, res) => {
   }
 });
 
+/// work to fix
+/**
+ * GET reports of user
+ * @returns reportsObj
+ * @type GET
+ * @required access_token
+ * @route [http://192.168.18.14/api/reports/user]
+ */
 reportRouter.get("/user/", (req, res) => {
   const userId = req.query.userId;
   const orderId = req.query.orderId;
@@ -66,6 +81,13 @@ reportRouter.get("/user/", (req, res) => {
   }
 });
 
+/**
+ * GET reports of user
+ * @returns reportsObj
+ * @type GET
+ * @required access_token
+ * @route [http://192.168.18.14/api/reports/user]
+ */
 reportRouter.post("/user/add-report", (req, res) => {
   reportModel
     .postReports(req.body)

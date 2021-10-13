@@ -1,12 +1,20 @@
 const express = require("express");
 const userRouter = express.Router();
 const userModel = require("../models/user.model");
-const auth = require("../middlewares/auth");
+const sessionModel = require("../models/session.model");
+const { verifyRefreshToken } = require("../helpers/jwt.helpers");
+const { verifyToken } = require("../middlewares/auth.middleware");
 // const sqlHelper = require('../helpers/sqlHeplers')
 const jwt = require("jsonwebtoken");
 const { body, param, validationResult } = require("express-validator");
 
-// POST /api/user/register
+/**
+ * Register User
+ * @retuns userObj
+ * @type POST
+ * @params name,password,email,mobile
+ * @route [http://192.168.18.14:5000/api/user/register]
+ */
 userRouter.post(
   "/register",
   [
@@ -26,7 +34,8 @@ userRouter.post(
           res.json({
             data: userObj,
             success: true,
-            message: "User inserted successfully",
+            message:
+              "A verification link has been sent to your email. Please verify your account in order to login",
           });
           console.log("register ::>> res", userObj);
         })
@@ -43,7 +52,13 @@ userRouter.post(
   }
 );
 
-// POST /api/user/register
+/**
+ * Register Gmail
+ * @retuns userObj
+ * @type POST
+ * @params name, email
+ * @route [http://192.168.18.14:5000/api/user/register/gmail]
+ */
 userRouter.post(
   "/register/gmail",
   [body("name").not().isEmpty(), body("email").not().isEmpty()],
@@ -74,19 +89,25 @@ userRouter.post(
   }
 );
 
-// GET /api/user/confirmation/:token
-userRouter.get("/confirmation/:token", auth, async (req, res) => {
+/**
+ * Token Verification
+ * @retuns success
+ * @type GET
+ * @route [http://192.168.18.14:5000/api/user/confirmation/:token]
+ */
+userRouter.get("/confirmation/:token", async (req, res) => {
   try {
     userModel
       .verifyEmail(req.user)
       .then(() => {
-        res.status(301).redirect("xanamedtech://chat/Eri");
-        // res.json({
-        //   success: true,
-        //   message: "User verified successfully",
-        // });
+        // res.status(301).redirect("https://xanameditest.com/verification/");
+        res.json({
+          success: true,
+          message: "User verified successfully",
+        });
       })
       .catch((err) => {
+        console.log(err);
         res.json({
           error: err,
           success: false,
@@ -99,7 +120,13 @@ userRouter.get("/confirmation/:token", auth, async (req, res) => {
   }
 });
 
-// POST /api/user/login
+/**
+ * Login
+ * @retuns userId, sessionId, accessToken, refreshToken
+ * @type POST
+ * @params password,email
+ * @route [http://192.168.18.14:5000/api/user/login]
+ */
 userRouter.post(
   "/login",
   [body("password").not().isEmpty(), body("email").not().isEmpty()],
@@ -110,10 +137,14 @@ userRouter.post(
     } else {
       userModel
         .login(req.body)
-        .then((userObj) => {
-          console.log("login ::>> res", userObj);
+        .then(async (payload) => {
+          console.log("login ::>> res", payload);
+
           res.json({
-            data: userObj.data,
+            data: payload.userId,
+            sessionId: payload.sessionId,
+            accessToken: payload.accessToken,
+            refreshToken: payload.refreshToken,
             success: true,
             message: "User logged in successfully",
           });
@@ -139,7 +170,38 @@ userRouter.post(
   }
 );
 
-// POST /api/user/login/gmail
+/**
+ * Logout
+ * @retuns success
+ * @type POST
+ * @route [http://192.168.18.14:5000/api/user/logout]
+ */
+userRouter.post("/logout", async (req, res) => {
+  try {
+    const { refreshToken } = req.body;
+    if (!refreshToken) throw new Error("Bad Request");
+    const verifiedToken = await verifyRefreshToken(refreshToken);
+    await sessionModel.invalidateSession(verifiedToken.payload.userId);
+    res.json({
+      success: true,
+      message: "User logged out successfully",
+    });
+    // delete from db
+  } catch (err) {
+    res.json({
+      data: err,
+      success: false,
+      message: "Something went wrong",
+    });
+  }
+});
+
+/**
+ * Login with gmail
+ * @retuns userObj
+ * @type POST
+ * @route [http://192.168.18.14:5000/api/user/login/gmail]
+ */
 userRouter.post("/login/gmail", [body("email").not().isEmpty()], (req, res) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
@@ -175,10 +237,17 @@ userRouter.post("/login/gmail", [body("email").not().isEmpty()], (req, res) => {
   }
 });
 
-// GET /api/user/profile/:id
-userRouter.get("/profile/:id", (req, res) => {
+/**
+ * Edit Profile
+ * @retuns userObj
+ * @type get
+ * @required access_token
+ * @route [http://192.168.18.14:5000/api/user/profile]
+ */
+userRouter.get("/profile", verifyToken, (req, res) => {
+  console.log("req.user", req.user);
   userModel
-    .getProfile(req.params.id)
+    .getProfile(req.user)
     .then((userObj) => {
       console.log("getProfile ::>> res", userObj);
       res.json({
@@ -198,9 +267,17 @@ userRouter.get("/profile/:id", (req, res) => {
     });
 });
 
-// PUT /api/user/profile/:id/edit
+/**
+ * Edit Profile
+ * @retuns userObj
+ * @type put
+ * @params name
+ * @required access_token
+ * @route [http://192.168.18.14:5000/api/user/profile/edit]
+ */
 userRouter.put(
-  "/profile/:id/edit",
+  "/profile/edit",
+  verifyToken,
   [body("name").not().isEmpty()],
   (req, res) => {
     const errors = validationResult(req);
@@ -208,7 +285,7 @@ userRouter.put(
       return res.status(422).jsonp(errors.array());
     } else {
       userModel
-        .updateProfile(req.params.id, req.body)
+        .updateProfile(req.user, req.body)
         .then((userObj) => {
           res.json({
             data: userObj,
@@ -230,6 +307,14 @@ userRouter.put(
   }
 );
 
+/**
+ * Forgot password
+ * @retuns success
+ * @type post
+ * @params email
+ * @required access_token
+ * @route [http://192.168.18.14:5000/api/user/forgot-password]
+ */
 userRouter.post(
   "/forgot-password",
   [body("email").not().isEmpty()],
@@ -260,13 +345,22 @@ userRouter.post(
   }
 );
 
-// POST /api/user/:id/reset-password
-userRouter.get("/reset-password/:token", auth, async (req, res) => {
+/**
+ * Reset Password
+ * @retuns userId
+ * @type get
+ * @route [http://192.168.18.14:5000/api/user/reset-password/:token]
+ */
+userRouter.get("/reset-password/:token", async (req, res) => {
   userModel
-    .resetPasswordVerify(req.user, req.params.token, req.body.password)
+    .resetPasswordVerify(req.params.token)
     .then((userObj) => {
       console.log("userObj : resetPassword :>> ", userObj);
-      res.status(301).redirect("xanamedtech://chat/Eri?id=" + req.user.id);
+      res.json({
+        success: true,
+        data: userObj[0].id,
+        message: "Code Verified Successfully",
+      });
     })
     .catch((err) => {
       res.json({
@@ -277,19 +371,69 @@ userRouter.get("/reset-password/:token", auth, async (req, res) => {
     });
 });
 
-// POST /api/user/refresh-token
-
-userRouter.post("/refresh-token", async (req, res) => {
+/**
+ * Resend Code
+ * @type post
+ * @retuns success
+ * @params email
+ * @route [http://192.168.18.14:5000/api/user/resend-code]
+ */
+userRouter.post("/resend-code", async (req, res) => {
   userModel
-    .refreshToken(req.body.id)
-    .then((token) => {
-      res.status(200).json({ token: token });
+    .resendCode(req.body.email)
+    .then((userObj) => {
+      console.log("Code sent res :>> ", userObj);
+      res.json({
+        success: true,
+        // data: userObj,
+        message: "Code sent successfully",
+      });
     })
     .catch((err) => {
-      console.log("error", err);
+      res.json({
+        success: false,
+        error: err,
+        message: err.message,
+      });
     });
 });
 
+/**
+ * Refresh Token
+ * @type post
+ * @retuns accessToken, refreshToken
+ * @params refreshToken
+ * @route [http://192.168.18.14:5000/api/user/refresh-token]
+ */
+userRouter.post("/refresh-token", async (req, res) => {
+  try {
+    const { refreshToken } = req.body;
+    if (!refreshToken) throw new Error("Bad Request");
+    const token = await verifyRefreshToken(refreshToken);
+    if (token.payload.accessToken && token.payload.refreshToken) {
+      res.status(200).json({
+        accessToken: token.payload.accessToken,
+        refreshToken: token.payload.refreshToken,
+      });
+    } else {
+      res.json({
+        success: false,
+        data: {},
+        message: "Invalid refresh token",
+      });
+    }
+  } catch (err) {
+    res.status(500).json({ data: err, message: "Invalid/Expired token" });
+  }
+});
+
+/**
+ * Update Password
+ * @type put
+ * @retuns success
+ * @params id,password
+ * @route [http://192.168.18.14:5000/api/user/update-password]
+ */
 userRouter.put("/update-password", async (req, res) => {
   userModel
     .updatePassword(req.body.password, req.body.id)
