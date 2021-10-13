@@ -100,7 +100,7 @@ userRouter.post(
  * @type GET
  * @route [http://192.168.18.14:5000/api/user/confirmation/:token]
  */
-userRouter.get("/confirmation/:token", async (req, res) => {
+userRouter.get("/confirmation/:token", verifyToken, async (req, res) => {
   try {
     userModel
       .verifyEmail(req.user)
@@ -143,7 +143,6 @@ userRouter.post(
         .login(req.body)
         .then(async (payload) => {
           console.log("login ::>> res", payload);
-
           res.json({
             data: payload.userId,
             sessionId: payload.sessionId,
@@ -249,7 +248,6 @@ userRouter.post("/login/gmail", [body("email").not().isEmpty()], (req, res) => {
  * @route [http://192.168.18.14:5000/api/user/profile]
  */
 userRouter.get("/profile", verifyToken, (req, res) => {
-  console.log("req.user", req.user);
   userModel
     .getProfile(req.user)
     .then((userObj) => {

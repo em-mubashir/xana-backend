@@ -156,7 +156,6 @@ const userModel = {
                   new Error("Please verify your email in order to login")
                 );
               }
-
               const { password: hashedPassword } = res[0];
               // = await bcrypt.compare(
               //   user.password,
@@ -181,6 +180,8 @@ const userModel = {
                   res[0].id,
                   refreshToken
                 );
+
+                console.log("res[0].id :: ", res[0].id);
                 console.log("session", session);
 
                 const payload = {
@@ -239,8 +240,6 @@ const userModel = {
         con.query(
           `select * from users where id='${userId}' LIMIT 1`,
           (err, res) => {
-            console.log("err", err);
-            console.log("res", res);
             if (res.length !== 0) {
               return resolve(res);
             } else {
@@ -250,7 +249,7 @@ const userModel = {
           }
         );
       } else {
-        return reject(new Error("Invalid User Id"));
+        return reject(new Error("Invalid user id in token"));
       }
     }),
 

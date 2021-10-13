@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: xana
--- Generation Time: Sep 29, 2021 at 11:09 AM
+-- Generation Time: Oct 13, 2021 at 12:12 PM
 -- Server version: 8.0.26
 -- PHP Version: 7.4.20
 
@@ -100,13 +100,6 @@ CREATE TABLE `sessions` (
   `ip` varchar(500) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
---
--- Dumping data for table `sessions`
---
-
-INSERT INTO `sessions` (`id`, `session_id`, `user_id`, `session_token`, `ip`) VALUES
-(56, 'ku6volnn7gtv5k08e8w', 87, 'eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJwYXlsb2FkIjo4NywiaWF0IjoxNjMzMDAyNzY0LCJleHAiOjE2NjQ1NjAzNjR9.RLSsNoZ4rJaLpVHaOSui_Eob7n9-PWG9_dxNcQUZpztpj_7b9XYuGnAU_3w4kt_mf6FZo0PrzJQu41JGAMEpQuyav5D_nHi_-FEQsBeAGyCmeUe6yxQKWhoRoC30bm_mx9P44hJ9AQLc4PfFVJgSWtUh82-Nk691EjRvPcHH5QI', NULL);
-
 -- --------------------------------------------------------
 
 --
@@ -134,7 +127,9 @@ CREATE TABLE `test_info` (
 
 CREATE TABLE `users` (
   `id` bigint NOT NULL,
-  `name` varchar(250) DEFAULT 'null',
+  `first_name` varchar(250) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
+  `last_name` varchar(255) NOT NULL,
+  `middile_name` varchar(255) DEFAULT NULL,
   `email` varchar(250) DEFAULT 'null',
   `mobile` varchar(45) DEFAULT 'null',
   `password` varchar(1000) DEFAULT 'null',
@@ -149,25 +144,9 @@ CREATE TABLE `users` (
 -- Dumping data for table `users`
 --
 
-INSERT INTO `users` (`id`, `name`, `email`, `mobile`, `password`, `roleId_fk`, `address`, `image`, `code`, `confirmed`) VALUES
-(3, 'Salman Ahmed', 'salman123@gmail.com', NULL, NULL, 1, NULL, NULL, NULL, 0),
-(4, 'Abdul Rafay', 'rafay@gmail.com', NULL, NULL, 1, NULL, NULL, NULL, 0),
-(62, 'get setgo', 'getsetgo.gsg3@gmail.com', 'null', 'null', 1, 'null', 'null', 'null', 1),
-(71, 'Beenish Khan', 'beenishkhan603@gmail.com', 'null', '17f34411d3349c8e67778db10c2e0150', 1, 'null', 'null', NULL, 1),
-(72, 'farhana', 'fabacek476@tinilalo.com', '03030302141', 'b4bdf2d388f361a006fa60ee25dc3ac2', 1, 'null', 'null', 'null', 1),
-(73, 'Farhana Aijaz', 'farhanaaijaz888@gmail.com', 'null', 'b4bdf2d388f361a006fa60ee25dc3ac2', 1, 'null', 'null', NULL, 1),
-(74, 'farhana', 'farhanaaijaz76@gmail.com', '12345678912', 'b4bdf2d388f361a006fa60ee25dc3ac2', 1, 'null', 'null', 'null', 1),
-(75, 'Farhana', 'kahipad274@secbuf.com', '123123123456', 'b4bdf2d388f361a006fa60ee25dc3ac2', 1, 'null', 'null', 'null', 1),
-(76, 'Humera Nooreen', 'humeranooreen1048@gmail.com', '03349108549', '0fb109b77a2cf103e79fb02bc4460abf', 1, 'null', 'null', NULL, 1),
-(77, 'Humera Nooreen', 'noor1234bibi@gmail.com', '03349108549', '8ba54e20f8803e04f82970ae60a6af0d', 1, 'null', 'null', 'null', 0),
-(78, 'Ali', 'humma7890bibi@ail.com', '03349108549', '2d74c807601424b15a9716ca4eacb838', 1, 'null', 'null', 'null', 0),
-(79, 'Maha', 'nomangul685@gmail.com', '03335545232', 'c43cd98546c19dd4f09b0156f85cd0a1', 1, 'null', 'null', 'null', 0),
-(80, 'Talha', 'kkaabbeess@gmail.com', '03122983872', '83833630ef8365327bb0283a65f9991d', 1, 'null', 'null', 'null', 0),
-(81, 'Humera', 'Asimsaqlain@gmail.com', '03349108549', 'b04f352c82af7af5ff3560c32172f87a', 1, 'null', 'null', 'null', 0),
-(82, 'farhi', 'mishalraza102@gmail.com', '12345678998', 'b4bdf2d388f361a006fa60ee25dc3ac2', 1, 'null', 'null', 'null', 1),
-(83, 'ABC', 'tadori8914@secbuf.com', '123123123423', 'b4bdf2d388f361a006fa60ee25dc3ac2', 1, 'null', 'null', 'null', 1),
-(86, 'Saim Danish', 'saim.danish1@gmail.com', 'null', 'null', 1, 'null', 'null', 'null', 1),
-(87, 'Hammad Safi', 'rokiw84675@bio123.net', 'null', 'null', 1, 'null', 'null', '5088', 1);
+INSERT INTO `users` (`id`, `first_name`, `last_name`, `middile_name`, `email`, `mobile`, `password`, `roleId_fk`, `address`, `image`, `code`, `confirmed`) VALUES
+(3, 'Salman Ahmed', '', NULL, 'salman123@gmail.com', NULL, NULL, 1, NULL, NULL, NULL, 0),
+(4, 'Abdul Rafay', '', NULL, 'rafay@gmail.com', NULL, NULL, 1, NULL, NULL, NULL, 0);
 
 -- --------------------------------------------------------
 
@@ -260,7 +239,7 @@ ALTER TABLE `roles`
 -- AUTO_INCREMENT for table `sessions`
 --
 ALTER TABLE `sessions`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=57;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=59;
 
 --
 -- AUTO_INCREMENT for table `test_info`
@@ -272,7 +251,7 @@ ALTER TABLE `test_info`
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` bigint NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=88;
+  MODIFY `id` bigint NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=91;
 
 --
 -- AUTO_INCREMENT for table `user_test_pivot`
