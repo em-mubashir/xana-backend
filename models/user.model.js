@@ -53,7 +53,8 @@ const userModel = {
                       email: user.email,
                     },
                   });
-                  const url = `https://xanamedtec.page.link/?link=http://13.125.14.138?token=${emailToken}&apn=com.xanamedtec`;
+                  const url = `https://xanamedtec.page.link/?link=http://192.168.18.14:3000/user/verification/${emailToken}&apn=com.xanamedtec
+                   `;
                   const transporter = nodemailer.createTransport({
                     service: "gmail",
                     host: "smtp.gmail.com",
@@ -224,9 +225,32 @@ const userModel = {
         `select * from users where email='${user.email}' LIMIT 1`,
         async (err, res) => {
           if (res) {
-            return res.length !== 0
-              ? resolve({ data: res, valid: true })
-              : reject(new Error("Email not registered", err));
+            if (res.length !== 0) {
+              const accessToken = await signJwt({ payload: res[0].id });
+
+              const refreshToken = await signRefreshToken({
+                payload: res[0].id,
+              });
+              const session = await sessionModel.createSession(
+                res[0].id,
+                refreshToken
+              );
+
+              console.log("res[0].id :: ", res[0].id);
+              console.log("session", session);
+
+              const payload = {
+                userId: session.userId,
+                sessionId: session.sessionId,
+                accessToken,
+                refreshToken,
+              };
+
+              // send user back
+              return resolve(payload);
+            } else {
+              reject(new Error("Email not registered", err));
+            }
           } else {
             return reject(new Error("Something went wrong", err));
           }
