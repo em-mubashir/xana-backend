@@ -1,6 +1,6 @@
 const jwt = require("jsonwebtoken");
 const sessionModel = require("../models/session.model");
-const { verifyJwt } = require("../helpers/jwt.helpers");
+const { verifyJwt, verifyEmailToken } = require("../helpers/jwt.helpers");
 const config = process.env;
 
 const verifyToken = (req, res, next) => {
@@ -8,26 +8,21 @@ const verifyToken = (req, res, next) => {
     let token = "";
     let decoded = "";
     if (req.params.token) {
-      console.log("in url");
       token = req.params.token;
-      decoded = jwt.verify(token, config.JWT_KEY);
+      decoded = verifyEmailToken(token);
     } else {
-      console.log("elseee");
       token = req.headers.authorization.split(" ")[1];
       decoded = verifyJwt(token);
+      console.log("decoded in else ", decoded);
     }
-
-    console.log("token :: ", token);
-
-    console.log(decoded);
-    if (!decoded) {
+    if (!decoded.payload) {
       return res.status(401).json({
         success: false,
         message: "Invalid/Missing token",
         data: [],
       });
     } else {
-      req.user = decoded;
+      req.user = decoded.payload.payload;
       next();
     }
   } catch (err) {

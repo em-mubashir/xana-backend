@@ -248,6 +248,7 @@ userRouter.post("/login/gmail", [body("email").not().isEmpty()], (req, res) => {
  * @route [http://192.168.18.14:5000/api/user/profile]
  */
 userRouter.get("/profile", verifyToken, (req, res) => {
+  console.log("req", req.user);
   userModel
     .getProfile(req.user)
     .then((userObj) => {

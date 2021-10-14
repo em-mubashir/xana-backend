@@ -33,11 +33,28 @@ C0kcgqbNwQ3R4XWEXoIBAkEAjL5VGsDUmUjOt/dtqH2cKHF/qzqgZfYJp7ZYleVS
 67O+vrv08mHQd9VwPU1zMowS1VtSBa0lgHqHii9ZsadfsfdsafsdfsdfPEUJ+Q==
 -----END RSA PRIVATE KEY-----`;
 
+const emailToken = `-----BEGIN RSA PUBLIC KEY-----
+MIIBCgKCAQEA+xGZ/wcz9ugFpP07Nspo6U17l0YhFiFpxxU4pTk3Lifz9R3zsIsu
+ERwta7+fWIfxOo208ett/jhskiVodSEt3QBGh4XBipyWopKwZ93HHaDVZAALi/2A
++xTBtWdEo7XGUujKDvC2/aZKukfjpOiUI8AhLAfjmlcD/UZ1QPh0mHsglRNCmpCw
+mwSXA9VNmhz+PiB+Dml4WWnKW/VHo2ujTXxq7+efMU4H2fny3Se3KYOsFPFGZ1TN
+QSYlFuShWrHPtiLmUdPoP6CV2mML1tk+l7DIIqXrQhLUKDACeM5roMx0kLhUWB8P
++0uj1CNlNN4JRZlC7xFfqiMbFRU9Z4N6YwIDAQAB
+-----END RSA PUBLIC KEY-----`;
+
 //sign access token
 const signJwt = (payload) => {
   return jwt.sign(payload, accessToken, {
     algorithm: "RS256",
     expiresIn: "20m",
+  });
+};
+
+//sign email token
+const signEmailToken = (payload) => {
+  return jwt.sign(payload, emailToken, {
+    algorithm: "RS256",
+    expiresIn: "4h",
   });
 };
 
@@ -57,6 +74,16 @@ const signRefreshToken = (payload) => {
     algorithm: "RS256",
     expiresIn: "1y",
   });
+};
+
+//verify Email Token
+const verifyEmailToken = (token) => {
+  try {
+    const decoded = jwt.verify(token, emailToken, { algorithms: ["RS256"] });
+    return { payload: decoded, expired: false };
+  } catch (err) {
+    return { payload: null, expired: err.message };
+  }
 };
 
 //verify refresh token
@@ -88,4 +115,11 @@ const verifyRefreshToken = async (refToken) => {
     return { payload: null, expired: err.message };
   }
 };
-module.exports = { signJwt, verifyJwt, signRefreshToken, verifyRefreshToken };
+module.exports = {
+  signJwt,
+  verifyJwt,
+  signRefreshToken,
+  verifyRefreshToken,
+  signEmailToken,
+  verifyEmailToken,
+};

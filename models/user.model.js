@@ -3,7 +3,11 @@ const crypto = require("crypto");
 const jwt = require("jsonwebtoken");
 var nodemailer = require("nodemailer");
 const { use } = require("../routes/user.route");
-const { signJwt, signRefreshToken } = require("../helpers/jwt.helpers");
+const {
+  signJwt,
+  signRefreshToken,
+  signEmailToken,
+} = require("../helpers/jwt.helpers");
 
 const sessionModel = require("./session.model");
 require("colors");
@@ -39,20 +43,16 @@ const userModel = {
             const hashedPassword = await mycrypto.encrypt(user.password);
             console.log("hashedPassword", hashedPassword);
             const sql = `INSERT into users (first_name,last_name, email, mobile, password, roleId_fk) values ('${user.firstName}','${user.lastName}','${user.email}','${user.mobile}','${hashedPassword}',1)`;
-            con.query(sql, (err, res) => {
+            con.query(sql, async (err, res) => {
               console.log("res", res);
               if (res) {
                 if (res.affectedRows > 0) {
-                  const emailToken = jwt.sign(
-                    {
+                  const emailToken = await signEmailToken({
+                    payload: {
                       id: `${res.insertId}`,
                       email: user.email,
                     },
-                    process.env.JWT_KEY,
-                    {
-                      expiresIn: "3h",
-                    }
-                  );
+                  });
                   const url = `https://xanamedtec.page.link/?link=http://13.125.14.138?token=${emailToken}&apn=com.xanamedtec`;
                   const transporter = nodemailer.createTransport({
                     service: "gmail",
