@@ -215,7 +215,7 @@ userRouter.post("/login/gmail", [body("email").not().isEmpty()], (req, res) => {
       .then((userObj) => {
         console.log("login ::>> res", userObj);
         res.json({
-          data: userObj.data,
+          data: userObj,
           success: true,
           message: "User logged in successfully",
         });
