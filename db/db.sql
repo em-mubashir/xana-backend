@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: xana
--- Generation Time: Sep 29, 2021 at 11:09 AM
+-- Generation Time: Oct 15, 2021 at 06:37 AM
 -- Server version: 8.0.26
 -- PHP Version: 7.4.20
 
@@ -20,6 +20,18 @@ SET time_zone = "+00:00";
 --
 -- Database: `xana`
 --
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `qr_codes`
+--
+
+CREATE TABLE `qr_codes` (
+  `id` bigint NOT NULL,
+  `qr_code` text NOT NULL,
+  `date_created` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- --------------------------------------------------------
 
@@ -41,18 +53,19 @@ CREATE TABLE `reports` (
   `testAuthorization` varchar(45) DEFAULT NULL,
   `sampleDate` date DEFAULT NULL,
   `resultDate` date DEFAULT NULL,
-  `result` varchar(45) DEFAULT NULL
+  `result` varchar(45) DEFAULT NULL,
+  `status` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL DEFAULT 'pending'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
 -- Dumping data for table `reports`
 --
 
-INSERT INTO `reports` (`reportId`, `userId`, `firstName`, `lastName`, `dob`, `passportNo`, `testName`, `testManufacturer`, `testDescription`, `testPerformance`, `testAuthorization`, `sampleDate`, `resultDate`, `result`) VALUES
-(1, 3, 'Hamza', 'Latif', '2002-01-02', 1812354, 'Sinopharm', 'Xana Companies', '2 doses of sinopharm', 'Test is valid for 6 months', 'Aroynd the globe', '2021-01-01', '2021-01-03', 'negative'),
-(2, 3, 'Hamid', 'Ayub', '2001-03-10', 41244521, 'Sinopharm', 'Xana Companies', '2 doses of sinopharm', 'Test is valid for 6 months', 'Aroynd the globe', '2021-02-06', '2021-02-08', 'negative'),
-(3, 4, 'Abdul', 'Rafay', '1998-05-17', 87944521, 'Sinopharm', 'Xana Companies', '2 doses of sinopharm', 'Test is valid for 6 months', 'Aroynd the globe', '2021-05-06', '2021-05-08', 'negative'),
-(4, 4, 'Abdul', 'Rafay', '1998-05-17', 87944521, 'Sinopharm', 'Xana Companies', '2 doses of sinopharm', 'Test is valid for 6 months', 'Aroynd the globe', '2021-05-06', '2021-05-08', 'negative');
+INSERT INTO `reports` (`reportId`, `userId`, `firstName`, `lastName`, `dob`, `passportNo`, `testName`, `testManufacturer`, `testDescription`, `testPerformance`, `testAuthorization`, `sampleDate`, `resultDate`, `result`, `status`) VALUES
+(1, 3, 'Hamza', 'Latif', '2002-01-02', 1812354, 'Sinopharm', 'Xana Companies', '2 doses of sinopharm', 'Test is valid for 6 months', 'Aroynd the globe', '2021-01-01', '2021-01-03', 'negative', ''),
+(2, 3, 'Hamid', 'Ayub', '2001-03-10', 41244521, 'Sinopharm', 'Xana Companies', '2 doses of sinopharm', 'Test is valid for 6 months', 'Aroynd the globe', '2021-02-06', '2021-02-08', 'negative', ''),
+(3, 4, 'Abdul', 'Rafay', '1998-05-17', 87944521, 'Sinopharm', 'Xana Companies', '2 doses of sinopharm', 'Test is valid for 6 months', 'Aroynd the globe', '2021-05-06', '2021-05-08', 'negative', ''),
+(4, 4, 'Abdul', 'Rafay', '1998-05-17', 87944521, 'Sinopharm', 'Xana Companies', '2 doses of sinopharm', 'Test is valid for 6 months', 'Aroynd the globe', '2021-05-06', '2021-05-08', 'negative', '');
 
 -- --------------------------------------------------------
 
@@ -72,6 +85,27 @@ CREATE TABLE `roles` (
 INSERT INTO `roles` (`id`, `role_name`) VALUES
 (1, 'user'),
 (2, 'admin');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `sessions`
+--
+
+CREATE TABLE `sessions` (
+  `id` int NOT NULL,
+  `session_id` text NOT NULL,
+  `user_id` bigint NOT NULL,
+  `session_token` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci,
+  `ip` varchar(500) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+--
+-- Dumping data for table `sessions`
+--
+
+INSERT INTO `sessions` (`id`, `session_id`, `user_id`, `session_token`, `ip`) VALUES
+(59, 'kurzqljjeprmsygyoqj', 3, 'eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJwYXlsb2FkIjozLCJpYXQiOjE2MzQyNzkzNjYsImV4cCI6MTY2NTgzNjk2Nn0.JDp-PIdtrHtyPJIYhvm4Sw0xZ1YdTYKhFmk2-wlpSDQS7xj4OqB8HCFQMAl4w2WbHDAENEN5hz3fDwdYkfk4fb56ygLDar0Ytyj6y0B0mqcQm3FaITU6E4TrvlHYLBUIQRyw3xX4FXY8aCS3W-Dk0HpCeMw7hlupk3BYu8hb_qI', NULL);
 
 -- --------------------------------------------------------
 
@@ -100,7 +134,9 @@ CREATE TABLE `test_info` (
 
 CREATE TABLE `users` (
   `id` bigint NOT NULL,
-  `name` varchar(250) DEFAULT 'null',
+  `first_name` varchar(250) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
+  `last_name` varchar(255) NOT NULL,
+  `middle_name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
   `email` varchar(250) DEFAULT 'null',
   `mobile` varchar(45) DEFAULT 'null',
   `password` varchar(1000) DEFAULT 'null',
@@ -115,10 +151,9 @@ CREATE TABLE `users` (
 -- Dumping data for table `users`
 --
 
-INSERT INTO `users` (`id`, `name`, `email`, `mobile`, `password`, `roleId_fk`, `address`, `image`, `code`, `confirmed`) VALUES
-(3, 'Salman Ahmed', 'salman123@gmail.com', NULL, NULL, 1, NULL, NULL, NULL, 0),
-(4, 'Abdul Rafay', 'rafay@gmail.com', NULL, NULL, 1, NULL, NULL, NULL, 0),
-(62, 'get setgo', 'getsetgo.gsg3@gmail.com', 'null', 'null', 1, 'null', 'null', 'null', 1);
+INSERT INTO `users` (`id`, `first_name`, `last_name`, `middle_name`, `email`, `mobile`, `password`, `roleId_fk`, `address`, `image`, `code`, `confirmed`) VALUES
+(3, 'Salman Ahmed', '', NULL, 'salman123@gmail.com', NULL, NULL, 1, NULL, NULL, NULL, 0),
+(4, 'Abdul Rafay', '', NULL, 'rafay@gmail.com', NULL, NULL, 1, NULL, NULL, NULL, 0);
 
 -- --------------------------------------------------------
 
@@ -137,6 +172,12 @@ CREATE TABLE `user_test_pivot` (
 --
 
 --
+-- Indexes for table `qr_codes`
+--
+ALTER TABLE `qr_codes`
+  ADD PRIMARY KEY (`id`);
+
+--
 -- Indexes for table `reports`
 --
 ALTER TABLE `reports`
@@ -148,6 +189,13 @@ ALTER TABLE `reports`
 --
 ALTER TABLE `roles`
   ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `sessions`
+--
+ALTER TABLE `sessions`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `user_id_fk_f` (`user_id`);
 
 --
 -- Indexes for table `test_info`
@@ -177,6 +225,12 @@ ALTER TABLE `user_test_pivot`
 --
 
 --
+-- AUTO_INCREMENT for table `qr_codes`
+--
+ALTER TABLE `qr_codes`
+  MODIFY `id` bigint NOT NULL AUTO_INCREMENT;
+
+--
 -- AUTO_INCREMENT for table `reports`
 --
 ALTER TABLE `reports`
@@ -189,6 +243,12 @@ ALTER TABLE `roles`
   MODIFY `id` bigint NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
+-- AUTO_INCREMENT for table `sessions`
+--
+ALTER TABLE `sessions`
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=60;
+
+--
 -- AUTO_INCREMENT for table `test_info`
 --
 ALTER TABLE `test_info`
@@ -198,7 +258,7 @@ ALTER TABLE `test_info`
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` bigint NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=63;
+  MODIFY `id` bigint NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=91;
 
 --
 -- AUTO_INCREMENT for table `user_test_pivot`
@@ -215,6 +275,12 @@ ALTER TABLE `user_test_pivot`
 --
 ALTER TABLE `reports`
   ADD CONSTRAINT `userId` FOREIGN KEY (`userId`) REFERENCES `users` (`id`);
+
+--
+-- Constraints for table `sessions`
+--
+ALTER TABLE `sessions`
+  ADD CONSTRAINT `user_id_fk_f` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT;
 
 --
 -- Constraints for table `test_info`

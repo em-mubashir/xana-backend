@@ -278,37 +278,31 @@ userRouter.get("/profile", verifyToken, (req, res) => {
  * @required access_token
  * @route [http://192.168.18.14:5000/api/user/profile/edit]
  */
-userRouter.put(
-  "/profile/edit",
-  verifyToken,
-  [body("first_name").not().isEmpty()],
-  (req, res) => {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      return res.status(422).jsonp(errors.array());
-    } else {
-      userModel
-        .updateProfile(req.user, req.body)
-        .then((userObj) => {
-          res.json({
-            data: userObj,
-            success: true,
-            message: "User updated successfully",
-          });
-          console.log("UpdateProfile ::>> res", userObj);
-        })
-        .catch((err) => {
-          console.log("UpdateProfile ::>> err", err);
-          // console.log(sqlHelper.consoleSQLException(err))
-          res.json({
-            data: err,
-            success: false,
-            message: err.message,
-          });
+userRouter.put("/profile/edit", verifyToken, (req, res) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(422).jsonp(errors.array());
+  } else {
+    userModel
+      .updateProfile(req.user, req.body)
+      .then((userObj) => {
+        res.json({
+          success: true,
+          message: "User updated successfully",
         });
-    }
+        console.log("UpdateProfile ::>> res", userObj);
+      })
+      .catch((err) => {
+        console.log("UpdateProfile ::>> err", err);
+        // console.log(sqlHelper.consoleSQLException(err))
+        res.json({
+          data: err,
+          success: false,
+          message: err.message,
+        });
+      });
   }
-);
+});
 
 /**
  * Forgot password
