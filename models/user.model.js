@@ -97,40 +97,45 @@ const userModel = {
       );
     }),
 
-  registerGmail: async (user) => {
-    await new Promise((resolve, reject) => {
+  registerGmail: (user) =>
+    new Promise((resolve, reject) => {
       // Email duplication check
       con.query(
         `select * from users where email='${user.email}' LIMIT 1`,
         (err, res) => {
-          if (res) {
-            if (res.length !== 0) {
-              return reject("User already exists");
-            } else {
-              const sql = `INSERT into users (first_name,last_name, email, roleId_fk, confirmed) values ('${user.firstName}','${user.lastName}','${user.email}',1, 1)`;
-              con.query(sql, (err, res) => {
-                if (res) {
-                  console.log(`Affected Rows: ${res.affectedRows}`.yellow.bold);
-                  if (res.affectedRows > 0) {
-                    console.log(res);
-                    return resolve(res);
-                  } else {
-                    return reject(new Error("Error adding user"));
-                  }
-                } else {
-                  console.log("err", err);
-                  return reject(new Error("Something went wrong", err));
-                }
-              });
-            }
+          if (res.length !== 0) {
+            return reject("User already exists");
           } else {
-            return reject(new Error("Something went wrong", err));
+            const sql = `INSERT into users (first_name,last_name, email, roleId_fk, confirmed) values ('${user.firstName}','${user.lastName}','${user.email}',1, 1)`;
+            con.query(sql, async (err, res) => {
+              if (res.affectedRows > 0) {
+                const accessToken = await signJwt({
+                  payload: res.insertId,
+                });
+                const refreshToken = await signRefreshToken({
+                  payload: res.insertId,
+                });
+                const session = await sessionModel.createSession(
+                  res.insertId,
+                  refreshToken
+                );
+                const payload = {
+                  userId: session.userId,
+                  sessionId: session.sessionId,
+                  accessToken,
+                  refreshToken,
+                };
+                console.log("payload", payload);
+                // send user back
+                return resolve(payload);
+              } else {
+                return reject(new Error("Error adding user"));
+              }
+            });
           }
         }
       );
-    });
-  },
-
+    }),
   verifyEmail: (user) =>
     new Promise((resolve, reject) => {
       con.query(
