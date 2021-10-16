@@ -31,7 +31,7 @@ adminRouter.get("/all-reports", (req, res) => {
  * @type GET
  * @retuns reportsObj
  * @required access_token
- * @route [http://192.168.18.14:5000/api/admin/report-detail/:id]
+ * @route [http://192.168.18.14/api/admin/report-detail/:id]
  */
 adminRouter.get("/report-detail/:id", (req, res) => {
   const reportId = req.params.id;

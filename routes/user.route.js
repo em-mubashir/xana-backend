@@ -13,7 +13,7 @@ const { body, param, validationResult } = require("express-validator");
  * @returns userObj
  * @type POST
  * @params firstName,lastName,password,email,mobile
- * @route [http://192.168.18.14:5000/api/user/register]
+ * @route [http://192.168.18.14/api/user/register]
  */
 userRouter.post(
   "/register",
@@ -58,7 +58,7 @@ userRouter.post(
  * @returns userObj
  * @type POST
  * @params firstName,lastName, email
- * @route [http://192.168.18.14:5000/api/user/register/gmail]
+ * @route [http://192.168.18.14/api/user/register/gmail]
  */
 userRouter.post(
   "/register/gmail",
@@ -75,6 +75,7 @@ userRouter.post(
       userModel
         .registerGmail(req.body)
         .then((userObj) => {
+          console.log("userObj: ", userObj);
           res.json({
             data: userObj,
             success: true,
@@ -98,7 +99,7 @@ userRouter.post(
  * Token Verification
  * @returns success
  * @type GET
- * @route [http://192.168.18.14:5000/api/user/confirmation/:token]
+ * @route [http://192.168.18.14/api/user/confirmation/:token]
  */
 userRouter.get("/confirmation/:token", verifyToken, async (req, res) => {
   try {
@@ -129,7 +130,7 @@ userRouter.get("/confirmation/:token", verifyToken, async (req, res) => {
  * @returns userId, sessionId, accessToken, refreshToken
  * @type POST
  * @params password,email
- * @route [http://192.168.18.14:5000/api/user/login]
+ * @route [http://192.168.18.14/api/user/login]
  */
 userRouter.post(
   "/login",
@@ -177,7 +178,7 @@ userRouter.post(
  * Logout
  * @returns success
  * @type POST
- * @route [http://192.168.18.14:5000/api/user/logout]
+ * @route [http://192.168.18.14/api/user/logout]
  */
 userRouter.post("/logout", async (req, res) => {
   try {
@@ -203,7 +204,7 @@ userRouter.post("/logout", async (req, res) => {
  * Login with gmail
  * @returns userObj
  * @type POST
- * @route [http://192.168.18.14:5000/api/user/login/gmail]
+ * @route [http://192.168.18.14/api/user/login/gmail]
  */
 userRouter.post("/login/gmail", [body("email").not().isEmpty()], (req, res) => {
   const errors = validationResult(req);
@@ -215,7 +216,7 @@ userRouter.post("/login/gmail", [body("email").not().isEmpty()], (req, res) => {
       .then((userObj) => {
         console.log("login ::>> res", userObj);
         res.json({
-          data: userObj.data,
+          data: userObj,
           success: true,
           message: "User logged in successfully",
         });
@@ -245,7 +246,7 @@ userRouter.post("/login/gmail", [body("email").not().isEmpty()], (req, res) => {
  * @returns userObj
  * @type get
  * @required access_token
- * @route [http://192.168.18.14:5000/api/user/profile]
+ * @route [http://192.168.18.14/api/user/profile]
  */
 userRouter.get("/profile", verifyToken, (req, res) => {
   console.log("req", req.user);
@@ -276,39 +277,33 @@ userRouter.get("/profile", verifyToken, (req, res) => {
  * @type put
  * @params first_name
  * @required access_token
- * @route [http://192.168.18.14:5000/api/user/profile/edit]
+ * @route [http://192.168.18.14/api/user/profile/edit]
  */
-userRouter.put(
-  "/profile/edit",
-  verifyToken,
-  [body("first_name").not().isEmpty()],
-  (req, res) => {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      return res.status(422).jsonp(errors.array());
-    } else {
-      userModel
-        .updateProfile(req.user, req.body)
-        .then((userObj) => {
-          res.json({
-            data: userObj,
-            success: true,
-            message: "User updated successfully",
-          });
-          console.log("UpdateProfile ::>> res", userObj);
-        })
-        .catch((err) => {
-          console.log("UpdateProfile ::>> err", err);
-          // console.log(sqlHelper.consoleSQLException(err))
-          res.json({
-            data: err,
-            success: false,
-            message: err.message,
-          });
+userRouter.put("/profile/edit", verifyToken, (req, res) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(422).jsonp(errors.array());
+  } else {
+    userModel
+      .updateProfile(req.user, req.body)
+      .then((userObj) => {
+        res.json({
+          success: true,
+          message: "User updated successfully",
         });
-    }
+        console.log("UpdateProfile ::>> res", userObj);
+      })
+      .catch((err) => {
+        console.log("UpdateProfile ::>> err", err);
+        // console.log(sqlHelper.consoleSQLException(err))
+        res.json({
+          data: err,
+          success: false,
+          message: err.message,
+        });
+      });
   }
-);
+});
 
 /**
  * Forgot password
@@ -316,7 +311,7 @@ userRouter.put(
  * @type post
  * @params email
  * @required access_token
- * @route [http://192.168.18.14:5000/api/user/forgot-password]
+ * @route [http://192.168.18.14/api/user/forgot-password]
  */
 userRouter.post(
   "/forgot-password",
@@ -352,7 +347,7 @@ userRouter.post(
  * Reset Password
  * @returns userId
  * @type get
- * @route [http://192.168.18.14:5000/api/user/reset-password/:token]
+ * @route [http://192.168.18.14/api/user/reset-password/:token]
  */
 userRouter.get("/reset-password/:token", async (req, res) => {
   userModel
@@ -379,7 +374,7 @@ userRouter.get("/reset-password/:token", async (req, res) => {
  * @type post
  * @returns success
  * @params email
- * @route [http://192.168.18.14:5000/api/user/resend-code]
+ * @route [http://192.168.18.14/api/user/resend-code]
  */
 userRouter.post("/resend-code", async (req, res) => {
   userModel
@@ -406,7 +401,7 @@ userRouter.post("/resend-code", async (req, res) => {
  * @type post
  * @returns accessToken, refreshToken
  * @params refreshToken
- * @route [http://192.168.18.14:5000/api/user/refresh-token]
+ * @route [http://192.168.18.14/api/user/refresh-token]
  */
 userRouter.post("/refresh-token", async (req, res) => {
   try {
@@ -435,7 +430,7 @@ userRouter.post("/refresh-token", async (req, res) => {
  * @type put
  * @returns success
  * @params id,password
- * @route [http://192.168.18.14:5000/api/user/update-password]
+ * @route [http://192.168.18.14/api/user/update-password]
  */
 userRouter.put("/update-password", async (req, res) => {
   userModel

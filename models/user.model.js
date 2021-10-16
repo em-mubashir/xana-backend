@@ -97,40 +97,45 @@ const userModel = {
       );
     }),
 
-  registerGmail: async (user) => {
-    await new Promise((resolve, reject) => {
+  registerGmail: (user) =>
+    new Promise((resolve, reject) => {
       // Email duplication check
       con.query(
         `select * from users where email='${user.email}' LIMIT 1`,
         (err, res) => {
-          if (res) {
-            if (res.length !== 0) {
-              return reject("User already exists");
-            } else {
-              const sql = `INSERT into users (first_name,last_name, email, roleId_fk, confirmed) values ('${user.firstName}','${user.lastName}','${user.email}',1, 1)`;
-              con.query(sql, (err, res) => {
-                if (res) {
-                  console.log(`Affected Rows: ${res.affectedRows}`.yellow.bold);
-                  if (res.affectedRows > 0) {
-                    console.log(res);
-                    return resolve(res);
-                  } else {
-                    return reject(new Error("Error adding user"));
-                  }
-                } else {
-                  console.log("err", err);
-                  return reject(new Error("Something went wrong", err));
-                }
-              });
-            }
+          if (res.length !== 0) {
+            return reject("User already exists");
           } else {
-            return reject(new Error("Something went wrong", err));
+            const sql = `INSERT into users (first_name,last_name, email, roleId_fk, confirmed) values ('${user.firstName}','${user.lastName}','${user.email}',1, 1)`;
+            con.query(sql, async (err, res) => {
+              if (res.affectedRows > 0) {
+                const accessToken = await signJwt({
+                  payload: res.insertId,
+                });
+                const refreshToken = await signRefreshToken({
+                  payload: res.insertId,
+                });
+                const session = await sessionModel.createSession(
+                  res.insertId,
+                  refreshToken
+                );
+                const payload = {
+                  userId: session.userId,
+                  sessionId: session.sessionId,
+                  accessToken,
+                  refreshToken,
+                };
+                console.log("payload", payload);
+                // send user back
+                return resolve(payload);
+              } else {
+                return reject(new Error("Error adding user"));
+              }
+            });
           }
         }
       );
-    });
-  },
-
+    }),
   verifyEmail: (user) =>
     new Promise((resolve, reject) => {
       con.query(
@@ -279,33 +284,36 @@ const userModel = {
 
   updateProfile: (userId, userData) =>
     new Promise(async (resolve, reject) => {
+      console.log("user id ", userId);
+      console.log("user data ", userData);
       // User validation Check
       con.query(
         `select * from users where id='${userId}' LIMIT 1`,
         async (err, res) => {
-          console.log(res);
+          console.log("result", res);
           if (res.length === 0) {
             return reject(new Error("User not exists"));
           } else if (err) {
             return reject(new Error("Something went wrong", err));
           } else {
-            const name = userData.name || res.name;
-            const mobile = userData.mobile || null;
-            const image = userData.image || null;
-            const address = userData.address || null;
+            const firstName = userData.firstName || res.first_name;
+            const lastName = userData.lastName || res.last_name;
+            const middleName = userData.middleName || res.middle_name;
+            const mobile = userData.mobile || res.mobile;
+            const image = userData.image || res.image;
+            const address = userData.address || res.address;
             const password =
-              userData.password || null
-                ? await mycrypto.encrypt(userData.password)
+              userData.password || res.password
+                ? await mycrypto.encrypt(userData.password || res.password)
                 : // await bcrypt.hash(`${userData.password}`, 10)
                   null;
 
-            const sql = `UPDATE users SET name='${name}',mobile='${mobile}',password='${password}',image='${image}', address='${address}' WHERE id='${userId}'`;
+            const sql = `UPDATE users SET first_name='${firstName}',last_name='${lastName}',middle_name='${middleName}',mobile='${mobile}',password='${password}',image='${image}', address='${address}' WHERE id='${userId}'`;
 
             con.query(sql, (err, res) => {
               if (res) {
                 console.log(`Affected Rows: ${res.affectedRows}`.yellow.bold);
                 if (res.affectedRows > 0) {
-                  console.log("updated");
                   return resolve(res);
                 }
               } else {
