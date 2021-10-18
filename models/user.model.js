@@ -282,10 +282,8 @@ const userModel = {
       }
     }),
 
-  updateProfile: (userId, userData) =>
+  updateProfile: (userId, userData, file) =>
     new Promise(async (resolve, reject) => {
-      console.log("user id ", userId);
-      console.log("user data ", userData);
       // User validation Check
       con.query(
         `select * from users where id='${userId}' LIMIT 1`,
@@ -294,13 +292,13 @@ const userModel = {
           if (res.length === 0) {
             return reject(new Error("User not exists"));
           } else if (err) {
-            return reject(new Error("Something went wrong", err));
+            return reject(new Error("Something went wrong --- ", err));
           } else {
             const firstName = userData.firstName || res.first_name;
             const lastName = userData.lastName || res.last_name;
             const middleName = userData.middleName || res.middle_name;
             const mobile = userData.mobile || res.mobile;
-            const image = userData.image || res.image;
+            const image = file.path || res.image;
             const address = userData.address || res.address;
             const password =
               userData.password || res.password

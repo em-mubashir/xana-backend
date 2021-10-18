@@ -1,4 +1,6 @@
 var express = require("express");
+const passport = require("passport");
+const path = require("path");
 var app = express();
 const cookieParser = require("cookie-parser");
 const apiErrorHanlder = require("./error/api-error-hanlder");
@@ -7,10 +9,12 @@ require("colors");
 const dotenv = require("dotenv");
 
 app.use(cors());
-app.use(cookieParser());
 app.use(express.urlencoded({ limit: "50mb", extended: true }));
 app.use(express.json({ limit: "50mb", extended: true }));
-// app.use("/uploads", express.static(path.join(__dirname, "uploads")));
+app.use(cookieParser());
+app.use(express.static("uploads"));
+app.use(passport.initialize());
+app.use(passport.session());
 
 dotenv.config();
 

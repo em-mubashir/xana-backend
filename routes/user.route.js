@@ -1,5 +1,7 @@
 const express = require("express");
 const userRouter = express.Router();
+const passport = require("passport");
+const multer = require("multer");
 const userModel = require("../models/user.model");
 const sessionModel = require("../models/session.model");
 const { verifyRefreshToken } = require("../helpers/jwt.helpers");
@@ -7,6 +9,32 @@ const { verifyToken } = require("../middlewares/auth.middleware");
 // const sqlHelper = require('../helpers/sqlHeplers')
 const jwt = require("jsonwebtoken");
 const { body, param, validationResult } = require("express-validator");
+
+// multer file store start
+const storage = multer.diskStorage({
+  destination(req, file, cb) {
+    cb(null, "./uploads/profileImages/");
+  },
+  filename(req, file, cb) {
+    cb(null, `test-${Date.now()}${file.originalname}`);
+  },
+});
+const fileFilter = (req, file, cb) => {
+  if (file.mimetype === "image/jpeg" || file.mimetype === "image/png") {
+    cb(null, true);
+  } else {
+    cb(new Error("file have different extension"), false);
+  }
+};
+const upload = multer({
+  storage: storage,
+  limits: {
+    fileSize: 1024 * 1024 * 5,
+  },
+  fileFilter: fileFilter,
+});
+
+// multer file store ends
 
 /**
  * Register User
@@ -136,6 +164,7 @@ userRouter.post(
   "/login",
   [body("password").not().isEmpty(), body("email").not().isEmpty()],
   (req, res) => {
+    console.log("req: authenticated", req.isAuthenticated());
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       return res.status(422).jsonp(errors.array());
@@ -248,28 +277,33 @@ userRouter.post("/login/gmail", [body("email").not().isEmpty()], (req, res) => {
  * @required access_token
  * @route [http://192.168.18.14/api/user/profile]
  */
-userRouter.get("/profile", verifyToken, (req, res) => {
-  console.log("req", req.user);
-  userModel
-    .getProfile(req.user)
-    .then((userObj) => {
-      console.log("getProfile ::>> res", userObj);
-      res.json({
-        data: userObj,
-        success: true,
-        message: "User Profile Fetched successfully",
+userRouter.get(
+  "/profile",
+  verifyToken,
+
+  (req, res) => {
+    console.log("req", req.user);
+    userModel
+      .getProfile(req.user)
+      .then((userObj) => {
+        console.log("getProfile ::>> res", userObj);
+        res.json({
+          data: userObj,
+          success: true,
+          message: "User Profile Fetched successfully",
+        });
+      })
+      .catch((err) => {
+        console.log("getProfile ::>> err", err);
+        res.json({
+          data: err,
+          success: false,
+          // message: sqlHelper.consoleSQLException(err),
+          message: err.message,
+        });
       });
-    })
-    .catch((err) => {
-      console.log("getProfile ::>> err", err);
-      res.json({
-        data: err,
-        success: false,
-        // message: sqlHelper.consoleSQLException(err),
-        message: err.message,
-      });
-    });
-});
+  }
+);
 
 /**
  * Edit Profile
@@ -279,13 +313,13 @@ userRouter.get("/profile", verifyToken, (req, res) => {
  * @required access_token
  * @route [http://192.168.18.14/api/user/profile/edit]
  */
-userRouter.put("/profile/edit", verifyToken, (req, res) => {
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) {
-    return res.status(422).jsonp(errors.array());
-  } else {
+userRouter.put(
+  "/profile/edit",
+  verifyToken,
+  upload.single("profileImage"),
+  (req, res) => {
     userModel
-      .updateProfile(req.user, req.body)
+      .updateProfile(req.user, req.body, req.file)
       .then((userObj) => {
         res.json({
           success: true,
@@ -303,7 +337,7 @@ userRouter.put("/profile/edit", verifyToken, (req, res) => {
         });
       });
   }
-});
+);
 
 /**
  * Forgot password
