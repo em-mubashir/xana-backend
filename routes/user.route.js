@@ -164,7 +164,6 @@ userRouter.post(
   "/login",
   [body("password").not().isEmpty(), body("email").not().isEmpty()],
   (req, res) => {
-    console.log("req: authenticated", req.isAuthenticated());
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       return res.status(422).jsonp(errors.array());

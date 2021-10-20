@@ -108,6 +108,8 @@ const userModel = {
           } else {
             const sql = `INSERT into users (first_name,last_name, email, roleId_fk, confirmed) values ('${user.firstName}','${user.lastName}','${user.email}',1, 1)`;
             con.query(sql, async (err, res) => {
+              console.log("res", res);
+              console.log("error", err);
               if (res.affectedRows > 0) {
                 const accessToken = await signJwt({
                   payload: res.insertId,
@@ -155,6 +157,8 @@ const userModel = {
       con.query(
         `select * from users where email='${user.email}' AND roleId_fk=1 LIMIT 1`,
         async (err, res) => {
+          console.log("res", res);
+          console.log("err", err);
           if (res) {
             if (res.length !== 0) {
               if (res[0]["confirmed"] != 1) {
@@ -298,15 +302,21 @@ const userModel = {
             const lastName = userData.lastName || res.last_name;
             const middleName = userData.middleName || res.middle_name;
             const mobile = userData.mobile || res.mobile;
+            const dob = userData.dob || res.dob;
+            const passportNumber =
+              userData.passportNumber || res.passport_number;
+            const gender = userData.gender || res.gender;
+            const company = userData.company || res.company;
             const image = file.path || res.image;
             const address = userData.address || res.address;
-            const password =
-              userData.password || res.password
-                ? await mycrypto.encrypt(userData.password || res.password)
-                : // await bcrypt.hash(`${userData.password}`, 10)
-                  null;
+            console.log("userData.password", userData.password);
+            console.log("res.password", res.password);
+            const password = userData.password
+              ? await mycrypto.encrypt(userData.password || res.password)
+              : res.password;
+            console.log("password", password);
 
-            const sql = `UPDATE users SET first_name='${firstName}',last_name='${lastName}',middle_name='${middleName}',mobile='${mobile}',password='${password}',image='${image}', address='${address}' WHERE id='${userId}'`;
+            const sql = `UPDATE users SET first_name='${firstName}',last_name='${lastName}',middle_name='${middleName}',mobile='${mobile}',password='${password}',image='${image}', address='${address}', dob='${dob}', passport_number='${passportNumber}', gender='${gender}', company='${company}' WHERE id='${userId}'`;
 
             con.query(sql, (err, res) => {
               if (res) {
