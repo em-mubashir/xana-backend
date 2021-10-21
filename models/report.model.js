@@ -19,7 +19,7 @@ const reportModel = {
   getReport: (userId, orderId) =>
     new Promise(async (resolve, reject) => {
       con.query(
-        `select * from reports where userId='${userId}' and orderId='${orderId}' `,
+        `select * from reports where userId='${userId}' and reportId='${orderId}' `,
         (err, res) => {
           if (res) {
             return resolve(res);

@@ -54,7 +54,7 @@ C0kcgqbNwQ3R4XWEXoIBAkEAjL5VGsDUmUjOt/dtqH2cKHF/qzqgZfYJp7ZYleVS
 const signJwt = (payload) => {
   return jwt.sign(payload, accessToken, {
     algorithm: "RS256",
-    expiresIn: "20m",
+    expiresIn: "4h",
   });
 };
 
