@@ -53,7 +53,7 @@ const userModel = {
                       email: user.email,
                     },
                   });
-                  const url = `https://xanamedtec.page.link/?link=http://192.168.18.14:3000/user/verification/${emailToken}&apn=com.xanamedtec
+                  const url = `https://xanamedtec.page.link/?link=http://100.26.42.223:3000/user/verification/${emailToken}&apn=com.xanamedtec
                    `;
                   const transporter = nodemailer.createTransport({
                     service: "gmail",
@@ -494,6 +494,7 @@ const userModel = {
           } else if (err) {
             return reject(new Error("Something went wrong --- ", err));
           } else {
+            console.log("-------------------------------------------", file);
             const firstName = userData.firstName || res.first_name;
             const lastName = userData.lastName || res.last_name;
             const middleName = userData.middleName || res.middle_name;
@@ -503,7 +504,7 @@ const userModel = {
               userData.passportNumber || res.passport_number;
             const gender = userData.gender || res.gender;
             const company = userData.company || res.company;
-            let image = file.path || res.image;
+            let image = file.path ? file.path : "" || res.image;
             const address = userData.address || res.address;
             image = process.env.IMAGE + image.substring(image.indexOf("/") + 1);
 
