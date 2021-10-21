@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: xana
--- Generation Time: Oct 20, 2021 at 10:45 AM
+-- Generation Time: Oct 21, 2021 at 11:29 AM
 -- Server version: 8.0.26
 -- PHP Version: 7.4.20
 
@@ -107,7 +107,8 @@ CREATE TABLE `sessions` (
 --
 
 INSERT INTO `sessions` (`id`, `session_id`, `user_id`, `session_token`, `ip`) VALUES
-(59, 'kurzqljjeprmsygyoqj', 3, 'eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJwYXlsb2FkIjozLCJpYXQiOjE2MzQyNzkzNjYsImV4cCI6MTY2NTgzNjk2Nn0.JDp-PIdtrHtyPJIYhvm4Sw0xZ1YdTYKhFmk2-wlpSDQS7xj4OqB8HCFQMAl4w2WbHDAENEN5hz3fDwdYkfk4fb56ygLDar0Ytyj6y0B0mqcQm3FaITU6E4TrvlHYLBUIQRyw3xX4FXY8aCS3W-Dk0HpCeMw7hlupk3BYu8hb_qI', NULL);
+(59, 'kurzqljjeprmsygyoqj', 3, 'eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJwYXlsb2FkIjozLCJpYXQiOjE2MzQyNzkzNjYsImV4cCI6MTY2NTgzNjk2Nn0.JDp-PIdtrHtyPJIYhvm4Sw0xZ1YdTYKhFmk2-wlpSDQS7xj4OqB8HCFQMAl4w2WbHDAENEN5hz3fDwdYkfk4fb56ygLDar0Ytyj6y0B0mqcQm3FaITU6E4TrvlHYLBUIQRyw3xX4FXY8aCS3W-Dk0HpCeMw7hlupk3BYu8hb_qI', NULL),
+(60, 'kv0uvnsoezfq9dbx2oh', 91, 'eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJwYXlsb2FkIjo5MSwiaWF0IjoxNjM0ODE1Mzk5LCJleHAiOjE2NjYzNzI5OTl9.Cb9nl28cQyDJcQJqbkOgHop5rFRb8nYn7oAOTrN7UqZKI9bQvsQ6YKfNUIQd1dodqDkhSoJhYhb7dKqGZej1BOmPqt_CbfKoR-_PrpuIkwiYJjLCgCcbUw8gCvQaN46YH2_oIMOWbj2k0OiWwZAh9wCGvpDeEMWZcp0yvlkESE8', NULL);
 
 -- --------------------------------------------------------
 
@@ -141,7 +142,6 @@ CREATE TABLE `users` (
   `middle_name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
   `email` varchar(250) DEFAULT 'null',
   `mobile` varchar(45) DEFAULT 'null',
-  `dob` date DEFAULT NULL,
   `passport_number` int DEFAULT NULL,
   `gender` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
   `company` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
@@ -150,16 +150,18 @@ CREATE TABLE `users` (
   `address` varchar(500) DEFAULT 'null',
   `image` varchar(500) DEFAULT 'null',
   `code` varchar(1000) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT 'null',
-  `confirmed` tinyint DEFAULT '0'
+  `confirmed` tinyint DEFAULT '0',
+  `dob` varchar(255) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
 -- Dumping data for table `users`
 --
 
-INSERT INTO `users` (`id`, `first_name`, `last_name`, `middle_name`, `email`, `mobile`, `dob`, `passport_number`, `gender`, `company`, `password`, `roleId_fk`, `address`, `image`, `code`, `confirmed`) VALUES
-(3, 'Salman Ahmed', '', NULL, 'salman123@gmail.com', NULL, NULL, 0, '', '', NULL, 1, NULL, NULL, NULL, 0),
-(4, 'Abdul Rafay', '', NULL, 'rafay@gmail.com', NULL, NULL, 0, '', '', NULL, 1, NULL, NULL, NULL, 0);
+INSERT INTO `users` (`id`, `first_name`, `last_name`, `middle_name`, `email`, `mobile`, `passport_number`, `gender`, `company`, `password`, `roleId_fk`, `address`, `image`, `code`, `confirmed`, `dob`) VALUES
+(3, 'Salman Ahmed', '', NULL, 'salman123@gmail.com', NULL, 0, '', '', NULL, 1, NULL, NULL, NULL, 0, NULL),
+(4, 'Abdul Rafay', '', NULL, 'rafay@gmail.com', NULL, 0, '', '', NULL, 1, NULL, NULL, NULL, 0, NULL),
+(91, 'leco1', 'jey6501', 'undefined', 'cibonig757@forfity.com', '123456789', 234243242, 'male', 'new company', '2025ab399fc521f625cd9e3a4ce30b5f', 1, 'abbottabad', 'http://192.168.18.14:5000/profileImages/test-1634815697300Screenshot 2021-10-20 at 5.40.30 PM.png', 'null', 1, '102120');
 
 -- --------------------------------------------------------
 
@@ -252,7 +254,7 @@ ALTER TABLE `roles`
 -- AUTO_INCREMENT for table `sessions`
 --
 ALTER TABLE `sessions`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=60;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=61;
 
 --
 -- AUTO_INCREMENT for table `test_info`
@@ -264,7 +266,7 @@ ALTER TABLE `test_info`
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` bigint NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=91;
+  MODIFY `id` bigint NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=93;
 
 --
 -- AUTO_INCREMENT for table `user_test_pivot`
