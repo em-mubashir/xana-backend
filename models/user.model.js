@@ -496,7 +496,7 @@ const userModel = {
           } else {
             let image = res.image;
             if (file) {
-              let image = file.path || res.image;
+              image = file.path;
               image =
                 process.env.IMAGE + image.substring(image.indexOf("/") + 1);
             }
