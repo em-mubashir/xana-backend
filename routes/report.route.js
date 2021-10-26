@@ -47,8 +47,8 @@ reportRouter.get("/user", verifyToken, (req, res) => {
  * @required access_token
  * @route [http://192.168.18.14/api/reports/user]
  */
-reportRouter.get("/", (req, res) => {
-  const userId = req.query.userId;
+reportRouter.get("/", verifyToken, (req, res) => {
+  const userId = req.user;
   const orderId = req.query.orderId;
   if (userId && orderId) {
     reportModel
