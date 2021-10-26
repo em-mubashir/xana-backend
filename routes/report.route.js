@@ -2,6 +2,7 @@ const express = require("express");
 const reportRouter = express.Router();
 const reportModel = require("../models/report.model");
 const sqlHelper = require("../helpers/sqlHeplers");
+const { verifyToken } = require("../middlewares/auth.middleware");
 
 /**
  * GET reports of user
@@ -10,7 +11,7 @@ const sqlHelper = require("../helpers/sqlHeplers");
  * @required access_token
  * @route [http://192.168.18.14/api/reports/user]
  */
-reportRouter.get("/user", (req, res) => {
+reportRouter.get("/user", verifyToken, (req, res) => {
   const userId = req.user;
   if (userId) {
     reportModel
@@ -46,7 +47,7 @@ reportRouter.get("/user", (req, res) => {
  * @required access_token
  * @route [http://192.168.18.14/api/reports/user]
  */
-reportRouter.get("/user/", (req, res) => {
+reportRouter.get("/", (req, res) => {
   const userId = req.query.userId;
   const orderId = req.query.orderId;
   if (userId && orderId) {

@@ -494,7 +494,12 @@ const userModel = {
           } else if (err) {
             return reject(new Error("Something went wrong --- ", err));
           } else {
-            console.log("-------------------------------------------", file);
+            let image = res.image;
+            if (file) {
+              let image = file.path || res.image;
+              image =
+                process.env.IMAGE + image.substring(image.indexOf("/") + 1);
+            }
             const firstName = userData.firstName || res.first_name;
             const lastName = userData.lastName || res.last_name;
             const middleName = userData.middleName || res.middle_name;
@@ -504,14 +509,10 @@ const userModel = {
               userData.passportNumber || res.passport_number;
             const gender = userData.gender || res.gender;
             const company = userData.company || res.company;
-            let image = file.path ? file.path : "" || res.image;
             const address = userData.address || res.address;
-            image = process.env.IMAGE + image.substring(image.indexOf("/") + 1);
-
             const password = userData.password
               ? await mycrypto.encrypt(userData.password || res.password)
               : res.password;
-
             const sql = `UPDATE users SET first_name='${firstName}',last_name='${lastName}',middle_name='${middleName}',mobile='${mobile}',password='${password}',image='${image}', address='${address}', dob='${dob}', passport_number='${passportNumber}', gender='${gender}', company='${company}' WHERE id='${userId}'`;
 
             con.query(sql, (err, res) => {
