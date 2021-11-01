@@ -50,6 +50,7 @@ reportRouter.get("/user", verifyToken, (req, res) => {
 reportRouter.get("/", verifyToken, (req, res) => {
   const userId = req.user;
   const orderId = req.query.orderId;
+  console.log(userId, orderId);
   if (userId && orderId) {
     reportModel
       .getReport(userId, orderId)
