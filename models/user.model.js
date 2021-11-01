@@ -53,7 +53,7 @@ const userModel = {
                       email: user.email,
                     },
                   });
-                  const url = `https://xanamedtec.page.link/?link=http://192.168.18.14:3000/user/verification/${emailToken}&apn=com.xanamedtec
+                  const url = `https://xanamedtec.page.link/?link=http://100.26.42.223:3000/user/verification/${emailToken}&apn=com.xanamedtec
                    `;
                   const transporter = nodemailer.createTransport({
                     service: "gmail",
@@ -494,25 +494,25 @@ const userModel = {
           } else if (err) {
             return reject(new Error("Something went wrong --- ", err));
           } else {
-            let image = res.image;
+            let image = res.image || "";
             if (file) {
               image = file.path;
               image =
                 process.env.IMAGE + image.substring(image.indexOf("/") + 1);
             }
-            const firstName = userData.firstName || res.first_name;
-            const lastName = userData.lastName || res.last_name;
-            const middleName = userData.middleName || res.middle_name;
-            const mobile = userData.mobile || res.mobile;
-            const dob = userData.dob || res.dob;
+            const firstName = userData.firstName || res.first_name || "";
+            const lastName = userData.lastName || res.last_name || "";
+            const middleName = userData.middleName || res.middle_name || "";
+            const mobile = userData.mobile || res.mobile || "";
+            const dob = userData.dob || res.dob || "";
             const passportNumber =
-              userData.passportNumber || res.passport_number;
-            const gender = userData.gender || res.gender;
-            const company = userData.company || res.company;
-            const address = userData.address || res.address;
+              userData.passportNumber || res.passport_number || 0;
+            const gender = userData.gender || res.gender || "";
+            const company = userData.company || res.company || "";
+            const address = userData.address || res.address || "";
             const password = userData.password
               ? await mycrypto.encrypt(userData.password || res.password)
-              : res.password;
+              : res.password || "";
             const sql = `UPDATE users SET first_name='${firstName}',last_name='${lastName}',middle_name='${middleName}',mobile='${mobile}',password='${password}',image='${image}', address='${address}', dob='${dob}', passport_number='${passportNumber}', gender='${gender}', company='${company}' WHERE id='${userId}'`;
 
             con.query(sql, (err, res) => {

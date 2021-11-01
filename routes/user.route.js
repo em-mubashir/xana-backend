@@ -16,7 +16,7 @@ const storage = multer.diskStorage({
     cb(null, "./uploads/profileImages/");
   },
   filename(req, file, cb) {
-    cb(null, `test-${Date.now()}${file.originalname}`);
+    cb(null, `test-${Date.now()}${file.originalname}.png`);
   },
 });
 const fileFilter = (req, file, cb) => {
