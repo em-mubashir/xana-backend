@@ -1,8 +1,36 @@
 const express = require("express");
 const reportRouter = express.Router();
+const axios = require("axios");
+const multer = require("multer");
 const reportModel = require("../models/report.model");
 const sqlHelper = require("../helpers/sqlHeplers");
 const { verifyToken } = require("../middlewares/auth.middleware");
+
+// multer file store start
+const storage = multer.diskStorage({
+  destination(req, file, cb) {
+    cb(null, "./uploads/reportImages/");
+  },
+  filename(req, file, cb) {
+    cb(null, `report-${Date.now()}${file.originalname}.png`);
+  },
+});
+const fileFilter = (req, file, cb) => {
+  if (file.mimetype === "image/jpeg" || file.mimetype === "image/png") {
+    cb(null, true);
+  } else {
+    cb(new Error("file have different extension"), false);
+  }
+};
+const upload = multer({
+  storage: storage,
+  limits: {
+    fileSize: 1024 * 1024 * 5,
+  },
+  fileFilter: fileFilter,
+});
+
+// multer file store ends
 
 /**
  * GET reports of user
@@ -89,25 +117,49 @@ reportRouter.get("/", verifyToken, (req, res) => {
  * @required access_token
  * @route [http://192.168.18.14/api/reports/user]
  */
-reportRouter.post("/user/add-report", (req, res) => {
-  reportModel
-    .postReports(req.body)
-    .then((userObj) => {
-      res.json({
-        data: userObj,
-        success: true,
-        message: "Report added successfully",
+reportRouter.post(
+  "/user/add-report",
+  upload.single("reportImage"),
+  (req, res) => {
+    const bodyFormData = new FormData();
+    bodyFormData.append("id", "COV1080034ACONLFDAG00013014");
+    bodyFormData.append(
+      "img",
+      "http://100.26.42.223:5000/reportImages/report-1635769362284_0_35.png"
+    );
+    axios
+      .post({
+        method: "post",
+        url: "https://100.26.42.223:5002/xana",
+        data: bodyFormData,
+        headers: { "Content-Type": "multipart/form-data" },
+      })
+      .then((response) => {
+        response.then((res) => console.log("res", res));
+      })
+      .catch((error) => {
+        console.log(error);
       });
-      console.log("postReports ::>> res", userObj);
-    })
-    .catch((err) => {
-      console.log("postReports ::>> err ", err);
-      res.json({
-        data: err,
-        success: false,
-        message: err.message,
-      });
-    });
-});
+
+    // reportModel
+    //   .postReports(req.body)
+    //   .then((userObj) => {
+    //     res.json({
+    //       data: userObj,
+    //       success: true,
+    //       message: "Report added successfully",
+    //     });
+    //     console.log("postReports ::>> res", userObj);
+    //   })
+    //   .catch((err) => {
+    //     console.log("postReports ::>> err ", err);
+    //     res.json({
+    //       data: err,
+    //       success: false,
+    //       message: err.message,
+    //     });
+    //   });
+  }
+);
 
 module.exports = reportRouter;
