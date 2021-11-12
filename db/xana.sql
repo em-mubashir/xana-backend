@@ -3,8 +3,8 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: xana
--- Generation Time: Oct 21, 2021 at 11:29 AM
--- Server version: 8.0.26
+-- Generation Time: Nov 05, 2021 at 07:09 AM
+-- Server version: 8.0.27
 -- PHP Version: 7.4.20
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
@@ -56,18 +56,9 @@ CREATE TABLE `reports` (
   `resultDate` date DEFAULT NULL,
   `resultTime` time DEFAULT NULL,
   `result` varchar(45) DEFAULT NULL,
-  `status` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL DEFAULT 'pending'
+  `status` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL DEFAULT 'pending',
+  `test_id` bigint NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
---
--- Dumping data for table `reports`
---
-
-INSERT INTO `reports` (`reportId`, `userId`, `firstName`, `lastName`, `dob`, `passportNo`, `testName`, `testManufacturer`, `testDescription`, `testPerformance`, `testAuthorization`, `sampleDate`, `sampleTime`, `resultDate`, `resultTime`, `result`, `status`) VALUES
-(1, 3, 'Hamza', 'Latif', '2002-01-02', 1812354, 'Sinopharm', 'Xana Companies', '2 doses of sinopharm', 'Test is valid for 6 months', 'Aroynd the globe', '2021-01-01', NULL, '2021-01-03', NULL, 'negative', ''),
-(2, 3, 'Hamid', 'Ayub', '2001-03-10', 41244521, 'Sinopharm', 'Xana Companies', '2 doses of sinopharm', 'Test is valid for 6 months', 'Aroynd the globe', '2021-02-06', NULL, '2021-02-08', NULL, 'negative', ''),
-(3, 4, 'Abdul', 'Rafay', '1998-05-17', 87944521, 'Sinopharm', 'Xana Companies', '2 doses of sinopharm', 'Test is valid for 6 months', 'Aroynd the globe', '2021-05-06', NULL, '2021-05-08', NULL, 'negative', ''),
-(4, 4, 'Abdul', 'Rafay', '1998-05-17', 87944521, 'Sinopharm', 'Xana Companies', '2 doses of sinopharm', 'Test is valid for 6 months', 'Aroynd the globe', '2021-05-06', NULL, '2021-05-08', NULL, 'negative', '');
 
 -- --------------------------------------------------------
 
@@ -126,7 +117,9 @@ CREATE TABLE `test_info` (
   `date_register` timestamp NULL DEFAULT NULL,
   `date_conduct` timestamp NULL DEFAULT NULL,
   `result` varchar(250) DEFAULT NULL,
-  `userId` bigint DEFAULT NULL
+  `userId` bigint DEFAULT NULL,
+  `test_image` varchar(500) DEFAULT NULL,
+  `qr_id` varchar(500) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- --------------------------------------------------------
@@ -190,7 +183,8 @@ ALTER TABLE `qr_codes`
 --
 ALTER TABLE `reports`
   ADD PRIMARY KEY (`reportId`),
-  ADD KEY `email_idx` (`userId`);
+  ADD KEY `email_idx` (`userId`),
+  ADD KEY `testId` (`test_id`);
 
 --
 -- Indexes for table `roles`
@@ -282,7 +276,7 @@ ALTER TABLE `user_test_pivot`
 -- Constraints for table `reports`
 --
 ALTER TABLE `reports`
-  ADD CONSTRAINT `userId` FOREIGN KEY (`userId`) REFERENCES `users` (`id`);
+  ADD CONSTRAINT `testId` FOREIGN KEY (`test_id`) REFERENCES `test_info` (`id`) ON DELETE CASCADE ON UPDATE RESTRICT;
 
 --
 -- Constraints for table `sessions`

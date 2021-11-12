@@ -2,6 +2,7 @@ const express = require("express");
 const testRouter = express.Router();
 const testModel = require("../models/test.model");
 const multer = require("multer");
+const { verifyToken } = require("../middlewares/auth.middleware");
 
 const { body, validationResult, errors } = require("express-validator");
 // multer file store start
@@ -38,6 +39,7 @@ const upload = multer({
  */
 testRouter.post(
   "/create-new",
+  verifyToken,
   [
     body("testName").not().isEmpty(),
     body("Manufacturer").not().isEmpty(),
@@ -50,9 +52,8 @@ testRouter.post(
     if (!errors.isEmpty()) {
       return res.status(422).jsonp(errors.array());
     } else {
-      console.log("create-new : >>> : req.user", req.user.id);
       testModel
-        .addNew(req.body, req.user.id)
+        .addNew(req.body, req.user)
         .then((userObj) => {
           res.json({
             data: userObj,
