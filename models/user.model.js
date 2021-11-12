@@ -670,6 +670,23 @@ const userModel = {
       );
     }),
 
+  getUserTest: async (token) =>
+    await new Promise((resolve, reject) => {
+      console.log("token", token);
+      console.log(`select * from test where userId=${token}`);
+      con.query(
+        `select * from test_info where userId=${token}`,
+        async (err, res) => {
+          if (res.length > 0) {
+            return resolve(res);
+          } else {
+            console.log(err);
+            return reject(new Error("Invalid verification code", err));
+          }
+        }
+      );
+    }),
+
   updatePassword: async (password, userId) =>
     await new Promise(async (resolve, reject) => {
       console.log("password", password);

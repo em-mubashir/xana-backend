@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: xana
--- Generation Time: Nov 05, 2021 at 07:09 AM
+-- Generation Time: Nov 05, 2021 at 12:53 PM
 -- Server version: 8.0.27
 -- PHP Version: 7.4.20
 
@@ -42,10 +42,6 @@ CREATE TABLE `qr_codes` (
 CREATE TABLE `reports` (
   `reportId` bigint NOT NULL,
   `userId` bigint DEFAULT NULL,
-  `firstName` varchar(45) DEFAULT NULL,
-  `lastName` varchar(45) DEFAULT NULL,
-  `dob` date DEFAULT NULL,
-  `passportNo` bigint DEFAULT NULL,
   `testName` varchar(150) DEFAULT NULL,
   `testManufacturer` varchar(150) DEFAULT NULL,
   `testDescription` varchar(1000) DEFAULT NULL,

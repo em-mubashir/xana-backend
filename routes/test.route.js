@@ -1,7 +1,11 @@
 const express = require("express");
 const testRouter = express.Router();
+const FormData = require("form-data");
+const fs = require("fs");
 const testModel = require("../models/test.model");
 const multer = require("multer");
+const path = require("path");
+const axios = require("axios");
 const { verifyToken } = require("../middlewares/auth.middleware");
 
 const { body, validationResult, errors } = require("express-validator");
@@ -93,6 +97,38 @@ testRouter.put("/upload-test-image", upload.single("testImage"), (req, res) => {
     })
     .catch((err) => {
       res.status(500).send({ success: false, message: err });
+    });
+});
+
+/**
+ * GET result of test
+ * @retuns resultObj
+ * @type GET
+ * @required access_token
+ * @route [http://192.168.18.14/api/test/result?id=1]
+ */
+testRouter.get("/result", (req, res) => {
+  ``;
+  console.log("req.query ::: ", req.query.id);
+  let image =
+    "http://192.168.18.19:5000/uploads/testImages/test-1636407520684_0_35.png";
+  image = image.replace("http://192.168.18.19:5000/", "");
+  console.log("image ::: ", image);
+  const imagePath = path.join(__dirname, `../${image}`);
+  console.log(imagePath, "imagePath");
+  const data = fs.readFileSync(imagePath);
+  console.log(data, "data");
+  const fd = new FormData();
+  fd.append("id", req.query.id);
+
+  fd.append("img", image);
+  axios
+    .post("http://100.26.42.223:5002/xana", fd)
+    .then((res) => {
+      console.log("res ::: ", res);
+    })
+    .catch((err) => {
+      console.log("err::: ", err);
     });
 });
 
