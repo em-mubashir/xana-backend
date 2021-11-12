@@ -477,6 +477,39 @@ userRouter.put("/update-password", async (req, res) => {
     })
     .catch((err) => {
       console.log("error", err);
+      res.json({
+        success: false,
+        error: err,
+        message: err.message,
+      });
+    });
+});
+
+/**
+ * Get Test
+ * @type get
+ * @returns data
+ * @route [http://192.168.18.14/api/user/test]
+ */
+userRouter.get("/test", verifyToken, async (req, res) => {
+  console.log("test");
+
+  userModel
+    .getUserTest(req.user)
+    .then((testObj) => {
+      console.log("updated password", testObj);
+      res.status(200).json({
+        success: true,
+        data: testObj,
+      });
+    })
+    .catch((err) => {
+      console.log("error", err);
+      res.json({
+        success: false,
+        error: err,
+        message: err.message,
+      });
     });
 });
 module.exports = userRouter;

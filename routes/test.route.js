@@ -108,6 +108,7 @@ testRouter.put("/upload-test-image", upload.single("testImage"), (req, res) => {
  * @route [http://192.168.18.14/api/test/result?id=1]
  */
 testRouter.get("/result", (req, res) => {
+  ``;
   console.log("req.query ::: ", req.query.id);
   let image =
     "http://192.168.18.19:5000/uploads/testImages/test-1636407520684_0_35.png";
@@ -120,7 +121,7 @@ testRouter.get("/result", (req, res) => {
   const fd = new FormData();
   fd.append("id", req.query.id);
 
-  fd.append("image", data);
+  fd.append("img", image);
   axios
     .post("http://100.26.42.223:5002/xana", fd)
     .then((res) => {

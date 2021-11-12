@@ -2,6 +2,7 @@ const express = require("express");
 const adminRouter = express.Router();
 const adminModel = require("../models/admin.model");
 const { body, validationResult, errors } = require("express-validator");
+const { verifyToken } = require("../middlewares/auth.middleware");
 
 /**
  * Get All Reports
@@ -18,6 +19,29 @@ adminRouter.get("/all-reports", (req, res) => {
         data: reportsObj,
         success: true,
         message: "Got all reports successfully",
+      });
+    })
+    .catch((err) => {
+      console.log("error", err);
+      res.json({ data: res, success: false, message: err });
+    });
+});
+
+/**
+ * Get All test
+ * @returns testObj
+ * @type GET
+ * @required access_token
+ * @route [http://192.168.18.14/api/admin/all-reports]
+ */
+adminRouter.get("/test", verifyToken, (req, res) => {
+  adminModel
+    .getAllTest()
+    .then((reportsObj) => {
+      res.json({
+        data: reportsObj,
+        success: true,
+        message: "Got all test successfully",
       });
     })
     .catch((err) => {
