@@ -33,6 +33,36 @@ const testModel = {
         }
       );
     }),
+  getUserTestImg: (id) =>
+    new Promise((resolve, reject) => {
+      console.log(`select test_image from test_info where id=${id}`);
+      con.query(
+        `select test_image,qr_id from test_info where id=${id}`,
+        (err, res) => {
+          if (err) {
+            console.log("error", err);
+            return reject(new Error(err));
+          } else {
+            return resolve(res[0]);
+          }
+        }
+      );
+    }),
+
+  addReportResult: (result, id) =>
+    new Promise((resolve, reject) => {
+      con.query(
+        `update  test_info set result= '${result}' where id=${id}`,
+        (err, res) => {
+          if (err) {
+            console.log("error", err);
+            return reject(new Error(err));
+          } else {
+            return resolve({ message: "Test updated successfully" });
+          }
+        }
+      );
+    }),
 };
 
 module.exports = testModel;

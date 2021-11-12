@@ -107,29 +107,56 @@ testRouter.put("/upload-test-image", upload.single("testImage"), (req, res) => {
  * @required access_token
  * @route [http://192.168.18.14/api/test/result?id=1]
  */
-testRouter.get("/result", (req, res) => {
-  ``;
+testRouter.get("/result", async (req, res) => {
   console.log("req.query ::: ", req.query.id);
   let image =
     "http://192.168.18.19:5000/uploads/testImages/test-1636407520684_0_35.png";
-  image = image.replace("http://192.168.18.19:5000/", "");
-  console.log("image ::: ", image);
-  const imagePath = path.join(__dirname, `../${image}`);
-  console.log(imagePath, "imagePath");
-  const data = fs.readFileSync(imagePath);
-  console.log(data, "data");
-  const fd = new FormData();
-  fd.append("id", req.query.id);
+  try {
+    const { qr_id, test_image } = await testModel.getUserTestImg(req.query.id);
+    console.log("res", qr_id, test_image);
 
-  fd.append("img", image);
-  axios
-    .post("http://100.26.42.223:5002/xana", fd)
-    .then((res) => {
-      console.log("res ::: ", res);
-    })
-    .catch((err) => {
-      console.log("err::: ", err);
-    });
+    // const { results = "True" } = await axios.post(
+    //   "http://100.26.42.223:5002/xana",
+    //   {
+    //     qr_id,
+    //     test_image,
+    //   }
+    // );
+    const results = "True";
+    console.log("results", results);
+    res
+      .status(200)
+      .send(await testModel.addReportResult(results, req.query.id));
+    // if (res) {
+    //   const obj = { id: res.qr_id, img: res.test_image };
+    //   axios
+    //     .post("http://100.26.42.223:5002/xana", obj)
+    //     .then((response) => {
+    //       console.log("response", response);
+    //     })
+    //     .catch((err) => {});
+    // }
+  } catch (e) {
+    console.log("error", e);
+  }
+  // image = image.replace("http://192.168.18.19:5000/", "");
+  // console.log("image ::: ", image);
+  // const imagePath = path.join(__dirname, `../${image}`);
+  // console.log(imagePath, "imagePath");
+  // const data = fs.readFileSync(imagePath);
+  // console.log(data, "data");
+  // const fd = new FormData();
+  // fd.append("id", req.query.id);
+
+  // fd.append("img", image);
+  // axios
+  //   .post("http://100.26.42.223:5002/xana", fd)
+  //   .then((res) => {
+  //     console.log("res ::: ", res);
+  //   })
+  //   .catch((err) => {
+  //     console.log("err::: ", err);
+  //   });
 });
 
 module.exports = testRouter;
