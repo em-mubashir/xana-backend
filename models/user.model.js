@@ -681,7 +681,7 @@ const userModel = {
             return resolve(res);
           } else {
             console.log(err);
-            return reject(new Error("Invalid verification code", err));
+            return reject(new Error("No Result found", err));
           }
         }
       );
