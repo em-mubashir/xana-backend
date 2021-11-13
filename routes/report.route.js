@@ -9,7 +9,7 @@ const { verifyToken } = require("../middlewares/auth.middleware");
  * @returns reportsObj
  * @type GET
  * @required access_token
- * @route [http://192.168.18.14/api/reports/user]
+ * @route [http://172.25.224.1/api/reports/user]
  */
 reportRouter.get("/user", verifyToken, (req, res) => {
   const userId = req.user;
@@ -45,7 +45,7 @@ reportRouter.get("/user", verifyToken, (req, res) => {
  * @returns reportsObj
  * @type GET
  * @required access_token
- * @route [http://192.168.18.14/api/reports/user]
+ * @route [http://172.25.224.1/api/reports/user]
  */
 reportRouter.get("/", verifyToken, (req, res) => {
   const userId = req.user;
@@ -87,7 +87,7 @@ reportRouter.get("/", verifyToken, (req, res) => {
  * @returns reportsObj
  * @type GET
  * @required access_token
- * @route [http://192.168.18.14/api/reports/user]
+ * @route [http://172.25.224.1/api/reports/user]
  */
 reportRouter.post("/user/add-report", (req, res) => {
   reportModel

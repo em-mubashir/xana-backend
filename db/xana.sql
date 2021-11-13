@@ -31,7 +31,7 @@ CREATE TABLE `qr_codes` (
   `id` bigint NOT NULL,
   `qr_code` text NOT NULL,
   `date_created` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci	;
 
 -- --------------------------------------------------------
 
@@ -56,8 +56,8 @@ CREATE TABLE `reports` (
   `resultDate` date DEFAULT NULL,
   `resultTime` time DEFAULT NULL,
   `result` varchar(45) DEFAULT NULL,
-  `status` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL DEFAULT 'pending'
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+  `status` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci	 NOT NULL DEFAULT 'pending'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci	;
 
 --
 -- Dumping data for table `reports`
@@ -78,7 +78,7 @@ INSERT INTO `reports` (`reportId`, `userId`, `firstName`, `lastName`, `dob`, `pa
 CREATE TABLE `roles` (
   `id` bigint NOT NULL,
   `role_name` varchar(250) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci	;
 
 --
 -- Dumping data for table `roles`
@@ -98,9 +98,9 @@ CREATE TABLE `sessions` (
   `id` int NOT NULL,
   `session_id` text NOT NULL,
   `user_id` bigint NOT NULL,
-  `session_token` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci,
+  `session_token` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci	,
   `ip` varchar(500) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci	;
 
 --
 -- Dumping data for table `sessions`
@@ -118,16 +118,16 @@ INSERT INTO `sessions` (`id`, `session_id`, `user_id`, `session_token`, `ip`) VA
 
 CREATE TABLE `test_info` (
   `id` bigint NOT NULL,
-  `test_name` varchar(150) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
-  `test_manufacturer` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
-  `test_description` varchar(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
+  `test_name` varchar(150) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci	 DEFAULT NULL,
+  `test_manufacturer` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci	 NOT NULL,
+  `test_description` varchar(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci	 NOT NULL,
   `test_performance` varchar(500) NOT NULL,
   `test_authorisation` varchar(500) NOT NULL,
   `date_register` timestamp NULL DEFAULT NULL,
   `date_conduct` timestamp NULL DEFAULT NULL,
   `result` varchar(250) DEFAULT NULL,
   `userId` bigint DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci	;
 
 -- --------------------------------------------------------
 
@@ -137,22 +137,22 @@ CREATE TABLE `test_info` (
 
 CREATE TABLE `users` (
   `id` bigint NOT NULL,
-  `first_name` varchar(250) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
+  `first_name` varchar(250) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci	 NOT NULL,
   `last_name` varchar(255) NOT NULL,
-  `middle_name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  `middle_name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci	 DEFAULT NULL,
   `email` varchar(250) DEFAULT 'null',
   `mobile` varchar(45) DEFAULT 'null',
   `passport_number` int DEFAULT NULL,
-  `gender` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
-  `company` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  `gender` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci	 DEFAULT NULL,
+  `company` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci	 DEFAULT NULL,
   `password` varchar(1000) DEFAULT 'null',
   `roleId_fk` bigint DEFAULT NULL,
   `address` varchar(500) DEFAULT 'null',
   `image` varchar(500) DEFAULT 'null',
-  `code` varchar(1000) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT 'null',
+  `code` varchar(1000) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci	 DEFAULT 'null',
   `confirmed` tinyint DEFAULT '0',
   `dob` varchar(255) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci	;
 
 --
 -- Dumping data for table `users`
@@ -161,7 +161,7 @@ CREATE TABLE `users` (
 INSERT INTO `users` (`id`, `first_name`, `last_name`, `middle_name`, `email`, `mobile`, `passport_number`, `gender`, `company`, `password`, `roleId_fk`, `address`, `image`, `code`, `confirmed`, `dob`) VALUES
 (3, 'Salman Ahmed', '', NULL, 'salman123@gmail.com', NULL, 0, '', '', NULL, 1, NULL, NULL, NULL, 0, NULL),
 (4, 'Abdul Rafay', '', NULL, 'rafay@gmail.com', NULL, 0, '', '', NULL, 1, NULL, NULL, NULL, 0, NULL),
-(91, 'leco1', 'jey6501', 'undefined', 'cibonig757@forfity.com', '123456789', 234243242, 'male', 'new company', '2025ab399fc521f625cd9e3a4ce30b5f', 1, 'abbottabad', 'http://192.168.18.14:5000/profileImages/test-1634815697300Screenshot 2021-10-20 at 5.40.30 PM.png', 'null', 1, '102120');
+(91, 'leco1', 'jey6501', 'undefined', 'cibonig757@forfity.com', '123456789', 234243242, 'male', 'new company', '2025ab399fc521f625cd9e3a4ce30b5f', 1, 'abbottabad', 'http://172.25.224.1:5000/profileImages/test-1634815697300Screenshot 2021-10-20 at 5.40.30 PM.png', 'null', 1, '102120');
 
 -- --------------------------------------------------------
 
@@ -173,7 +173,7 @@ CREATE TABLE `user_test_pivot` (
   `id` bigint NOT NULL,
   `test_id` bigint DEFAULT NULL,
   `user_id` bigint DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci	;
 
 --
 -- Indexes for dumped tables

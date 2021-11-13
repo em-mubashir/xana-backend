@@ -34,7 +34,7 @@ const upload = multer({
  * @retuns reportsObj
  * @type GET
  * @required access_token
- * @route [http://192.168.18.14/api/reports/user]
+ * @route [http://172.25.224.1/api/reports/user]
  */
 testRouter.post(
   "/create-new",
@@ -77,7 +77,7 @@ testRouter.post(
  * @retuns reportsObj
  * @type GET
  * @required access_token
- * @route [http://192.168.18.14/api/reports/user]
+ * @route [http://172.25.224.1/api/reports/user]
  */
 testRouter.put("/upload-test-image", upload.single("testImage"), (req, res) => {
   console.log(req.file);

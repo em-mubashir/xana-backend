@@ -8,7 +8,7 @@ const { body, validationResult, errors } = require("express-validator");
  * @retuns reportsObj
  * @type GET
  * @required access_token
- * @route [http://192.168.18.14/api/admin/all-reports]
+ * @route [http://172.25.224.1/api/admin/all-reports]
  */
 adminRouter.get("/all-reports", (req, res) => {
   adminModel
@@ -31,7 +31,7 @@ adminRouter.get("/all-reports", (req, res) => {
  * @type GET
  * @retuns reportsObj
  * @required access_token
- * @route [http://192.168.18.14/api/admin/report-detail/:id]
+ * @route [http://172.25.224.1/api/admin/report-detail/:id]
  */
 adminRouter.get("/report-detail/:id", (req, res) => {
   const reportId = req.params.id;
@@ -55,7 +55,7 @@ adminRouter.get("/report-detail/:id", (req, res) => {
  * @type POST
  * @retuns userObj
  * @params password,email
- * @route [http://192.168.18.14/api/admin/login]
+ * @route [http://172.25.224.1/api/admin/login]
  */
 adminRouter.post(
   "/login",
@@ -100,7 +100,7 @@ adminRouter.post(
  * @type POST
  * @retuns reportsObj
  * @params name,password,email,mobile
- * @route [http://192.168.18.14/api/admin/admin-singup]
+ * @route [http://172.25.224.1/api/admin/admin-singup]
  */
 adminRouter.post(
   "/admin-singup",
@@ -151,7 +151,7 @@ adminRouter.post(
  * @retuns reportsObj
  * @params status,id
  * @required accessToken
- * @route [http://192.168.18.14/api/admin/update-report-status]
+ * @route [http://172.25.224.1/api/admin/update-report-status]
  */
 adminRouter.put(
   "/update-report-status",
@@ -197,7 +197,7 @@ adminRouter.put(
  * @retuns Obj
  * @required accessToken
 //  * @params status,id
- * @route [http://192.168.18.14/api/admin/generate-qr]
+ * @route [http://172.25.224.1/api/admin/generate-qr]
  */
 adminRouter.post("/generate-qr", (req, res) => {
   adminModel
