@@ -54,6 +54,17 @@ const adminModel = {
       );
     }),
 
+  getAllUsers: () =>
+    new Promise((resolve, reject) => {
+      con.query(`select * from users`, (err, res) => {
+        if (err) {
+          return reject(err);
+        } else {
+          return resolve(res);
+        }
+      });
+    }),
+
   adminLogin: (user) =>
     new Promise((resolve, reject) => {
       con.query(

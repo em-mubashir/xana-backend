@@ -27,6 +27,22 @@ adminRouter.get("/all-reports", (req, res) => {
     });
 });
 
+adminRouter.get("/all-users", (req, res) => {
+  adminModel
+    .getAllUsers()
+    .then((reportsObj) => {
+      res.json({
+        data: reportsObj,
+        success: true,
+        message: "User Fetch successfully",
+      });
+    })
+    .catch((err) => {
+      console.log("error", err);
+      res.json({ data: res, success: false, message: err });
+    });
+});
+
 /**
  * Get All test
  * @returns testObj
