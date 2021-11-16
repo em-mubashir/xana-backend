@@ -2,13 +2,14 @@ const express = require("express");
 const adminRouter = express.Router();
 const adminModel = require("../models/admin.model");
 const { body, validationResult, errors } = require("express-validator");
+const { verifyToken } = require("../middlewares/auth.middleware");
 
 /**
  * Get All Reports
  * @retuns reportsObj
  * @type GET
  * @required access_token
- * @route [http://172.25.224.1/api/admin/all-reports]
+ * @route [http://192.168.18.62/api/admin/all-reports]
  */
 adminRouter.get("/all-reports", (req, res) => {
   adminModel
@@ -27,11 +28,34 @@ adminRouter.get("/all-reports", (req, res) => {
 });
 
 /**
+ * Get All test
+ * @returns testObj
+ * @type GET
+ * @required access_token
+ * @route [http://192.168.18.14/api/admin/all-reports]
+ */
+adminRouter.get("/test", verifyToken, (req, res) => {
+  adminModel
+    .getAllTest()
+    .then((reportsObj) => {
+      res.json({
+        data: reportsObj,
+        success: true,
+        message: "Got all test successfully",
+      });
+    })
+    .catch((err) => {
+      console.log("error", err);
+      res.json({ data: res, success: false, message: err });
+    });
+});
+
+/**
  * Forgot password
  * @type GET
  * @retuns reportsObj
  * @required access_token
- * @route [http://172.25.224.1/api/admin/report-detail/:id]
+ * @route [http://192.168.18.62/api/admin/report-detail/:id]
  */
 adminRouter.get("/report-detail/:id", (req, res) => {
   const reportId = req.params.id;
@@ -55,7 +79,7 @@ adminRouter.get("/report-detail/:id", (req, res) => {
  * @type POST
  * @retuns userObj
  * @params password,email
- * @route [http://172.25.224.1/api/admin/login]
+ * @route [http://192.168.18.62/api/admin/login]
  */
 adminRouter.post(
   "/login",
@@ -100,7 +124,7 @@ adminRouter.post(
  * @type POST
  * @retuns reportsObj
  * @params name,password,email,mobile
- * @route [http://172.25.224.1/api/admin/admin-singup]
+ * @route [http://192.168.18.62/api/admin/admin-singup]
  */
 adminRouter.post(
   "/admin-singup",
@@ -151,7 +175,7 @@ adminRouter.post(
  * @retuns reportsObj
  * @params status,id
  * @required accessToken
- * @route [http://172.25.224.1/api/admin/update-report-status]
+ * @route [http://192.168.18.62/api/admin/update-report-status]
  */
 adminRouter.put(
   "/update-report-status",
@@ -197,7 +221,7 @@ adminRouter.put(
  * @retuns Obj
  * @required accessToken
 //  * @params status,id
- * @route [http://172.25.224.1/api/admin/generate-qr]
+ * @route [http://192.168.18.62/api/admin/generate-qr]
  */
 adminRouter.post("/generate-qr", (req, res) => {
   adminModel

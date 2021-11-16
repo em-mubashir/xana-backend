@@ -53,7 +53,7 @@ const userModel = {
                       email: user.email,
                     },
                   });
-                  const url = `https://xanamedtec.page.link/?link=http://100.26.42.223:3000/user/verification/${emailToken}&apn=com.xanamedtec
+                  const url = `https://xanamedtec.page.link/?link=http://192.168.18.62:3000/user/verification/${emailToken}&apn=com.xanamedtec
                    `;
                   const transporter = nodemailer.createTransport({
                     service: "gmail",
@@ -665,6 +665,23 @@ const userModel = {
           } else {
             console.log(err);
             return reject(new Error("Invalid verification code", err));
+          }
+        }
+      );
+    }),
+
+  getUserTest: async (token) =>
+    await new Promise((resolve, reject) => {
+      console.log("token", token);
+      console.log(`select * from test where userId=${token}`);
+      con.query(
+        `select * from test_info where userId=${token}`,
+        async (err, res) => {
+          if (res.length > 0) {
+            return resolve(res);
+          } else {
+            console.log(err);
+            return reject(new Error("No Result found", err));
           }
         }
       );

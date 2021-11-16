@@ -29,6 +29,17 @@ const adminModel = {
       });
     }),
 
+  getAllTest: () =>
+    new Promise((resolve, reject) => {
+      con.query(`select * from test_info`, (err, res) => {
+        if (err) {
+          return reject(err);
+        } else {
+          return resolve(res);
+        }
+      });
+    }),
+
   getReportDetail: (reportId) =>
     new Promise((resolve, reject) => {
       con.query(
