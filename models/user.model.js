@@ -53,7 +53,7 @@ const userModel = {
                       email: user.email,
                     },
                   });
-                  const url = `https://xanamedtec.page.link/?link=http://192.168.18.62:3000/user/verification/${emailToken}&apn=com.xanamedtec
+                  const url = `https://xanamedtec.page.link/?link=http://192.168.10.6:3000/user/verification/${emailToken}&apn=com.xanamedtec
                    `;
                   const transporter = nodemailer.createTransport({
                     service: "gmail",
