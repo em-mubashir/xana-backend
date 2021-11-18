@@ -19,11 +19,18 @@ const testModel = {
 
   saveImage: (path, id) =>
     new Promise((resolve, reject) => {
+      console.log("save image", path, id);
       con.query(
         `UPDATE test_info set test_image = '${
           process.env.IMAGE + path
         }' where id=${id}`,
+
         (err, res) => {
+          console.log(
+            `UPDATE test_info set test_image = '${
+              process.env.IMAGE + path
+            }' where id=${id}`
+          );
           if (err) {
             console.log("error", err);
             return reject(new Error(err));
@@ -33,6 +40,7 @@ const testModel = {
         }
       );
     }),
+
   getUserTestImg: (id) =>
     new Promise((resolve, reject) => {
       console.log(`select test_image from test_info where id=${id}`);

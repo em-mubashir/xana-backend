@@ -67,8 +67,11 @@ const adminModel = {
 
   adminLogin: (user) =>
     new Promise((resolve, reject) => {
+      console.log(user);
+
       con.query(
         `select * from users where email='${user.email}' AND roleId_fk = 2 LIMIT 1`,
+        // `select * from users where email='${user.email}'`,
         async (err, res) => {
           if (res) {
             if (res.length !== 0) {
@@ -110,14 +113,16 @@ const adminModel = {
       con.query(
         `select * from users where email='${user.email}' LIMIT 1`,
         async (err, res) => {
+          console.log("first query run successfully");
           if (res !== undefined && res.length !== 0) {
             return reject(new Error("User already exists", err));
           } else {
             const hashedPassword = await mycrypto.encrypt(user.password);
             console.log("hashedPassword", hashedPassword);
-            const sql = `INSERT into users (name, email, mobile, password, roleId_fk,confirmed) values ('${user.name}','${user.email}','${user.mobile}','${hashedPassword}',2,1)`;
+            const sql = `INSERT into users (first_name, last_name, email, mobile, password, roleid_fk, confirmed) values ('${user.fname}','${user.lname}','${user.email}','${user.mobile}','${hashedPassword}',2,1)`;
             con.query(sql, (err, res) => {
               console.log("res", res);
+              console.log("sql run successfully", sql);
               if (res) {
                 return resolve(res);
               } else {
@@ -129,6 +134,7 @@ const adminModel = {
         }
       );
     }),
+
   updateReportStatus: (status) =>
     new Promise((resolve, reject) => {
       con.query(

@@ -150,7 +150,7 @@ CREATE TABLE `users` (
 INSERT INTO `users` (`id`, `first_name`, `last_name`, `middle_name`, `email`, `mobile`, `passport_number`, `gender`, `company`, `password`, `roleId_fk`, `address`, `image`, `code`, `confirmed`, `dob`) VALUES
 (3, 'Salman Ahmed', '', NULL, 'salman123@gmail.com', NULL, 0, '', '', NULL, 1, NULL, NULL, NULL, 0, NULL),
 (4, 'Abdul Rafay', '', NULL, 'rafay@gmail.com', NULL, 0, '', '', NULL, 1, NULL, NULL, NULL, 0, NULL),
-(91, 'leco1', 'jey6501', 'undefined', 'cibonig757@forfity.com', '123456789', 234243242, 'male', 'new company', '2025ab399fc521f625cd9e3a4ce30b5f', 1, 'abbottabad', 'http://192.168.10.6:5000/profileImages/test-1634815697300Screenshot 2021-10-20 at 5.40.30 PM.png', 'null', 1, '102120');
+(91, 'leco1', 'jey6501', 'undefined', 'cibonig757@forfity.com', '123456789', 234243242, 'male', 'new company', '2025ab399fc521f625cd9e3a4ce30b5f', 1, 'abbottabad', 'http://192.168.18.62:5000/profileImages/test-1634815697300Screenshot 2021-10-20 at 5.40.30 PM.png', 'null', 1, '102120');
 
 -- --------------------------------------------------------
 
