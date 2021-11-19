@@ -13,7 +13,7 @@ const testModel = {
       console.log(newdate);
 
       con.query(
-        `INSERT INTO test_info (userId, test_name, test_manufacturer, test_description, test_performance, test_authorisation, date_register, date_conduct, qr_id  ) VALUES ('${userId}', '${testObj.testName}','${testObj.Manufacturer}', '${testObj.Description}', '${testObj.Performance}', '${testObj.Authorisation}','${testObj.qrId}')`,
+        `INSERT INTO test_info (userId, test_name, test_manufacturer, test_description, test_performance, test_authorisation, date_register, date_conduct, qr_id  ) VALUES ('${userId}', '${testObj.testName}','${testObj.Manufacturer}', '${testObj.Description}', '${testObj.Performance}', '${testObj.Authorisation}','${newdate}','${newdate}','${testObj.qrId}')`,
         (err, res) => {
           if (res) {
             if (res.affectedRows > 0) {
