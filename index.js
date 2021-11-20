@@ -8,6 +8,11 @@ const cors = require("cors");
 require("colors");
 const dotenv = require("dotenv");
 
+app.use((req, res, next) => {
+  console.log(req.originalUrl, "My route");
+  return next();
+});
+
 app.use(cors());
 app.use(express.urlencoded({ limit: "50mb", extended: true }));
 app.use(express.json({ limit: "50mb", extended: true }));

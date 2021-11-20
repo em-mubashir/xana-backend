@@ -37,7 +37,7 @@ const upload = multer({
  * @returns reportsObj
  * @type GET
  * @required access_token
- * @route [http://192.168.18.62/api/reports/user]
+ * @route [http://192.168.0.104/api/reports/user]
  */
 reportRouter.get("/user", verifyToken, (req, res) => {
   const userId = req.user;
@@ -73,7 +73,7 @@ reportRouter.get("/user", verifyToken, (req, res) => {
  * @returns reportsObj
  * @type GET
  * @required access_token
- * @route [http://192.168.18.62/api/reports/user]
+ * @route [http://192.168.0.104/api/reports/user]
  */
 reportRouter.get("/", verifyToken, (req, res) => {
   const userId = req.user;
@@ -115,7 +115,7 @@ reportRouter.get("/", verifyToken, (req, res) => {
  * @returns reportsObj
  * @type GET
  * @required access_token
- * @route [http://192.168.18.62/api/reports/user]
+ * @route [http://192.168.0.104/api/reports/user]
  */
 reportRouter.post(
   "/user/add-report",
@@ -125,12 +125,12 @@ reportRouter.post(
     bodyFormData.append("id", "COV1080034ACONLFDAG00013014");
     bodyFormData.append(
       "img",
-      "http://192.168.18.62:5000/reportImages/report-1635769362284_0_35.png"
+      "http://192.168.0.104:5000/reportImages/report-1635769362284_0_35.png"
     );
     axios
       .post({
         method: "post",
-        url: "https://192.168.18.62:5002/xana",
+        url: "https://192.168.0.104:5002/xana",
         data: bodyFormData,
         headers: { "Content-Type": "multipart/form-data" },
       })
