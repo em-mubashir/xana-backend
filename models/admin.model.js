@@ -2,6 +2,15 @@ const con = require("../config/mysql");
 const crypto = require("crypto");
 const QRCode = require("qrcode");
 
+const {
+  signJwt,
+  signRefreshToken,
+  signEmailToken,
+} = require("../helpers/jwt.helpers");
+
+const sessionModel = require("./session.model");
+require("colors");
+
 const mycrypto = {
   encrypt: (password) => {
     const cipher = crypto.createCipher("aes192", process.env.HASH_KEY);
@@ -84,7 +93,23 @@ const adminModel = {
                 validPass = false;
               }
               if (validPass) {
-                return resolve({ data: res, valid: true });
+                const accessToken = await signJwt({ payload: res[0].id });
+                const refreshToken = await signRefreshToken({
+                  payload: res[0].id,
+                });
+                const session = await sessionModel.createSession(
+                  res[0].id,
+                  refreshToken
+                );
+                console.log("res[0].id :: ", res[0].id);
+                console.log("session", session);
+                const payload = {
+                  userId: session.userId,
+                  sessionId: session.sessionId,
+                  accessToken,
+                  refreshToken,
+                };
+                return resolve({ data: res, payload: payload, valid: true });
               } else {
                 return reject({
                   data: err,
