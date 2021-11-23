@@ -53,7 +53,7 @@ const userModel = {
                       email: user.email,
                     },
                   });
-                  const url = `https://xanamedtec.page.link/?link=http://35.153.58.173:3000/user/verification/${emailToken}&apn=com.xanamedtec
+                  const url = `https://xanamedtec.page.link/?link=http://192.168.18.62:3000/user/verification/${emailToken}&apn=com.xanamedtec
                    `;
                   const transporter = nodemailer.createTransport({
                     service: "gmail",
@@ -507,6 +507,8 @@ const userModel = {
             const dob = userData.dob || res.dob || "";
             const passportNumber =
               userData.passportNumber || res.passport_number || 0;
+            console.log("PASSPORT");
+            console.log(passportNumber);
             const gender = userData.gender || res.gender || "";
             const company = userData.company || res.company || "";
             const address = userData.address || res.address || "";

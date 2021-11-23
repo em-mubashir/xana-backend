@@ -320,6 +320,8 @@ userRouter.put(
     userModel
       .updateProfile(req.user, req.body, req.file)
       .then((userObj) => {
+        console.log("in updATE PROFILE");
+
         res.json({
           success: true,
           message: "User updated successfully",
@@ -361,7 +363,7 @@ userRouter.post(
             success: true,
             message: "Password reset email sent successfully",
           });
-          console.log("Password Reset ::>> res", userObj);
+          // console.log("Password Reset ::>> res", userObj);
         })
         .catch((err) => {
           console.log("Password Reset ::>> err", err);
@@ -386,7 +388,7 @@ userRouter.get("/reset-password/:token", async (req, res) => {
   userModel
     .resetPasswordVerify(req.params.token)
     .then((userObj) => {
-      console.log("userObj : resetPassword :>> ", userObj);
+      //  console.log("userObj : resetPassword :>> ", userObj);
       res.json({
         success: true,
         data: userObj[0].id,
@@ -413,7 +415,7 @@ userRouter.post("/resend-code", async (req, res) => {
   userModel
     .resendCode(req.body.email)
     .then((userObj) => {
-      console.log("Code sent res :>> ", userObj);
+      //  console.log("Code sent res :>> ", userObj);
       res.json({
         success: true,
         // data: userObj,
@@ -469,7 +471,7 @@ userRouter.put("/update-password", async (req, res) => {
   userModel
     .updatePassword(req.body.password, req.body.id)
     .then((updatedPassword) => {
-      console.log("updated password", updatedPassword);
+      // console.log("updated password", updatedPassword);
       res.status(200).json({
         success: true,
         message: "Password Updated Successfully",
@@ -492,12 +494,12 @@ userRouter.put("/update-password", async (req, res) => {
  * @route [http://192.168.18.14/api/user/test]
  */
 userRouter.get("/test", verifyToken, async (req, res) => {
-  console.log("test");
+  // console.log("test");
 
   userModel
     .getUserTest(req.user)
     .then((testObj) => {
-      console.log("updated password", testObj);
+      //   console.log("updated password", testObj);
       res.status(200).json({
         success: true,
         data: testObj,
