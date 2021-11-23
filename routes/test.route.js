@@ -93,7 +93,7 @@ testRouter.put("/upload-test-image", upload.single("testImage"), (req, res) => {
       console.log("image stored ", fileObj);
       res
         .status(200)
-        .send({ success: true, message: "Image stored successfully" });
+        .send({ success: true, message: "Image uploaded successfully" });
     })
     .catch((err) => {
       res.status(500).send({ success: false, message: err });
