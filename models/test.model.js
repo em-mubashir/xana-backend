@@ -2,15 +2,33 @@ const con = require("../config/mysql");
 const testModel = {
   addNew: (testObj, userId) =>
     new Promise(async (resolve, reject) => {
-      var d = new Date();
-      var date = d.getDate();
-      var month = d.getMonth() + 1;
-      var year = d.getFullYear();
-      var newdate = date + "/" + month + "/" + year;
+      const d = new Date();
+      let date = d.getDate();
+      let month = d.getMonth() + 1;
+      let year = d.getFullYear();
+      let hour = d.getUTCHours();
+      let minute = d.getMinutes();
+      let seconds = d.getSeconds();
+
+      let newdate =
+        year +
+        "/" +
+        month +
+        "/" +
+        date +
+        " " +
+        hour +
+        ":" +
+        minute +
+        ":" +
+        seconds;
       console.log(date);
       console.log(month);
       console.log(year);
-      console.log(newdate);
+      console.log(hour);
+      console.log(minute);
+      console.log(seconds);
+      console.log("dateeeeeeeeeeeeeeeee", newdate);
 
       con.query(
         `INSERT INTO test_info (userId, test_name, test_manufacturer, test_description, test_performance, test_authorisation, date_register, date_conduct, qr_id  ) VALUES ('${userId}', '${testObj.testName}','${testObj.Manufacturer}', '${testObj.Description}', '${testObj.Performance}', '${testObj.Authorisation}','${newdate}','${newdate}','${testObj.qrId}')`,
