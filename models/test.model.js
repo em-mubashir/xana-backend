@@ -6,7 +6,7 @@ const testModel = {
       let date = d.getDate();
       let month = d.getMonth() + 1;
       let year = d.getFullYear();
-      let hour = d.getUTCHours();
+      let hour = d.getHours();
       let minute = d.getMinutes();
       let seconds = d.getSeconds();
 
