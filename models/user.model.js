@@ -53,7 +53,7 @@ const userModel = {
                       email: user.email,
                     },
                   });
-                  const url = `https://xanamedtec.page.link/?link=http://192.168.18.62:3000/user/verification/${emailToken}&apn=com.xanamedtec
+                  const url = `https://xanamedtec.page.link/?link=${process.env.EMAIL_URL}/user/verification/${emailToken}&apn=com.xanamedtec
                    `;
                   const transporter = nodemailer.createTransport({
                     service: "gmail",
@@ -482,18 +482,25 @@ const userModel = {
       }
     }),
 
-  updateProfile: (userId, userData, file) =>
+  updateProfile: (userId, userData, file) => {
+    console.log("update profile");
     new Promise(async (resolve, reject) => {
       // User validation Check
       con.query(
-        `select * from users where id='${userId}' LIMIT 1`,
+        `select * from users where id=${userId} LIMIT 1`,
         async (err, res) => {
+          console.log(`select * from users where id=${userId} LIMIT 1`);
           console.log("result", res);
+          console.log("result", res.length);
           if (res.length === 0) {
             return reject(new Error("User not exists"));
           } else if (err) {
+            console.log("in something went wrong");
+            console.log(err);
             return reject(new Error("Something went wrong --- ", err));
           } else {
+            console.log("in res");
+            console.log(res);
             let image = res.image || "";
             if (file) {
               image = file.path;
@@ -515,8 +522,8 @@ const userModel = {
             const password = userData.password
               ? await mycrypto.encrypt(userData.password || res.password)
               : res.password || "";
-            const sql = `UPDATE users SET first_name='${firstName}',last_name='${lastName}',middle_name='${middleName}',mobile='${mobile}',password='${password}',image='${image}', address='${address}', dob='${dob}', passport_number='${passportNumber}', gender='${gender}', company='${company}' WHERE id='${userId}'`;
-
+            const sql = `UPDATE users SET first_name='${firstName}',last_name='${lastName}',middle_name='${middleName}',mobile='${mobile}',password='${password}',image='${image}', address='${address}', dob='${dob}', passport_number=${passportNumber}, gender='${gender}', company='${company}' WHERE id='${userId}'`;
+            console.log("update query-->", sql);
             con.query(sql, (err, res) => {
               if (res) {
                 console.log(`Affected Rows: ${res.affectedRows}`.yellow.bold);
@@ -531,7 +538,8 @@ const userModel = {
           }
         }
       );
-    }),
+    });
+  },
   resendCode: (email) =>
     new Promise((resolve, reject) => {
       console.log("email", email);

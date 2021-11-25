@@ -317,6 +317,9 @@ userRouter.put(
   verifyToken,
   upload.single("profileImage"),
   (req, res) => {
+    console.log("in i dont know ");
+    console.log(upload.single("profileImage"));
+    console.log(req);
     userModel
       .updateProfile(req.user, req.body, req.file)
       .then((userObj) => {
