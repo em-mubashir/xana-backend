@@ -482,25 +482,18 @@ const userModel = {
       }
     }),
 
-  updateProfile: (userId, userData, file) => {
-    console.log("update profile");
+  updateProfile: (userId, userData, file) =>
     new Promise(async (resolve, reject) => {
       // User validation Check
       con.query(
-        `select * from users where id=${userId} LIMIT 1`,
+        `select * from users where id='${userId}' LIMIT 1`,
         async (err, res) => {
-          console.log(`select * from users where id=${userId} LIMIT 1`);
           console.log("result", res);
-          console.log("result", res.length);
           if (res.length === 0) {
             return reject(new Error("User not exists"));
           } else if (err) {
-            console.log("in something went wrong");
-            console.log(err);
             return reject(new Error("Something went wrong --- ", err));
           } else {
-            console.log("in res");
-            console.log(res);
             let image = res.image || "";
             if (file) {
               image = file.path;
@@ -528,6 +521,8 @@ const userModel = {
               if (res) {
                 console.log(`Affected Rows: ${res.affectedRows}`.yellow.bold);
                 if (res.affectedRows > 0) {
+                  console.log(res);
+                  console.log(resolve(res));
                   return resolve(res);
                 }
               } else {
@@ -538,8 +533,7 @@ const userModel = {
           }
         }
       );
-    });
-  },
+    }),
   resendCode: (email) =>
     new Promise((resolve, reject) => {
       console.log("email", email);

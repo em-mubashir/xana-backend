@@ -318,8 +318,8 @@ userRouter.put(
   upload.single("profileImage"),
   (req, res) => {
     console.log("in i dont know ");
-    console.log(upload.single("profileImage"));
-    console.log(req);
+    // console.log(upload.single("profileImage"));
+    // console.log(req);
     userModel
       .updateProfile(req.user, req.body, req.file)
       .then((userObj) => {
@@ -332,6 +332,7 @@ userRouter.put(
         console.log("UpdateProfile ::>> res", userObj);
       })
       .catch((err) => {
+        console.log("IN PROFILE UPDATE ASDASDASDSAD");
         console.log("UpdateProfile ::>> err", err);
         // console.log(sqlHelper.consoleSQLException(err))
         res.json({
