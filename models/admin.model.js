@@ -133,6 +133,11 @@ const adminModel = {
       );
     }),
 
+  // addReportAdmin: (user)=> new Promise((resolve, reject)) => {con.query(
+  //   const sql = `INSERT into custom_report (first_name, last_name, dob, mobile, password, roleid_fk, confirmed) values ('${user.fname}','${user.lname}','${user.email}','${user.mobile}','${hashedPassword}',2,1)`;
+
+  // )},
+
   adminSignup: (user) =>
     new Promise((resolve, reject) => {
       con.query(
