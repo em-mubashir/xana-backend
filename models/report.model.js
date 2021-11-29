@@ -31,6 +31,32 @@ const reportModel = {
       );
     }),
 
+  addCustomReport: (data) =>
+    new Promise((resolve, reject) => {
+      console.log("Report data ::: >>>", data);
+      console.log(
+        `INSERT INTO custom_report (first_name, last_name, email, dob, passport, sample_date, sample_time, result_date, result_time, order_id, result, test_name, test_manufacturer, test_authorization, test_description) VALUES (
+          '${data.first_name}','${data.last_name}','${data.email}', '${data.dob}', '${data.passport}', '${data.sample_date}', '${data.sample_time}',  '${data.result_date}', '${data.result_time}' , '${data.order_id}', 'Completed', '${data.test_name}', '${data.test_manufacturer}', '${data.test_authorization}', '${data.test_description}'
+        )`
+      );
+      con.query(
+        `INSERT INTO custom_report (first_name, last_name, email, dob, passport, sample_date, sample_time, result_date, result_time, order_id, result, test_name, test_manufacturer, test_authorization, test_description) VALUES (
+          '${data.first_name}','${data.last_name}','${data.email}', '${data.dob}', '${data.passport}', '${data.sample_date}', '${data.sample_time}',  '${data.result_date}', '${data.result_time}' , '${data.order_id}', 'Completed', '${data.test_name}', '${data.test_manufacturer}', '${data.test_authorization}', '${data.test_description}'
+        )`,
+        (err, res) => {
+          if (res) {
+            if (res.affectedRows > 0) {
+              console.log();
+              return resolve(res);
+            } else {
+              console.log("err", err);
+              return reject(new Error("Something went wrong", err));
+            }
+          }
+        }
+      );
+    }),
+
   postReports: (data) =>
     new Promise((resolve, reject) => {
       console.log("dataaa ::: >>>", data);

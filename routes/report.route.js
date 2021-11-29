@@ -111,6 +111,29 @@ reportRouter.get("/", verifyToken, (req, res) => {
 });
 
 /**
+ * Add custom report
+ * @returns reportObj
+ * @type GET
+ * @required access_token
+ * @route [http://192.168.18.14/api/admin/add-custom-report]
+ */
+reportRouter.post("/add-custom-report", (req, res) => {
+  reportModel
+    .addCustomReport(req.body)
+    .then((reportsObj) => {
+      res.json({
+        data: reportsObj,
+        success: true,
+        message: "Report data inserted successfully",
+      });
+    })
+    .catch((err) => {
+      console.log("error", err);
+      res.json({ data: res, success: false, message: err });
+    });
+});
+
+/**
  * GET reports of user
  * @returns reportsObj
  * @type GET
