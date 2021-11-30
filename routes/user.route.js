@@ -66,7 +66,7 @@ userRouter.post("/getreporturl", (req, res) => {
  * @returns userObj
  * @type POST
  * @params firstName,lastName,password,email,mobile
- * @route [http://192.168.18.62/api/user/register]
+ * @route [http://192.168.0.101/api/user/register]
  */
 userRouter.post(
   "/register",
@@ -111,7 +111,7 @@ userRouter.post(
  * @returns userObj
  * @type POST
  * @params firstName,lastName, email
- * @route [http://192.168.18.62/api/user/register/gmail]
+ * @route [http://192.168.0.101/api/user/register/gmail]
  */
 userRouter.post(
   "/register/gmail",
@@ -152,7 +152,7 @@ userRouter.post(
  * Token Verification
  * @returns success
  * @type GET
- * @route [http://192.168.18.62/api/user/confirmation/:token]
+ * @route [http://192.168.0.101/api/user/confirmation/:token]
  */
 userRouter.get("/confirmation/:token", verifyToken, async (req, res) => {
   try {
@@ -183,7 +183,7 @@ userRouter.get("/confirmation/:token", verifyToken, async (req, res) => {
  * @returns userId, sessionId, accessToken, refreshToken
  * @type POST
  * @params password,email
- * @route [http://192.168.18.62/api/user/login]
+ * @route [http://192.168.0.101/api/user/login]
  */
 userRouter.post(
   "/login",
@@ -231,7 +231,7 @@ userRouter.post(
  * Logout
  * @returns success
  * @type POST
- * @route [http://192.168.18.62/api/user/logout]
+ * @route [http://192.168.0.101/api/user/logout]
  */
 userRouter.post("/logout", async (req, res) => {
   try {
@@ -257,7 +257,7 @@ userRouter.post("/logout", async (req, res) => {
  * Login with gmail
  * @returns userObj
  * @type POST
- * @route [http://192.168.18.62/api/user/login/gmail]
+ * @route [http://192.168.0.101/api/user/login/gmail]
  */
 userRouter.post("/login/gmail", [body("email").not().isEmpty()], (req, res) => {
   const errors = validationResult(req);
@@ -299,7 +299,7 @@ userRouter.post("/login/gmail", [body("email").not().isEmpty()], (req, res) => {
  * @returns userObj
  * @type get
  * @required access_token
- * @route [http://192.168.18.62/api/user/profile]
+ * @route [http://192.168.0.101/api/user/profile]
  */
 userRouter.get(
   "/profile",
@@ -335,7 +335,7 @@ userRouter.get(
  * @type put
  * @params first_name
  * @required access_token
- * @route [http://192.168.18.62/api/user/profile/edit]
+ * @route [http://192.168.0.101/api/user/profile/edit]
  */
 userRouter.put(
   "/profile/edit",
@@ -375,7 +375,7 @@ userRouter.put(
  * @type post
  * @params email
  * @required access_token
- * @route [http://192.168.18.62/api/user/forgot-password]
+ * @route [http://192.168.0.101/api/user/forgot-password]
  */
 userRouter.post(
   "/forgot-password",
@@ -411,7 +411,7 @@ userRouter.post(
  * Reset Password
  * @returns userId
  * @type get
- * @route [http://192.168.18.62/api/user/reset-password/:token]
+ * @route [http://192.168.0.101/api/user/reset-password/:token]
  */
 userRouter.get("/reset-password/:token", async (req, res) => {
   userModel
@@ -438,7 +438,7 @@ userRouter.get("/reset-password/:token", async (req, res) => {
  * @type post
  * @returns success
  * @params email
- * @route [http://192.168.18.62/api/user/resend-code]
+ * @route [http://192.168.0.101/api/user/resend-code]
  */
 userRouter.post("/resend-code", async (req, res) => {
   userModel
@@ -465,7 +465,7 @@ userRouter.post("/resend-code", async (req, res) => {
  * @type post
  * @returns accessToken, refreshToken
  * @params refreshToken
- * @route [http://192.168.18.62/api/user/refresh-token]
+ * @route [http://192.168.0.101/api/user/refresh-token]
  */
 userRouter.post("/refresh-token", async (req, res) => {
   try {
@@ -494,7 +494,7 @@ userRouter.post("/refresh-token", async (req, res) => {
  * @type put
  * @returns success
  * @params id,password
- * @route [http://192.168.18.62/api/user/update-password]
+ * @route [http://192.168.0.101/api/user/update-password]
  */
 userRouter.put("/update-password", async (req, res) => {
   userModel
