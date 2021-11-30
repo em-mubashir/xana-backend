@@ -2,6 +2,10 @@ const con = require("../config/mysql");
 const crypto = require("crypto");
 const jwt = require("jsonwebtoken");
 var nodemailer = require("nodemailer");
+
+var fs = require("fs");
+var path = require("path");
+
 const { use } = require("../routes/user.route");
 const {
   signJwt,
@@ -12,22 +16,10 @@ const {
 const sessionModel = require("./session.model");
 require("colors");
 
-const mycrypto = {
-  encrypt: (password) => {
-    const cipher = crypto.createCipher("aes192", process.env.HASH_KEY);
-    let hashedPassword = cipher.update(`${password}`, "utf8", "hex");
-    hashedPassword += cipher.final("hex");
-    return hashedPassword;
-  },
-
-  decrypt: (hashed) => {
-    const decipher = crypto.createDecipher("aes192", process.env.HASH_KEY);
-    let decrypted = decipher.update(`${hashed}`, "hex", "utf8");
-    decrypted += decipher.final("utf8");
-
-    return decrypted;
-  },
+const reportData = () => {
+  console.log("Report All data using select with user");
 };
+
 const userModel = {
   register: (user) =>
     new Promise(async (resolve, reject) => {
@@ -480,6 +472,36 @@ const userModel = {
       } else {
         return reject(new Error("Invalid user id in token"));
       }
+    }),
+
+  getReportUrl: (userId, testId, QrId, Result) =>
+    new Promise((resolve, reject) => {
+      reportData();
+      console.log(
+        `SELECT test_info.id, users.first_name, users.last_name, users.dob, users.passport_number, test_info.test_name, test_info.test_description, test_info.test_performance, test_info.test_authorisation, test_info.date_register, test_info.date_conduct
+        FROM test_info
+        INNER JOIN users
+        ON test_info.userId= ${userId}
+        WHERE test_info.id = ${testId} LIMIT 1;
+        `
+      );
+      con.query(
+        `SELECT test_info.id, users.first_name, users.last_name, users.dob, users.passport_number, test_info.test_name, test_info.test_description, test_info.test_performance, test_info.test_authorisation, test_info.date_register, test_info.date_conduct
+      FROM test_info
+      INNER JOIN users
+      ON test_info.userId= ${userId}
+      WHERE test_info.id = ${testId} LIMIT 1;
+      `,
+        async (err, res) => {
+          console.log(res);
+          if (res && res.length > 0) {
+            return resolve(res);
+          } else {
+            console.log("err", err);
+            return reject(new Error("No test found", err));
+          }
+        }
+      );
     }),
 
   updateProfile: (userId, userData, file) =>

@@ -36,6 +36,31 @@ const upload = multer({
 
 // multer file store ends
 
+userRouter.post("/getreporturl", (req, res) => {
+  userModel
+    .getReportUrl(
+      req.body.userId,
+      req.body.testId,
+      req.body.QrId,
+      req.body.Result
+    )
+    .then((repObj) => {
+      res.json({
+        data: repObj,
+        success: true,
+        message: "Report Testing URL Generated",
+      });
+    })
+    .catch((err) => {
+      console.log("Get report url ::>> err", err);
+      res.json({
+        data: err,
+        success: false,
+        message: err.message,
+      });
+    });
+});
+
 /**
  * Register User
  * @returns userObj
