@@ -5,7 +5,11 @@ const multer = require("multer");
 const reportModel = require("../models/report.model");
 const sqlHelper = require("../helpers/sqlHeplers");
 const { verifyToken } = require("../middlewares/auth.middleware");
-
+const base64 = require('base64topdf');
+const fileSystemUtils = require('../utils/fileSystemUtils')
+const path = require('path')
+const fs = require('fs')
+PDFDocument = require('pdfkit');
 // multer file store start
 const storage = multer.diskStorage({
   destination(req, file, cb) {
@@ -19,7 +23,7 @@ const fileFilter = (req, file, cb) => {
   if (file.mimetype === "image/jpeg" || file.mimetype === "image/png") {
     cb(null, true);
   } else {
-    cb(new Error("file have different extension"), false);
+    cb(new err("file have different extension"), false);
   }
 };
 const upload = multer({
@@ -41,22 +45,29 @@ const upload = multer({
 
 reportRouter.post("/send-custom-report", async (req, res) => {
   try {
-    console.log("req.body", req.body)
-    const result = await reportModel.sendCustomReport(req.body);
-    if (result) {
-      res.json({
-        data: result,
-        success: true,
-        message: "Email sent successfully",
-      });
-    } else {
-      res.json({
-        success: false,
-        message: "Email Invalid",
-      });
-    }
-  } catch (error) {
-    // throw new Error(error.message);
+
+
+    var base64Data = req.body.img.replace(/^data:image\/png;base64,/, "");
+    const dirPath = path.join(__dirname, '../uploads/')
+    const fileName = 'out.png'
+    const pdfName = 'out.pdf'
+    const reportImagePath = dirPath + fileName;
+    const reportPdfPath = dirPath + pdfName;
+
+    await fileSystemUtils.writeFileAsync(reportImagePath, base64Data, 'base64');
+    doc = new PDFDocument
+    doc.pipe(fs.createWriteStream(reportPdfPath))
+    doc.image(reportImagePath, {
+      fit: [600, 400],
+      align: 'center',
+      valign: 'center'
+    });
+    doc.end()
+
+    const result = await reportModel.sendCustomReport(reportImagePath, reportPdfPath);
+    res.send(result)
+  } catch (err) {
+    console.log(err.stack)
     return res.sendStatus(400)
   }
 
@@ -153,7 +164,7 @@ reportRouter.post("/add-custom-report", async (req, res) => {
       })
     }
     else {
-      throw new Error("Failed to create report.")
+      throw new err("Failed to create report.")
     }
 
   }
@@ -190,7 +201,7 @@ reportRouter.post(
       })
       .then((response) => {
       })
-      .catch((error) => {
+      .catch((err) => {
       });
     // reportModel
     //   .postReports(req.body)

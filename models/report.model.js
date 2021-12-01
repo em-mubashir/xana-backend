@@ -1,13 +1,17 @@
 const con = require("../config/mysql");
 const nodemailer = require("nodemailer");
-
+const fileSystemUtils = require('../utils/fileSystemUtils')
 const reportModel = {
-  sendCustomReport: (data) => {
-
-    let pdfFiles = [];
-    pdfFiles.push(data.file);
-
+  sendCustomReport: async (imagePath, pdfPath) => {
     try {
+      console.log("insdide")
+
+      // GMAIL_SERVICE_NAME = gmail
+      // GMAIL_SERVICE_HOST = smtp.gmail.com
+      // GMAIL_SERVICE_SECURE = true
+      // GMAIL_SERVICE_PORT = 465
+      // GMAIL_USER_NAME = maliksblr92@gmail.com
+      // GMAIL_USER_PASSWORD = ZP ? []~1F6M) _
       const transporter = nodemailer.createTransport({
         // host: process.env.HOST,
         host: "smtp-relay.sendinblue.com",
@@ -19,6 +23,7 @@ const reportModel = {
           // pass: process.env.PASSWORD,
           pass: "0b8pEBjPtFRK2Txy",
         },
+
       });
       const mailOptions = {
         // FROM=info@landofsneakers.com
@@ -26,29 +31,28 @@ const reportModel = {
         // HOST=smtp-relay.sendinblue.com
         // EMAIL_PORT=587
 
-        // from: process.env.FROM,
         from: "info@landofsneakers.com",
-        // to: `${data.email}`,
-        to: "saqibkhan7112@gmail.com",
-        cc: "beenishkhan603@gmail.com",
+        // from: "info@landofsneakers.com",
+        to: "info@landofsneakers.com",
+        cc: "info@landofsneakers.com",
         subject: "Result Of Report",
-        // html: message,
-        attachments: pdfFiles,
+        html: '<html><h1>Ahmed Kabeer </h1></html>',
+        attachments: [
+          { filename: 'report.pdf', path: pdfPath, contentType: 'application/pdf' },
+          { filename: 'report.png', path: imagePath, contentType: 'image/png' },
+        ],
+
       };
-      transporter.sendMail(mailOptions, (err, info) => {
-        if (err) {
-          return err.message;
-        } else {
-          return info.response;
-        }
-      });
-      return {
-        status: 200,
-        message: `Success`,
-        // message:token
-      };
-    } catch (error) {
-      throw new Error(error.message);
+      const res = await transporter.sendMail(mailOptions)
+      const reportImage = await fileSystemUtils.unlinkFileAsync(imagePath)
+      const reportPdf = await fileSystemUtils.unlinkFileAsync(pdfPath)
+      console.log("res,", res.accepted)
+      console.log("res,", res.rejected)
+      console.log("res,", res.response)
+      return res
+    } catch (err) {
+      console.log(err.message)
+      throw new Error(err.message);
     }
   },
 
@@ -60,7 +64,7 @@ const reportModel = {
           if (res) {
             return resolve(res);
           } else {
-            return reject(new Error("Something went wrong", err));
+            return reject(new err("Something went wrong", err));
           }
         }
       );
@@ -74,7 +78,7 @@ const reportModel = {
           if (res) {
             return resolve(res);
           } else {
-            return reject(new Error("Report not found", err));
+            return reject(new err("Report not found", err));
           }
         }
       );
@@ -105,7 +109,7 @@ const reportModel = {
     new Promise((resolve, reject) => {
       con.query(
         `select * from users where id='${data.userId}' LIMIT 1`,
-        (error, userData) => {
+        (err, userData) => {
 
           con.query(
             `INSERT INTO reports
@@ -123,7 +127,7 @@ const reportModel = {
                   return resolve(res);
                 }
               } else {
-                return reject(new Error("Something went wrong", err));
+                return reject(new err("Something went wrong", err));
               }
             }
           );
