@@ -31,13 +31,57 @@ const upload = multer({
 });
 
 // multer file store ends
+/**
+ * Add custom report
+ * @returns reportObj
+ * @type GET
+ * @required access_token
+ * @route [http://192.168.18.14/api/reports/send-custom-report]
+ */
+
+reportRouter.post("/send-custom-report", async (req, res) => {
+  try {
+    console.log(req);
+
+    const result = await reportModel.sendCustomReport(req.body);
+    console.log("Result of custom pdf report", result);
+
+    if (result) {
+      res.json({
+        data: result,
+        success: true,
+        message: "Email sent successfully",
+      });
+    } else {
+      res.json({
+        success: false,
+        message: "Email Invalid",
+      });
+    }
+  } catch (error) {
+    throw new Error(error.message);
+  }
+  // reportModel
+  //   .sendCustomReport(req.body.email)
+  // .then((reportsObj) => {
+  //   res.json({
+  //     data: reportsObj,
+  //     success: true,
+  //     message: "Report pdf data inserted successfully",
+  //   });
+  // })
+  // .catch((err) => {
+  //   console.log("error", err);
+  //   res.json({ data: res, success: false, message: err });
+  // });
+});
 
 /**
  * GET reports of user
  * @returns reportsObj
  * @type GET
  * @required access_token
- * @route [http://192.168.0.101/api/reports/user]
+ * @route [http://192.168.18.62/api/reports/user]
  */
 reportRouter.get("/user", verifyToken, (req, res) => {
   const userId = req.user;
@@ -73,7 +117,7 @@ reportRouter.get("/user", verifyToken, (req, res) => {
  * @returns reportsObj
  * @type GET
  * @required access_token
- * @route [http://192.168.0.101/api/reports/user]
+ * @route [http://192.168.18.62/api/reports/user]
  */
 reportRouter.get("/", verifyToken, (req, res) => {
   const userId = req.user;
@@ -115,7 +159,7 @@ reportRouter.get("/", verifyToken, (req, res) => {
  * @returns reportObj
  * @type GET
  * @required access_token
- * @route [http://192.168.18.14/api/admin/add-custom-report]
+ * @route [http://192.168.18.14/api/reports/add-custom-report]
  */
 reportRouter.post("/add-custom-report", (req, res) => {
   reportModel
@@ -138,7 +182,7 @@ reportRouter.post("/add-custom-report", (req, res) => {
  * @returns reportsObj
  * @type GET
  * @required access_token
- * @route [http://192.168.0.101/api/reports/user]
+ * @route [http://192.168.18.62/api/reports/user]
  */
 reportRouter.post(
   "/user/add-report",
@@ -148,12 +192,12 @@ reportRouter.post(
     bodyFormData.append("id", "COV1080034ACONLFDAG00013014");
     bodyFormData.append(
       "img",
-      "http://192.168.0.101:5000/reportImages/report-1635769362284_0_35.png"
+      "http://192.168.18.62:5000/reportImages/report-1635769362284_0_35.png"
     );
     axios
       .post({
         method: "post",
-        url: "https://192.168.0.101:5002/xana",
+        url: "https://192.168.18.62:5002/xana",
         data: bodyFormData,
         headers: { "Content-Type": "multipart/form-data" },
       })

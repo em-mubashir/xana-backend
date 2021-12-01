@@ -1,6 +1,63 @@
 const con = require("../config/mysql");
+const nodemailer = require("nodemailer");
 
 const reportModel = {
+  sendCustomReport: (data) => {
+    console.log("data for pdf in api", data);
+    console.log("email for pdf in api", data.email);
+    console.log("file for pdf in api", data.file);
+
+    let pdfFiles = [];
+    pdfFiles.push(data.file);
+    console.log("Pdf file array", pdfFiles);
+
+    try {
+      const transporter = nodemailer.createTransport({
+        // host: process.env.HOST,
+        host: "smtp-relay.sendinblue.com",
+        port: 587,
+        secure: false,
+        auth: {
+          // user: process.env.FROM,
+          user: "info@landofsneakers.com",
+          // pass: process.env.PASSWORD,
+          pass: "0b8pEBjPtFRK2Txy",
+        },
+      });
+      const mailOptions = {
+        // FROM=info@landofsneakers.com
+        // PASSWORD=0b8pEBjPtFRK2Txy
+        // HOST=smtp-relay.sendinblue.com
+        // EMAIL_PORT=587
+
+        // from: process.env.FROM,
+        from: "info@landofsneakers.com",
+        // to: `${data.email}`,
+        to: "saqibkhan7112@gmail.com",
+        cc: "beenishkhan603@gmail.com",
+        subject: "Result Of Report",
+        // html: message,
+        attachments: pdfFiles,
+      };
+      transporter.sendMail(mailOptions, (err, info) => {
+        if (err) {
+          console.log("errorrr", err.message);
+          return err.message;
+        } else {
+          console.log(info.response);
+          return info.response;
+        }
+      });
+      return {
+        status: 200,
+        message: `Success`,
+        // message:token
+      };
+    } catch (error) {
+      throw new Error(error.message);
+    }
+  },
+
   getAllReports: (userId) =>
     new Promise(async (resolve, reject) => {
       con.query(
@@ -35,13 +92,13 @@ const reportModel = {
     new Promise((resolve, reject) => {
       console.log("Report data ::: >>>", data);
       console.log(
-        `INSERT INTO custom_report (first_name, last_name, email, dob, passport, sample_date, sample_time, result_date, result_time, order_id, result, test_name, test_manufacturer, test_authorization, test_description) VALUES (
-          '${data.first_name}','${data.last_name}','${data.email}', '${data.dob}', '${data.passport}', '${data.sample_date}', '${data.sample_time}',  '${data.result_date}', '${data.result_time}' , '${data.order_id}', 'Completed', '${data.test_name}', '${data.test_manufacturer}', '${data.test_authorization}', '${data.test_description}'
+        `INSERT INTO custom_report (first_name, last_name, email, dob, passport, sample_date, sample_time, result_date, result_time, order_id, result, test_name, test_manufacturer, test_authorization, test_description, test_image) VALUES (
+          '${data.first_name}','${data.last_name}','${data.email}', '${data.dob}', '${data.passport}', '${data.sample_date}', '${data.sample_time}',  '${data.result_date}', '${data.result_time}' , '${data.order_id}', '${data.result}', '${data.test_name}', '${data.test_manufacturer}', '${data.test_authorization}', '${data.test_description}', '${data.test_image}'
         )`
       );
       con.query(
-        `INSERT INTO custom_report (first_name, last_name, email, dob, passport, sample_date, sample_time, result_date, result_time, order_id, result, test_name, test_manufacturer, test_authorization, test_description) VALUES (
-          '${data.first_name}','${data.last_name}','${data.email}', '${data.dob}', '${data.passport}', '${data.sample_date}', '${data.sample_time}',  '${data.result_date}', '${data.result_time}' , '${data.order_id}', 'Completed', '${data.test_name}', '${data.test_manufacturer}', '${data.test_authorization}', '${data.test_description}'
+        `INSERT INTO custom_report (first_name, last_name, email, dob, passport, sample_date, sample_time, result_date, result_time, order_id, result, test_name, test_manufacturer, test_authorization, test_description, test_image) VALUES (
+          '${data.first_name}','${data.last_name}','${data.email}', '${data.dob}', '${data.passport}', '${data.sample_date}', '${data.sample_time}',  '${data.result_date}', '${data.result_time}' , '${data.order_id}', '${data.result}', '${data.test_name}', '${data.test_manufacturer}', '${data.test_authorization}', '${data.test_description}', '${data.test_image}'
         )`,
         (err, res) => {
           if (res) {

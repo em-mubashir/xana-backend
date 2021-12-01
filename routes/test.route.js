@@ -39,7 +39,7 @@ const upload = multer({
  * @retuns reportsObj
  * @type GET
  * @required access_token
- * @route [http://192.168.0.101/api/reports/user]
+ * @route [http://192.168.18.62/api/reports/user]
  */
 testRouter.post(
   "/create-new",
@@ -82,7 +82,7 @@ testRouter.post(
  * @retuns reportsObj
  * @type GET
  * @required access_token
- * @route [http://192.168.0.101/api/reports/user]
+ * @route [http://192.168.18.62/api/reports/user]
  */
 testRouter.put("/upload-test-image", upload.single("testImage"), (req, res) => {
   console.log(req);
@@ -110,13 +110,13 @@ testRouter.put("/upload-test-image", upload.single("testImage"), (req, res) => {
 testRouter.get("/result", async (req, res) => {
   console.log("req.query ::: ", req.query.id);
   let image =
-    "http://192.168.0.101:5000/uploads/testImages/test-1636407520684_0_35.png";
+    "http://192.168.18.62:5000/uploads/testImages/test-1636407520684_0_35.png";
   try {
     const { qr_id, test_image } = await testModel.getUserTestImg(req.query.id);
     console.log("res", qr_id, test_image);
 
     // const { results = "True" } = await axios.post(
-    //   "http://192.168.0.101:5002/xana",
+    //   "http://192.168.18.62:5002/xana",
     //   {
     //     qr_id,
     //     test_image,
@@ -130,7 +130,7 @@ testRouter.get("/result", async (req, res) => {
     // if (res) {
     //   const obj = { id: res.qr_id, img: res.test_image };
     //   axios
-    //     .post("http://192.168.0.101:5002/xana", obj)
+    //     .post("http://192.168.18.62:5002/xana", obj)
     //     .then((response) => {
     //       console.log("response", response);
     //     })
@@ -139,7 +139,7 @@ testRouter.get("/result", async (req, res) => {
   } catch (e) {
     console.log("error", e);
   }
-  // image = image.replace("http://192.168.0.101:5000/", "");
+  // image = image.replace("http://192.168.18.62:5000/", "");
   // console.log("image ::: ", image);
   // const imagePath = path.join(__dirname, `../${image}`);
   // console.log(imagePath, "imagePath");
@@ -150,7 +150,7 @@ testRouter.get("/result", async (req, res) => {
 
   // fd.append("img", image);
   // axios
-  //   .post("http://192.168.0.101:5002/xana", fd)
+  //   .post("http://192.168.18.62:5002/xana", fd)
   //   .then((res) => {
   //     console.log("res ::: ", res);
   //   })
