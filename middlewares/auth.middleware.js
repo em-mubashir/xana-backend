@@ -4,6 +4,7 @@ const { verifyJwt, verifyEmailToken } = require("../helpers/jwt.helpers");
 const config = process.env;
 
 const verifyToken = (req, res, next) => {
+
   try {
     let token = "";
     let decoded = "";
@@ -13,7 +14,6 @@ const verifyToken = (req, res, next) => {
     } else {
       token = req.headers.authorization.split(" ")[1];
       decoded = verifyJwt(token);
-      console.log("decoded in else ", decoded);
     }
     if (!decoded.payload) {
       return res.status(401).json({
@@ -26,6 +26,8 @@ const verifyToken = (req, res, next) => {
       next();
     }
   } catch (err) {
+    console.log(err.message)
+    console.log(err.stack)
     return res.status(401).json({
       success: false,
       message: "Unauthorized",

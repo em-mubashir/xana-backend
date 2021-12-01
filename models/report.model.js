@@ -3,13 +3,9 @@ const nodemailer = require("nodemailer");
 
 const reportModel = {
   sendCustomReport: (data) => {
-    console.log("data for pdf in api", data);
-    console.log("email for pdf in api", data.email);
-    console.log("file for pdf in api", data.file);
 
     let pdfFiles = [];
     pdfFiles.push(data.file);
-    console.log("Pdf file array", pdfFiles);
 
     try {
       const transporter = nodemailer.createTransport({
@@ -41,10 +37,8 @@ const reportModel = {
       };
       transporter.sendMail(mailOptions, (err, info) => {
         if (err) {
-          console.log("errorrr", err.message);
           return err.message;
         } else {
-          console.log(info.response);
           return info.response;
         }
       });
@@ -66,7 +60,6 @@ const reportModel = {
           if (res) {
             return resolve(res);
           } else {
-            console.log("err", err);
             return reject(new Error("Something went wrong", err));
           }
         }
@@ -81,74 +74,48 @@ const reportModel = {
           if (res) {
             return resolve(res);
           } else {
-            console.log("err", err);
             return reject(new Error("Report not found", err));
           }
         }
       );
     }),
 
-  addCustomReport: (data) =>
-    new Promise((resolve, reject) => {
-      console.log("Report data ::: >>>", data);
-      console.log(
-        `INSERT INTO custom_report (first_name, last_name, email, dob, passport, sample_date, sample_time, result_date, result_time, order_id, result, test_name, test_manufacturer, test_authorization, test_description, test_image) VALUES (
+  addCustomReport: async (data) => {
+
+    return new Promise((resolve, reject) => {
+      const query = `INSERT INTO custom_report (first_name, last_name, email, dob, passport, sample_date, sample_time, result_date, result_time, order_id, result, test_name, test_manufacturer, test_authorization, test_description, test_image) VALUES (
           '${data.first_name}','${data.last_name}','${data.email}', '${data.dob}', '${data.passport}', '${data.sample_date}', '${data.sample_time}',  '${data.result_date}', '${data.result_time}' , '${data.order_id}', '${data.result}', '${data.test_name}', '${data.test_manufacturer}', '${data.test_authorization}', '${data.test_description}', '${data.test_image}'
-        )`
-      );
-      con.query(
-        `INSERT INTO custom_report (first_name, last_name, email, dob, passport, sample_date, sample_time, result_date, result_time, order_id, result, test_name, test_manufacturer, test_authorization, test_description, test_image) VALUES (
-          '${data.first_name}','${data.last_name}','${data.email}', '${data.dob}', '${data.passport}', '${data.sample_date}', '${data.sample_time}',  '${data.result_date}', '${data.result_time}' , '${data.order_id}', '${data.result}', '${data.test_name}', '${data.test_manufacturer}', '${data.test_authorization}', '${data.test_description}', '${data.test_image}'
-        )`,
-        (err, res) => {
-          if (res) {
-            if (res.affectedRows > 0) {
-              console.log();
-              return resolve(res);
-            } else {
-              console.log("err", err);
-              return reject(new Error("Something went wrong", err));
-            }
-          }
+        )`;
+      return con.query(query, (err, rows) => {
+        if (!err) {
+          return resolve(rows)
         }
-      );
-    }),
+        else {
+          return reject(err.message)
+        }
+      })
+    })
+  },
+
+
+
+
 
   postReports: (data) =>
     new Promise((resolve, reject) => {
-      console.log("dataaa ::: >>>", data);
       con.query(
         `select * from users where id='${data.userId}' LIMIT 1`,
         (error, userData) => {
-          console.log("userdataaaaaa", userData);
-          console.log(`INSERT INTO reports
-          (userId, firstName, lastName, dob, passportNo, testName, testManufacturer, testDescription, testPerformance, testAuthorization, sampleDate, sampleTime, resultDate, resultTime, result, status)
-          VALUES
-          ( ${userData[0].id}, '${userData[0].first_name}','${
-            userData[0].last_name || ""
-          }', '${userData[0].dob || ""}', '${userData[0].passportNo || ""}', '${
-            data.testName
-          }', '${data.testManufacturer}', '${data.testDescription}', '${
-            data.testPerformance
-          }', '${data.testAuthorization}', '${data.sampleDate || ""}','${
-            data.sampleTime || ""
-          }', '${data.resultDate || ""}', '${data.resultTime || ""}','${
-            data.result || ""
-          }', 'completed' ) `);
+
           con.query(
             `INSERT INTO reports
           (userId, firstName, lastName, dob, passportNo, testName, testManufacturer, testDescription, testPerformance, testAuthorization, sampleDate, sampleTime, resultDate, resultTime, result, status)
           VALUES
-          ( ${userData[0].id}, '${userData[0].first_name}','${
-              userData[0].last_name || ""
-            }', '${userData[0].dob || ""}', '${
-              userData[0].passportNo || 0
-            }', '${data.testName}', '${data.testManufacturer}', '${
-              data.testDescription
-            }', '${data.testPerformance}', '${data.testAuthorization}', '${
-              data.sampleDate || ""
-            }','${data.sampleTime || ""}', '${data.resultDate || ""}', '${
-              data.resultTime || ""
+          ( ${userData[0].id}, '${userData[0].first_name}','${userData[0].last_name || ""
+            }', '${userData[0].dob || ""}', '${userData[0].passportNo || 0
+            }', '${data.testName}', '${data.testManufacturer}', '${data.testDescription
+            }', '${data.testPerformance}', '${data.testAuthorization}', '${data.sampleDate || ""
+            }','${data.sampleTime || ""}', '${data.resultDate || ""}', '${data.resultTime || ""
             }','${data.result || ""}', 'completed' ) `,
             (err, res) => {
               if (res) {
@@ -156,7 +123,6 @@ const reportModel = {
                   return resolve(res);
                 }
               } else {
-                console.log("err", err);
                 return reject(new Error("Something went wrong", err));
               }
             }

@@ -20,6 +20,25 @@ const reportData = () => {
   console.log("Report All data using select with user");
 };
 
+
+const mycrypto = {
+  encrypt: (password) => {
+    const cipher = crypto.createCipher("aes192", process.env.HASH_KEY);
+    let hashedPassword = cipher.update(`${password}`, "utf8", "hex");
+    hashedPassword += cipher.final("hex");
+    return hashedPassword;
+  },
+
+  decrypt: (hashed) => {
+    const decipher = crypto.createDecipher("aes192", process.env.HASH_KEY);
+    let decrypted = decipher.update(`${hashed}`, "hex", "utf8");
+    decrypted += decipher.final("utf8");
+
+    return decrypted;
+  },
+};
+
+
 const userModel = {
   register: (user) =>
     new Promise(async (resolve, reject) => {

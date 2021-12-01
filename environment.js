@@ -9,8 +9,8 @@ dbHost = "xana";
 dbName = "xana";
 dbPort = 3306;
 dbConnections = 10;
-dbUser = "root";
-dbPassword = "root";
+dbUser = "codistanxana";
+dbPassword = "Codistan@132";
 
 module.exports = {
   dbHost,
@@ -20,3 +20,9 @@ module.exports = {
   dbUser,
   dbPassword,
 };
+
+
+//  - MYSQL_ROOT_PASSWORD=Codistan@132X
+//       - MYSQL_DATABASE=xana
+//       - MYSQL_USER=codistanxana
+//       - MYSQL_PASSWORD=Codistan@132

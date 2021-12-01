@@ -41,11 +41,8 @@ const upload = multer({
 
 reportRouter.post("/send-custom-report", async (req, res) => {
   try {
-    console.log(req);
-
+    console.log("req.body", req.body)
     const result = await reportModel.sendCustomReport(req.body);
-    console.log("Result of custom pdf report", result);
-
     if (result) {
       res.json({
         data: result,
@@ -59,21 +56,10 @@ reportRouter.post("/send-custom-report", async (req, res) => {
       });
     }
   } catch (error) {
-    throw new Error(error.message);
+    // throw new Error(error.message);
+    return res.sendStatus(400)
   }
-  // reportModel
-  //   .sendCustomReport(req.body.email)
-  // .then((reportsObj) => {
-  //   res.json({
-  //     data: reportsObj,
-  //     success: true,
-  //     message: "Report pdf data inserted successfully",
-  //   });
-  // })
-  // .catch((err) => {
-  //   console.log("error", err);
-  //   res.json({ data: res, success: false, message: err });
-  // });
+
 });
 
 /**
@@ -98,10 +84,8 @@ reportRouter.get("/user", verifyToken, (req, res) => {
           success: true,
           message,
         });
-        console.log("getReports ::>> res", reports);
       })
       .catch((err) => {
-        console.log("getReports ::>> err", err);
         res.json({
           data: err,
           success: false,
@@ -135,14 +119,11 @@ reportRouter.get("/", verifyToken, (req, res) => {
           success: true,
           message,
         });
-        console.log("getReport ::>> res", report);
       })
       .catch((err) => {
-        console.log("getReport ::>> err", err);
         res.json({
           data: err,
           success: false,
-          message: sqlHelper.consoleSQLException(err),
         });
       });
   } else {
@@ -161,20 +142,26 @@ reportRouter.get("/", verifyToken, (req, res) => {
  * @required access_token
  * @route [http://192.168.18.14/api/reports/add-custom-report]
  */
-reportRouter.post("/add-custom-report", (req, res) => {
-  reportModel
-    .addCustomReport(req.body)
-    .then((reportsObj) => {
-      res.json({
+reportRouter.post("/add-custom-report", async (req, res) => {
+  try {
+    const reportsObj = await reportModel.addCustomReport(req.body)
+    if (reportsObj.affectedRows) {
+      return res.json({
         data: reportsObj,
         success: true,
         message: "Report data inserted successfully",
-      });
-    })
-    .catch((err) => {
-      console.log("error", err);
-      res.json({ data: res, success: false, message: err });
-    });
+      })
+    }
+    else {
+      throw new Error("Failed to create report.")
+    }
+
+  }
+  catch (err) {
+    return res.sendStatus(400)
+  }
+
+
 });
 
 /**
@@ -202,10 +189,8 @@ reportRouter.post(
         headers: { "Content-Type": "multipart/form-data" },
       })
       .then((response) => {
-        response.then((res) => console.log("res", res));
       })
       .catch((error) => {
-        console.log(error);
       });
     // reportModel
     //   .postReports(req.body)
@@ -215,10 +200,8 @@ reportRouter.post(
     //       success: true,
     //       message: "Report added successfully",
     //     });
-    //     console.log("postReports ::>> res", userObj);
     //   })
     //   .catch((err) => {
-    //     console.log("postReports ::>> err ", err);
     //     res.json({
     //       data: err,
     //       success: false,

@@ -76,8 +76,6 @@ const adminModel = {
 
   // addCustomReport: (data) =>
   //   new Promise((resolve, reject) => {
-  //     console.log("Report data ::: >>>", data);
-  //     console.log(
   //       `INSERT INTO custom_report (first_name, last_name, email, dob, passport, sample_date, sample_time, result_date, result_time, order_id, result, test_name, test_manufacturer, test_authorization, test_description) VALUES (
   //         '${data.first_name}','${data.last_name}','${data.email}', '${data.dob}', '${data.passport}', '${data.sample_date}', '${data.sample_time}',  '${data.result_date}', '${data.result_time}' , '${data.order_id}', 'Completed', '${data.test_name}', '${data.test_manufacturer}', '${data.test_authorization}', '${data.test_description}'
   //       )`
@@ -89,10 +87,8 @@ const adminModel = {
   //       (err, res) => {
   //         if (res) {
   //           if (res.affectedRows > 0) {
-  //             console.log();
   //             return resolve(res);
   //           } else {
-  //             console.log("err", err);
   //             return reject(new Error("Something went wrong", err));
   //           }
   //         }
@@ -102,7 +98,6 @@ const adminModel = {
 
   adminLogin: (user) =>
     new Promise((resolve, reject) => {
-      console.log(user);
       con.query(
         `select * from users where email='${user.email}' AND roleId_fk = 2 LIMIT 1`,
         // `select * from users where email='${user.email}'`,
@@ -126,8 +121,6 @@ const adminModel = {
                   res[0].id,
                   refreshToken
                 );
-                console.log("res[0].id :: ", res[0].id);
-                console.log("session", session);
                 const payload = {
                   userId: session.userId,
                   sessionId: session.sessionId,
@@ -168,20 +161,15 @@ const adminModel = {
       con.query(
         `select * from users where email='${user.email}' LIMIT 1`,
         async (err, res) => {
-          console.log("first query run successfully");
           if (res !== undefined && res.length !== 0) {
             return reject(new Error("User already exists", err));
           } else {
             const hashedPassword = await mycrypto.encrypt(user.password);
-            console.log("hashedPassword", hashedPassword);
             const sql = `INSERT into users (first_name, last_name, email, mobile, password, roleid_fk, confirmed) values ('${user.fname}','${user.lname}','${user.email}','${user.mobile}','${hashedPassword}',2,1)`;
             con.query(sql, (err, res) => {
-              console.log("res", res);
-              console.log("sql run successfully", sql);
               if (res) {
                 return resolve(res);
               } else {
-                console.log("err", err);
                 return reject(new Error("Something went wrong", err));
               }
             });
@@ -198,7 +186,6 @@ const adminModel = {
           if (res) {
             return resolve(res);
           } else {
-            console.log("err", err);
             return reject(new Error("Something went wrong", err));
           }
         }
@@ -207,7 +194,6 @@ const adminModel = {
 
   generateQr: (qrObj) =>
     new Promise(async (resolve, reject) => {
-      console.log(qrObj);
       let generatedQr = [];
       for (let i = 0; i < qrObj.length; i++) {
         await QRCode.toDataURL(JSON.stringify(qrObj[i]), {
@@ -222,22 +208,17 @@ const adminModel = {
             generatedQr.push(url);
           })
           .catch((err) => {
-            console.error(err);
             return reject(err);
           });
       }
-      console.log("generatedQr :: >>", generatedQr);
       generatedQr.map((item) => {
-        console.log("item", item);
       });
       // con.query(
       //   `insert into qr_codes (qr_code) values ?`[generatedQr.map((i) => [i])],
       //   (err, res) => {
       //     if (res) {
-      //       console.log(res);
       //       return resolve(res);
       //     } else {
-      //       console.log("err", err);
       //       return reject(new Error("Something went wrong", err));
       //     }
       //   }

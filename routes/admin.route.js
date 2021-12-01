@@ -22,7 +22,6 @@ adminRouter.get("/all-reports", (req, res) => {
       });
     })
     .catch((err) => {
-      console.log("error", err);
       res.json({ data: res, success: false, message: err });
     });
 });
@@ -45,7 +44,6 @@ adminRouter.get("/all-users", (req, res) => {
       });
     })
     .catch((err) => {
-      console.log("error", err);
       res.json({ data: res, success: false, message: err });
     });
 });
@@ -68,7 +66,6 @@ adminRouter.get("/test", verifyToken, (req, res) => {
       });
     })
     .catch((err) => {
-      console.log("error", err);
       res.json({ data: res, success: false, message: err });
     });
 });
@@ -91,7 +88,6 @@ adminRouter.post("/add-custom-report", (req, res) => {
       });
     })
     .catch((err) => {
-      console.log("error", err);
       res.json({ data: res, success: false, message: err });
     });
 });
@@ -115,7 +111,6 @@ adminRouter.get("/report-detail/:id", (req, res) => {
       });
     })
     .catch((err) => {
-      console.log("error", err);
       res.json({ data: res, success: false, message: err });
     });
 });
@@ -130,7 +125,7 @@ adminRouter.get("/report-detail/:id", (req, res) => {
 adminRouter.post(
   "/login",
   [body("password").not().isEmpty(), body("email").not().isEmpty()],
-  (req, res) => {
+  async(req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       return res.status(422).jsonp(errors.array());
@@ -138,7 +133,6 @@ adminRouter.post(
       adminModel
         .adminLogin(req.body)
         .then((userObj) => {
-          console.log("login ::>> res", userObj);
           res.json({
             data: userObj.data,
             payload: userObj.payload,
@@ -147,9 +141,7 @@ adminRouter.post(
           });
         })
         .catch((err) => {
-          console.log("login ::>> err", err);
           if (err.valid === false) {
-            console.log("false");
             res.json({
               success: false,
               message: err.message,
@@ -190,7 +182,6 @@ adminRouter.post(
       adminModel
         .adminSignup(req.body)
         .then((userObj) => {
-          console.log("signup ::>> res", userObj);
           res.json({
             data: userObj.data,
             success: true,
@@ -198,9 +189,7 @@ adminRouter.post(
           });
         })
         .catch((err) => {
-          console.log("signup ::>> err", err);
           if (err.valid === false) {
-            console.log("false");
             res.json({
               success: false,
               message: err.message,
@@ -236,7 +225,6 @@ adminRouter.put(
       adminModel
         .updateReportStatus(req.body)
         .then((reportsObj) => {
-          console.log("update report status ::>> res", reportsObj);
           res.json({
             data: reportsObj.data,
             success: true,
@@ -244,9 +232,7 @@ adminRouter.put(
           });
         })
         .catch((err) => {
-          console.log("update report ::>> err", err);
           if (err.valid === false) {
-            console.log("false");
             res.json({
               success: false,
               message: err.message,
@@ -275,7 +261,6 @@ adminRouter.post("/generate-qr", (req, res) => {
   adminModel
     .generateQr(req.body)
     .then((userObj) => {
-      console.log("generate Qr ::>> res", userObj);
       res.json({
         data: userObj.data,
         success: true,
@@ -283,9 +268,7 @@ adminRouter.post("/generate-qr", (req, res) => {
       });
     })
     .catch((err) => {
-      console.log("generate Qr  ::>> err", err);
       if (err.valid === false) {
-        console.log("false");
         res.json({
           success: false,
           message: err.message,
