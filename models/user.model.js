@@ -20,7 +20,6 @@ const reportData = () => {
   console.log("Report All data using select with user");
 };
 
-
 const mycrypto = {
   encrypt: (password) => {
     const cipher = crypto.createCipher("aes192", process.env.HASH_KEY);
@@ -37,7 +36,6 @@ const mycrypto = {
     return decrypted;
   },
 };
-
 
 const userModel = {
   register: (user) =>
@@ -538,8 +536,8 @@ const userModel = {
             let image = res.image || "";
             if (file) {
               image = file.path;
-              image =
-                process.env.IMAGE + image.substring(image.indexOf("/") + 1);
+              // image =
+              //   process.env.IMAGE + image.substring(image.indexOf("/") + 1);
             }
             const firstName = userData.firstName || res.first_name || "";
             const lastName = userData.lastName || res.last_name || "";

@@ -340,7 +340,7 @@ userRouter.get(
 userRouter.put(
   "/profile/edit",
   verifyToken,
-  upload.single("profileImage"),
+  // upload.single("profileImage"),
   (req, res) => {
     console.log("in i dont know ");
     // console.log(upload.single("profileImage"));

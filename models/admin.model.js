@@ -211,8 +211,7 @@ const adminModel = {
             return reject(err);
           });
       }
-      generatedQr.map((item) => {
-      });
+      generatedQr.map((item) => {});
       // con.query(
       //   `insert into qr_codes (qr_code) values ?`[generatedQr.map((i) => [i])],
       //   (err, res) => {
