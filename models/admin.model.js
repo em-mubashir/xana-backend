@@ -98,15 +98,28 @@ const adminModel = {
 
   adminLogin: (user) =>
     new Promise((resolve, reject) => {
+      console.log(user);
+      console.log(
+        `select * from users where email='${user.email}' AND roleId_fk = 2 LIMIT 1`
+      );
       con.query(
         `select * from users where email='${user.email}' AND roleId_fk = 2 LIMIT 1`,
         // `select * from users where email='${user.email}'`,
         async (err, res) => {
+          console.log(err);
+          console.log(res);
           if (res) {
+            console.log("In if");
+            console.log(res);
+
             if (res.length !== 0) {
               const { password: hashedPassword } = res[0];
+              console.log("Hashed Password", hashedPassword);
               let validPass = 0;
               const decrypted = await mycrypto.decrypt(hashedPassword);
+              console.log("decrypted password", decrypted);
+              console.log("user entered password", user.password);
+
               if (decrypted === user.password) {
                 validPass = true;
               } else {
@@ -181,7 +194,7 @@ const adminModel = {
   updateReportStatus: (status) =>
     new Promise((resolve, reject) => {
       con.query(
-        `update reports set status = '${status.status}' where reportId = ${status.id}`,
+        `update test_info set result = '${status.result}' where id = ${status.id}`,
         (err, res) => {
           if (res) {
             return resolve(res);

@@ -555,7 +555,32 @@ const userModel = {
               ? await mycrypto.encrypt(userData.password || res.password)
               : res.password || "";
             const sql = `UPDATE users SET first_name='${firstName}',last_name='${lastName}',middle_name='${middleName}',mobile='${mobile}',password='${password}',image='${image}', address='${address}', dob='${dob}', passport_number=${passportNumber}, gender='${gender}', company='${company}' WHERE id='${userId}'`;
-            console.log("update query-->", sql);
+            console.log(
+              "**********************************************************************"
+            );
+            console.log(
+              "**********************************************************************"
+            );
+            console.log(
+              "**********************************************************************"
+            );
+            console.log(
+              "**********************************************************************"
+            );
+            console.log(sql);
+            console.log(
+              "**********************************************************************"
+            );
+            console.log(
+              "**********************************************************************"
+            );
+            console.log(
+              "**********************************************************************"
+            );
+            console.log(
+              "**********************************************************************"
+            );
+
             con.query(sql, (err, res) => {
               if (res) {
                 console.log(`Affected Rows: ${res.affectedRows}`.yellow.bold);

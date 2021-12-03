@@ -5,11 +5,11 @@ const multer = require("multer");
 const reportModel = require("../models/report.model");
 const sqlHelper = require("../helpers/sqlHeplers");
 const { verifyToken } = require("../middlewares/auth.middleware");
-const base64 = require('base64topdf');
-const fileSystemUtils = require('../utils/fileSystemUtils')
-const path = require('path')
-const fs = require('fs')
-PDFDocument = require('pdfkit');
+const base64 = require("base64topdf");
+const fileSystemUtils = require("../utils/fileSystemUtils");
+const path = require("path");
+const fs = require("fs");
+PDFDocument = require("pdfkit");
 // multer file store start
 const storage = multer.diskStorage({
   destination(req, file, cb) {
@@ -45,32 +45,33 @@ const upload = multer({
 
 reportRouter.post("/send-custom-report", async (req, res) => {
   try {
-
-
     var base64Data = req.body.img.replace(/^data:image\/png;base64,/, "");
-    const dirPath = path.join(__dirname, '../uploads/')
-    const fileName = 'out.png'
-    const pdfName = 'out.pdf'
+    const dirPath = path.join(__dirname, "../uploads/");
+    const fileName = "out.png";
+    const pdfName = "out.pdf";
     const reportImagePath = dirPath + fileName;
     const reportPdfPath = dirPath + pdfName;
 
-    await fileSystemUtils.writeFileAsync(reportImagePath, base64Data, 'base64');
-    doc = new PDFDocument
-    doc.pipe(fs.createWriteStream(reportPdfPath))
+    await fileSystemUtils.writeFileAsync(reportImagePath, base64Data, "base64");
+    doc = new PDFDocument();
+    doc.pipe(fs.createWriteStream(reportPdfPath));
     doc.image(reportImagePath, {
       fit: [600, 400],
-      align: 'center',
-      valign: 'center'
+      align: "center",
+      valign: "center",
     });
-    doc.end()
+    doc.end();
 
-    const result = await reportModel.sendCustomReport(reportImagePath, reportPdfPath);
-    res.send(result)
+    const result = await reportModel.sendCustomReport(
+      reportImagePath,
+      reportPdfPath,
+      req.body.userEmail
+    );
+    res.send(result);
   } catch (err) {
-    console.log(err.stack)
-    return res.sendStatus(400)
+    console.log(err.stack);
+    return res.sendStatus(400);
   }
-
 });
 
 /**
@@ -155,24 +156,19 @@ reportRouter.get("/", verifyToken, (req, res) => {
  */
 reportRouter.post("/add-custom-report", async (req, res) => {
   try {
-    const reportsObj = await reportModel.addCustomReport(req.body)
+    const reportsObj = await reportModel.addCustomReport(req.body);
     if (reportsObj.affectedRows) {
       return res.json({
         data: reportsObj,
         success: true,
         message: "Report data inserted successfully",
-      })
+      });
+    } else {
+      throw new err("Failed to create report.");
     }
-    else {
-      throw new err("Failed to create report.")
-    }
-
+  } catch (err) {
+    return res.sendStatus(400);
   }
-  catch (err) {
-    return res.sendStatus(400)
-  }
-
-
 });
 
 /**
@@ -199,10 +195,8 @@ reportRouter.post(
         data: bodyFormData,
         headers: { "Content-Type": "multipart/form-data" },
       })
-      .then((response) => {
-      })
-      .catch((err) => {
-      });
+      .then((response) => {})
+      .catch((err) => {});
     // reportModel
     //   .postReports(req.body)
     //   .then((userObj) => {

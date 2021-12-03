@@ -125,7 +125,7 @@ adminRouter.get("/report-detail/:id", (req, res) => {
 adminRouter.post(
   "/login",
   [body("password").not().isEmpty(), body("email").not().isEmpty()],
-  async(req, res) => {
+  async (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       return res.status(422).jsonp(errors.array());
@@ -216,7 +216,7 @@ adminRouter.post(
  */
 adminRouter.put(
   "/update-report-status",
-  [body("status").not().isEmpty(), body("id").not().isEmpty()],
+  [body("result").not().isEmpty(), body("id").not().isEmpty()],
   (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {

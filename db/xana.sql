@@ -181,14 +181,14 @@ CREATE TABLE `users` (
 INSERT INTO `users` (`id`, `first_name`, `last_name`, `middle_name`, `email`, `mobile`, `passport_number`, `gender`, `company`, `password`, `roleId_fk`, `address`, `image`, `code`, `confirmed`, `dob`) VALUES
 (3, 'Salman Ahmed', '', NULL, 'salman123@gmail.com', NULL, 0, '', '', NULL, 1, NULL, NULL, NULL, 0, NULL),
 (4, 'Abdul Rafay', '', NULL, 'rafay@gmail.com', NULL, 0, '', '', NULL, 1, NULL, NULL, NULL, 0, NULL),
-(95, 'Salman', 'Usmani', '', 'salman090898@gmail.com', '', 0, 'null', '', '', 1, '', 'http://35.153.58.173:5000/uploads/profileImages/test-1638039570353image.png', 'null', 1, '2021-11-27'),
+(95, 'Salman', 'Usmani', '', 'salman090898@gmail.com', '', 0, 'null', '', '', 1, '', 'http://192.168.18.62:5000/uploads/profileImages/test-1638039570353image.png', 'null', 1, '2021-11-27'),
 (97, 'shan', 'ahdsb', NULL, 'jeefugwepwjjukhlxo@mrvpm.net', '12345678910', NULL, NULL, NULL, 'ababb607febee496edff2895f76343ce', 1, 'null', 'null', NULL, 1, NULL),
-(98, 'get', 'setgo', '', 'getsetgo.gsg3@gmail.com', 'null', 0, 'Male ', 'null', '', 1, 'null', 'http://35.153.58.173:5000/uploads/profileImages/test-1638341165535image.png', 'null', 1, '2021-12-01'),
-(100, 'Tetsing', 'Account', '', 'wawolav329@terasd.com', '2136458793354', 213767675, 'Female ', 'codistan', '', 1, 'House no g74 FFC township mirpur mathelo,ghotki', 'http://35.153.58.173:5000/uploads/profileImages/test-1638254691299image.png', 'null', 1, '2021-11-30'),
+(98, 'get', 'setgo', '', 'getsetgo.gsg3@gmail.com', 'null', 0, 'Male ', 'null', '', 1, 'null', 'http://192.168.18.62:5000/uploads/profileImages/test-1638341165535image.png', 'null', 1, '2021-12-01'),
+(100, 'Tetsing', 'Account', '', 'wawolav329@terasd.com', '2136458793354', 213767675, 'Female ', 'codistan', '', 1, 'House no g74 FFC township mirpur mathelo,ghotki', 'http://192.168.18.62:5000/uploads/profileImages/test-1638254691299image.png', 'null', 1, '2021-11-30'),
 (101, 'waseem', 'khan', NULL, 'mwaseemkha@gmail.com', 'null', NULL, NULL, NULL, 'null', 1, 'null', 'null', 'null', 1, NULL),
-(102, 'Testing', 'Account', '', 'farhanaaijaz76@gmail.com', '30254043634', 394808, 'Female ', 'Gjajanxnm', '', 1, 'Hdjdjnz hsis 537  gsjsn', 'http://35.153.58.173:5000/uploads/profileImages/test-1638337557572image.png', NULL, 1, '2016-11-30'),
-(103, 'Ahmed', '', '', 'cetam60992@tinydef.com', '2134997986868', NULL, 'Female ', 'null', '', 1, 'null', 'http://35.153.58.173:5000/uploads/profileImages/test-1638256771871image.png', 'null', 1, '2021-11-30'),
-(109, 'syed', 'talha', '', 'syedtalha0305@gmail.com', '546499497', 0, 'Female ', '', '', 1, 'House no 12 street 5 ', 'http://35.153.58.173:5000/uploads/profileImages/test-1638340771915image.png', 'null', 1, '2021-12-01'),
+(102, 'Testing', 'Account', '', 'farhanaaijaz76@gmail.com', '30254043634', 394808, 'Female ', 'Gjajanxnm', '', 1, 'Hdjdjnz hsis 537  gsjsn', 'http://192.168.18.62:5000/uploads/profileImages/test-1638337557572image.png', NULL, 1, '2016-11-30'),
+(103, 'Ahmed', '', '', 'cetam60992@tinydef.com', '2134997986868', NULL, 'Female ', 'null', '', 1, 'null', 'http://192.168.18.62:5000/uploads/profileImages/test-1638256771871image.png', 'null', 1, '2021-11-30'),
+(109, 'syed', 'talha', '', 'syedtalha0305@gmail.com', '546499497', 0, 'Female ', '', '', 1, 'House no 12 street 5 ', 'http://192.168.18.62:5000/uploads/profileImages/test-1638340771915image.png', 'null', 1, '2021-12-01'),
 (110, 'Beenish', 'Khan', NULL, 'beenishkhan603@gmail.com', '03046809932', NULL, NULL, NULL, '8e3831751f239bd6ce7e49922fb271e8', 2, 'null', 'null', 'null', 1, NULL);
 
 -- --------------------------------------------------------

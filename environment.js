@@ -11,6 +11,8 @@ dbPort = 3306;
 dbConnections = 10;
 dbUser = "root";
 dbPassword = "root";
+// dbUser = "codistanxana";
+// dbPassword = "Codistan@132";
 
 module.exports = {
   dbHost,
