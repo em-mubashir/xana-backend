@@ -71,6 +71,28 @@ adminRouter.get("/test", verifyToken, (req, res) => {
 });
 
 /**
+ * Get All test
+ * @returns testObj
+ * @type GET
+ * @required access_token
+ * @route [http://192.168.18.14/api/admin/all-reports]
+ */
+adminRouter.get("/customreport", verifyToken, (req, res) => {
+  adminModel
+    .getAllCustomReport()
+    .then((reportsObj) => {
+      res.json({
+        data: reportsObj,
+        success: true,
+        message: "Got all custom reports successfully",
+      });
+    })
+    .catch((err) => {
+      res.json({ data: res, success: false, message: err });
+    });
+});
+
+/**
  * Add custom report
  * @returns reportObj
  * @type GET
@@ -228,7 +250,50 @@ adminRouter.put(
           res.json({
             data: reportsObj.data,
             success: true,
-            message: "Status updated  successfully",
+            message: "Test Result Status Updated Successfully",
+          });
+        })
+        .catch((err) => {
+          if (err.valid === false) {
+            res.json({
+              success: false,
+              message: err.message,
+            });
+          } else {
+            res.json({
+              data: err,
+              success: false,
+              message: err.message,
+            });
+          }
+        });
+    }
+  }
+);
+
+/**
+ * Update report status
+ * @type PUT
+ * @retuns reportsObj
+ * @params status,id
+ * @required accessToken
+ * @route [http://192.168.18.62/api/admin/update-report-status]
+ */
+adminRouter.put(
+  "/update-custom-report-status",
+  [body("result").not().isEmpty(), body("id").not().isEmpty()],
+  (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(422).jsonp(errors.array());
+    } else {
+      adminModel
+        .updateCustomReportStatus(req.body)
+        .then((reportsObj) => {
+          res.json({
+            data: reportsObj.data,
+            success: true,
+            message: "Custom Report Status Updated Successfully",
           });
         })
         .catch((err) => {

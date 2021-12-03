@@ -23,6 +23,7 @@ const mycrypto = {
     const decipher = crypto.createDecipher("aes192", process.env.HASH_KEY);
     let decrypted = decipher.update(`${hashed}`, "hex", "utf8");
     decrypted += decipher.final("utf8");
+
     return decrypted;
   },
 };
@@ -41,6 +42,17 @@ const adminModel = {
   getAllTest: () =>
     new Promise((resolve, reject) => {
       con.query(`select * from test_info`, (err, res) => {
+        if (err) {
+          return reject(err);
+        } else {
+          return resolve(res);
+        }
+      });
+    }),
+
+  getAllCustomReport: () =>
+    new Promise((resolve, reject) => {
+      con.query(`select * from custom_report`, (err, res) => {
         if (err) {
           return reject(err);
         } else {
@@ -195,6 +207,20 @@ const adminModel = {
     new Promise((resolve, reject) => {
       con.query(
         `update test_info set result = '${status.result}' where id = ${status.id}`,
+        (err, res) => {
+          if (res) {
+            return resolve(res);
+          } else {
+            return reject(new Error("Something went wrong", err));
+          }
+        }
+      );
+    }),
+
+  updateCustomReportStatus: (status) =>
+    new Promise((resolve, reject) => {
+      con.query(
+        `update custom_report set result = '${status.result}' where custom_report_id = ${status.id}`,
         (err, res) => {
           if (res) {
             return resolve(res);
