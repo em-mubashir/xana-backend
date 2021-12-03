@@ -84,7 +84,7 @@ testRouter.post(
  * @required access_token
  * @route [http://192.168.18.62/api/reports/user]
  */
-testRouter.put("/upload-test-image", upload.single("testImage"), (req, res) => {
+testRouter.put("/upload-test-image", (req, res) => {
   console.log(req);
   console.log(req.body);
   testModel
@@ -94,6 +94,22 @@ testRouter.put("/upload-test-image", upload.single("testImage"), (req, res) => {
       res
         .status(200)
         .send({ success: true, message: "Image uploaded successfully" });
+    })
+    .catch((err) => {
+      res.status(500).send({ success: false, message: err });
+    });
+});
+
+testRouter.put("/upload-test-video", (req, res) => {
+  console.log(req);
+  console.log(req.body);
+  testModel
+    .saveVideo(req.body.video, req.body.testId)
+    .then((fileObj) => {
+      console.log("Video stored ", fileObj);
+      res
+        .status(200)
+        .send({ success: true, message: "Video uploaded successfully" });
     })
     .catch((err) => {
       res.status(500).send({ success: false, message: err });

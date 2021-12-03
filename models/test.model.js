@@ -31,7 +31,7 @@ const testModel = {
       console.log("dateeeeeeeeeeeeeeeee", newdate);
 
       con.query(
-        `INSERT INTO test_info (userId, test_name, test_manufacturer, test_description, test_performance, test_authorisation, date_register, date_conduct, qr_id  ) VALUES ('${userId}', '${testObj.testName}','${testObj.Manufacturer}', '${testObj.Description}', '${testObj.Performance}', '${testObj.Authorisation}','${newdate}','${newdate}','${testObj.qrId}')`,
+        `INSERT INTO test_info (userId, test_name, test_manufacturer,test_image, test_description, test_performance, test_authorisation, date_register, date_conduct, qr_id ,video ) VALUES ('${userId}', '${testObj.testName}','${testObj.Manufacturer}','${testObj.test_image}', '${testObj.Description}', '${testObj.Performance}', '${testObj.Authorisation}','${newdate}','${newdate}','${testObj.qrId}','${testObj.video}')`,
         (err, res) => {
           if (res) {
             if (res.affectedRows > 0) {
@@ -49,15 +49,30 @@ const testModel = {
     new Promise((resolve, reject) => {
       console.log("save image", path, id);
       con.query(
-        `UPDATE test_info set test_image = '${
-          process.env.IMAGE + path
-        }' where id=${id}`,
+        `UPDATE test_info set test_image = '${path}' where id=${id}`,
 
         (err, res) => {
           console.log(
-            `UPDATE test_info set test_image = '${
-              process.env.IMAGE + path
-            }' where id=${id}`
+            `UPDATE test_info set test_image = '${path}' where id=${id}`
+          );
+          if (err) {
+            console.log("error", err);
+            return reject(new Error(err));
+          } else {
+            return resolve(res);
+          }
+        }
+      );
+    }),
+  saveVideo: (path, id) =>
+    new Promise((resolve, reject) => {
+      console.log("save image", path, id);
+      con.query(
+        `UPDATE test_info set video = '${path}' where id=${id}`,
+
+        (err, res) => {
+          console.log(
+            `UPDATE test_info set test_image = '${path}' where id=${id}`
           );
           if (err) {
             console.log("error", err);

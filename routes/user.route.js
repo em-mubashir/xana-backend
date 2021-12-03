@@ -38,12 +38,7 @@ const upload = multer({
 
 userRouter.post("/getreporturl", (req, res) => {
   userModel
-    .getReportUrl(
-      req.body.userId,
-      req.body.testId,
-      req.body.QrId,
-      req.body.Result
-    )
+    .getReportUrl(req.body.testId)
     .then((repObj) => {
       res.json({
         data: repObj,
