@@ -38,12 +38,7 @@ const upload = multer({
 
 userRouter.post("/getreporturl", (req, res) => {
   userModel
-    .getReportUrl(
-      req.body.userId,
-      req.body.testId,
-      req.body.QrId,
-      req.body.Result
-    )
+    .getReportUrl(req.body.testId)
     .then((repObj) => {
       res.json({
         data: repObj,
@@ -337,37 +332,32 @@ userRouter.get(
  * @required access_token
  * @route [http://192.168.18.62/api/user/profile/edit]
  */
-userRouter.put(
-  "/profile/edit",
-  verifyToken,
-  // upload.single("profileImage"),
-  (req, res) => {
-    console.log("in i dont know ");
-    // console.log(upload.single("profileImage"));
-    // console.log(req);
-    userModel
-      .updateProfile(req.user, req.body, req.file)
-      .then((userObj) => {
-        console.log("in updATE PROFILE");
+userRouter.put("/profile/edit", verifyToken, (req, res) => {
+  console.log("in i dont know ");
+  // console.log(upload.single("profileImage"));
+  console.log(req);
+  userModel
+    .updateProfile(req.user, req.body, req.file)
+    .then((userObj) => {
+      console.log("in updATE PROFILE");
 
-        res.json({
-          success: true,
-          message: "User updated successfully",
-        });
-        console.log("UpdateProfile ::>> res", userObj);
-      })
-      .catch((err) => {
-        console.log("IN PROFILE UPDATE ASDASDASDSAD");
-        console.log("UpdateProfile ::>> err", err);
-        // console.log(sqlHelper.consoleSQLException(err))
-        res.json({
-          data: err,
-          success: false,
-          message: err.message,
-        });
+      res.json({
+        success: true,
+        message: "User updated successfully",
       });
-  }
-);
+      console.log("UpdateProfile ::>> res", userObj);
+    })
+    .catch((err) => {
+      console.log("IN PROFILE UPDATE ASDASDASDSAD");
+      console.log("UpdateProfile ::>> err", err);
+      // console.log(sqlHelper.consoleSQLException(err))
+      res.json({
+        data: err,
+        success: false,
+        message: err.message,
+      });
+    });
+});
 
 /**
  * Forgot password

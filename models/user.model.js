@@ -438,6 +438,8 @@ const userModel = {
       con.query(
         `select * from users where email='${user.email}' LIMIT 1`,
         async (err, res) => {
+          console.log(err);
+          console.log(res);
           if (res) {
             if (res.length !== 0) {
               const accessToken = await signJwt({ payload: res[0].id });
@@ -491,22 +493,22 @@ const userModel = {
       }
     }),
 
-  getReportUrl: (userId, testId, QrId, Result) =>
+  getReportUrl: (testId) =>
     new Promise((resolve, reject) => {
       reportData();
-      console.log(
-        `SELECT test_info.id, users.first_name, users.last_name, users.dob, users.passport_number, test_info.test_name, test_info.test_description, test_info.test_performance, test_info.test_authorisation, test_info.date_register, test_info.date_conduct
-        FROM test_info
-        INNER JOIN users
-        ON test_info.userId= ${userId}
-        WHERE test_info.id = ${testId} LIMIT 1;
-        `
-      );
+      // console.log(
+      //   `SELECT test_info.id, users.first_name, users.last_name, users.dob, users.passport_number, test_info.test_name, test_info.test_description, test_info.test_performance, test_info.test_authorisation, test_info.date_register, test_info.date_conduct
+      //   FROM test_info
+      //   INNER JOIN users
+      //   ON test_info.userId= ${userId}
+      //   WHERE test_info.id = ${testId} LIMIT 1;
+      //   `
+      // );
       con.query(
         `SELECT test_info.id, users.first_name, users.last_name, users.dob, users.passport_number, test_info.test_name, test_info.test_description, test_info.test_performance, test_info.test_authorisation, test_info.date_register, test_info.date_conduct
       FROM test_info
       INNER JOIN users
-      ON test_info.userId= ${userId}
+      ON test_info.userId= users.id
       WHERE test_info.id = ${testId} LIMIT 1;
       `,
         async (err, res) => {
