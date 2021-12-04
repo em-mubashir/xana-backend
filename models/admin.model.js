@@ -11,22 +11,55 @@ const {
 const sessionModel = require("./session.model");
 require("colors");
 
+const iv = crypto.randomBytes(16);
 const mycrypto = {
+  // encrypt: (password) => {
+  //   const cipher = crypto.createCipher("aes192", process.env.HASH_KEY);
+  //   let hashedPassword = cipher.update(`${password}`, "utf8", "hex");
+  //   hashedPassword += cipher.final("hex");
+  //   return hashedPassword;
+  // },
   encrypt: (password) => {
-    const cipher = crypto.createCipher("aes192", process.env.HASH_KEY);
-    let hashedPassword = cipher.update(`${password}`, "utf8", "hex");
-    hashedPassword += cipher.final("hex");
-    return hashedPassword;
+    const cipher = crypto.createCipheriv(
+      "aes-256-ctr",
+      process.env.HASH_KEY,
+      iv
+    );
+    let hashedPassword = Buffer.concat([
+      cipher.update(password),
+      cipher.final(),
+    ]);
+    return hashedPassword.toString("hex");
+    // return {
+    //   iv: iv.toString("hex"),
+    //   hashedPassword: hashedPassword.toString("hex"),
+    // };
   },
 
-  decrypt: (hashed) => {
-    const decipher = crypto.createDecipher("aes192", process.env.HASH_KEY);
-    let decrypted = decipher.update(`${hashed}`, "hex", "utf8");
-    decrypted += decipher.final("utf8");
+  // decrypt: (hashed) => {
+  //   const decipher = crypto.createDecipher("aes192", process.env.HASH_KEY);
+  //   let decrypted = decipher.update(`${hashed}`, "hex", "utf8");
+  //   decrypted += decipher.final("utf8");
 
-    return decrypted;
+  //   return decrypted;
+  // },
+  decrypt: (hashed) => {
+    const decipher = crypto.createDecipheriv(
+      "aes-256-ctr",
+      process.env.HASH_KEY,
+      iv
+      // Buffer.from(hashed.iv, "hex")
+    );
+    let decrypted = Buffer.concat([
+      decipher.update(Buffer.from(hashed, "hex")),
+      // decipher.update(Buffer.from(hashed.hashedPassword, "hex")),
+      decipher.final(),
+    ]);
+
+    return decrypted.toString();
   },
 };
+
 const adminModel = {
   getAllReports: () =>
     new Promise((resolve, reject) => {
