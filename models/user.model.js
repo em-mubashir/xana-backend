@@ -523,7 +523,7 @@ const userModel = {
       );
     }),
 
-  updateProfile: (userId, userData, file) =>
+  updateProfile: (userId, userData) =>
     new Promise(async (resolve, reject) => {
       // User validation Check
       con.query(
@@ -535,12 +535,12 @@ const userModel = {
           } else if (err) {
             return reject(new Error("Something went wrong --- ", err));
           } else {
-            let image = res.image || "";
-            if (file) {
-              image = file.path;
-              // image =
-              //   process.env.IMAGE + image.substring(image.indexOf("/") + 1);
-            }
+            let image =userData.profileImage || res.image || "";
+            // if (file) {
+            //   image = file.path;
+            //   // image =
+            //   //   process.env.IMAGE + image.substring(image.indexOf("/") + 1);
+            // }
             const firstName = userData.firstName || res.first_name || "";
             const lastName = userData.lastName || res.last_name || "";
             const middleName = userData.middleName || res.middle_name || "";

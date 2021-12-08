@@ -338,7 +338,7 @@ userRouter.put(
   // upload.single("profileImage"),
   (req, res) => {
     userModel
-      .updateProfile(req.user, req.body, req.file)
+      .updateProfile(req.user, req.body)
       .then((userObj) => {
         console.log("in updATE PROFILE");
 
