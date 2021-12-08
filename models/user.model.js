@@ -496,14 +496,7 @@ const userModel = {
   getReportUrl: (testId) =>
     new Promise((resolve, reject) => {
       reportData();
-      // console.log(
-      //   `SELECT test_info.id, users.first_name, users.last_name, users.dob, users.passport_number, test_info.test_name, test_info.test_description, test_info.test_performance, test_info.test_authorisation, test_info.date_register, test_info.date_conduct
-      //   FROM test_info
-      //   INNER JOIN users
-      //   ON test_info.userId= ${userId}
-      //   WHERE test_info.id = ${testId} LIMIT 1;
-      //   `
-      // );
+
       con.query(
         `SELECT test_info.id, users.first_name, users.last_name, users.dob, users.passport_number, test_info.test_name, test_info.test_description, test_info.test_performance, test_info.test_authorisation, test_info.date_register, test_info.date_conduct
       FROM test_info

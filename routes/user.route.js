@@ -33,9 +33,15 @@ const upload = multer({
   },
   fileFilter: fileFilter,
 });
-
 // multer file store ends
 
+/**
+ * Get Report URL
+ * @returns userObj
+ * @type POST
+ * @params testId
+ * @route [http://192.168.18.62/api/user/getreporturl]
+ */
 userRouter.post("/getreporturl", (req, res) => {
   userModel
     .getReportUrl(req.body.testId)
@@ -48,6 +54,33 @@ userRouter.post("/getreporturl", (req, res) => {
     })
     .catch((err) => {
       console.log("Get report url ::>> err", err);
+      res.json({
+        data: err,
+        success: false,
+        message: err.message,
+      });
+    });
+});
+
+/**
+ * Get Report URL
+ * @returns userObj
+ * @type POST
+ * @params testId
+ * @route [http://192.168.18.62/api/user/get-qrid]
+ */
+userRouter.get("/get-qrid", (req, res) => {
+  userModel
+    .getQrId(req.body.testId)
+    .then((repObj) => {
+      res.json({
+        data: repObj,
+        success: true,
+        message: "QR-ID found",
+      });
+    })
+    .catch((err) => {
+      console.log("QR-ID ::>> err", err);
       res.json({
         data: err,
         success: false,
