@@ -548,23 +548,7 @@ const userModel = {
       );
     }),
 
-  getQrId: (testId) =>
-    new Promise((resolve, reject) => {
-      con.query(
-        `SELECT qr_id FROM test_info WHERE id = ${testId};`,
-        async (err, res) => {
-          console.log(res);
-          if (res.length) {
-            return resolve(res);
-          } else {
-            console.log("err", err);
-            return reject(new Error("No QR_ID found", err));
-          }
-        }
-      );
-    }),
-
-  updateProfile: (userId, userData, file) =>
+  updateProfile: (userId, userData) =>
     new Promise(async (resolve, reject) => {
       // User validation Check
       con.query(
@@ -576,12 +560,12 @@ const userModel = {
           } else if (err) {
             return reject(new Error("Something went wrong --- ", err));
           } else {
-            let image = res.image || "";
-            if (file) {
-              image = file.path;
-              // image =
-              //   process.env.IMAGE + image.substring(image.indexOf("/") + 1);
-            }
+            let image =userData.profileImage || res.image || "";
+            // if (file) {
+            //   image = file.path;
+            //   // image =
+            //   //   process.env.IMAGE + image.substring(image.indexOf("/") + 1);
+            // }
             const firstName = userData.firstName || res.first_name || "";
             const lastName = userData.lastName || res.last_name || "";
             const middleName = userData.middleName || res.middle_name || "";
