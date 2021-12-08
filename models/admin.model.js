@@ -1,6 +1,8 @@
 const con = require("../config/mysql");
-const crypto = require("crypto");
+// const crypto = require("crypto");
 const QRCode = require("qrcode");
+
+const bcrypt = require("bcryptjs");
 
 const {
   signJwt,
@@ -9,55 +11,74 @@ const {
 } = require("../helpers/jwt.helpers");
 
 const sessionModel = require("./session.model");
+const { dbPassword } = require("../environment");
 require("colors");
 
-const iv = crypto.randomBytes(16);
+// const iv = crypto.randomBytes(16);
 const mycrypto = {
+  funcHashPassword: async (password) => {
+    const hashPassword = await bcrypt.hash(password, 12);
+    if (hashPassword) {
+      return hashPassword;
+    } else {
+      return null;
+    }
+  },
+
+  funcComparePassword: async (reqBodyPassword, dbPassword) => {
+    const verifiedPassword = await bcrypt.compare(reqBodyPassword, dbPassword);
+    if (verifiedPassword) {
+      return verifiedPassword;
+    } else {
+      return false;
+    }
+  },
+
   // encrypt: (password) => {
   //   const cipher = crypto.createCipher("aes192", process.env.HASH_KEY);
   //   let hashedPassword = cipher.update(`${password}`, "utf8", "hex");
   //   hashedPassword += cipher.final("hex");
   //   return hashedPassword;
   // },
-  encrypt: (password) => {
-    const cipher = crypto.createCipheriv(
-      "aes-256-ctr",
-      process.env.HASH_KEY,
-      iv
-    );
-    let hashedPassword = Buffer.concat([
-      cipher.update(password),
-      cipher.final(),
-    ]);
-    return hashedPassword.toString("hex");
-    // return {
-    //   iv: iv.toString("hex"),
-    //   hashedPassword: hashedPassword.toString("hex"),
-    // };
-  },
-
+  // ******************************************************************************
+  // encrypt: (password) => {
+  //   const cipher = crypto.createCipheriv(
+  //     "aes-256-ctr",
+  //     process.env.HASH_KEY,
+  //     iv
+  //   );
+  //   let hashedPassword = Buffer.concat([
+  //     cipher.update(password),
+  //     cipher.final(),
+  //   ]);
+  //   return hashedPassword.toString("hex");
+  // return {
+  //   iv: iv.toString("hex"),
+  //   hashedPassword: hashedPassword.toString("hex"),
+  // };
+  // },
+  // ******************************************************************************************************************************************
   // decrypt: (hashed) => {
   //   const decipher = crypto.createDecipher("aes192", process.env.HASH_KEY);
   //   let decrypted = decipher.update(`${hashed}`, "hex", "utf8");
   //   decrypted += decipher.final("utf8");
-
   //   return decrypted;
   // },
-  decrypt: (hashed) => {
-    const decipher = crypto.createDecipheriv(
-      "aes-256-ctr",
-      process.env.HASH_KEY,
-      iv
-      // Buffer.from(hashed.iv, "hex")
-    );
-    let decrypted = Buffer.concat([
-      decipher.update(Buffer.from(hashed, "hex")),
-      // decipher.update(Buffer.from(hashed.hashedPassword, "hex")),
-      decipher.final(),
-    ]);
-
-    return decrypted.toString();
-  },
+  // ******************************************************************************
+  // decrypt: (hashed) => {
+  //   const decipher = crypto.createDecipheriv(
+  //     "aes-256-ctr",
+  //     process.env.HASH_KEY,
+  //     iv
+  //     // Buffer.from(hashed.iv, "hex")
+  //   );
+  //   let decrypted = Buffer.concat([
+  //     decipher.update(Buffer.from(hashed, "hex")),
+  //     // decipher.update(Buffer.from(hashed.hashedPassword, "hex")),
+  //     decipher.final(),
+  //   ]);
+  //   return decrypted.toString();
+  // },
 };
 
 const adminModel = {
@@ -161,11 +182,20 @@ const adminModel = {
               const { password: hashedPassword } = res[0];
               console.log("Hashed Password", hashedPassword);
               let validPass = 0;
-              const decrypted = await mycrypto.decrypt(hashedPassword);
-              console.log("decrypted password", decrypted);
+              // const decrypted = await mycrypto.decrypt(hashedPassword);
+              const verifiedCompare = await mycrypto.funcComparePassword(
+                user.password,
+                hashedPassword
+              );
+              console.log("Verified password", verifiedCompare);
               console.log("user entered password", user.password);
 
-              if (decrypted === user.password) {
+              // if (decrypted === user.password) {
+              //   validPass = true;
+              // } else {
+              //   validPass = false;
+              // }
+              if (verifiedCompare) {
                 validPass = true;
               } else {
                 validPass = false;
@@ -209,11 +239,6 @@ const adminModel = {
       );
     }),
 
-  // addReportAdmin: (user)=> new Promise((resolve, reject)) => {con.query(
-  //   const sql = `INSERT into custom_report (first_name, last_name, dob, mobile, password, roleid_fk, confirmed) values ('${user.fname}','${user.lname}','${user.email}','${user.mobile}','${hashedPassword}',2,1)`;
-
-  // )},
-
   adminSignup: (user) =>
     new Promise((resolve, reject) => {
       con.query(
@@ -222,7 +247,10 @@ const adminModel = {
           if (res !== undefined && res.length !== 0) {
             return reject(new Error("User already exists", err));
           } else {
-            const hashedPassword = await mycrypto.encrypt(user.password);
+            // const hashedPassword = await mycrypto.encrypt(user.password);
+            const hashedPassword = await mycrypto.funcHashPassword(
+              user.password
+            );
             const sql = `INSERT into users (first_name, last_name, email, mobile, password, roleid_fk, confirmed) values ('${user.fname}','${user.lname}','${user.email}','${user.mobile}','${hashedPassword}',2,1)`;
             con.query(sql, (err, res) => {
               if (res) {

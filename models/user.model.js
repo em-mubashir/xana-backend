@@ -3,6 +3,8 @@ const crypto = require("crypto");
 const jwt = require("jsonwebtoken");
 var nodemailer = require("nodemailer");
 
+const bcrypt = require("bcryptjs");
+
 var fs = require("fs");
 var path = require("path");
 
@@ -21,19 +23,37 @@ const reportData = () => {
 };
 
 const mycrypto = {
-  encrypt: (password) => {
-    const cipher = crypto.createCipher("aes192", process.env.HASH_KEY);
-    let hashedPassword = cipher.update(`${password}`, "utf8", "hex");
-    hashedPassword += cipher.final("hex");
-    return hashedPassword;
+  // encrypt: (password) => {
+  //   const cipher = crypto.createCipher("aes192", process.env.HASH_KEY);
+  //   let hashedPassword = cipher.update(`${password}`, "utf8", "hex");
+  //   hashedPassword += cipher.final("hex");
+  //   return hashedPassword;
+  // },
+
+  // decrypt: (hashed) => {
+  //   const decipher = crypto.createDecipher("aes192", process.env.HASH_KEY);
+  //   let decrypted = decipher.update(`${hashed}`, "hex", "utf8");
+  //   decrypted += decipher.final("utf8");
+
+  //   return decrypted;
+  // },
+
+  funcHashPassword: async (password) => {
+    const hashPassword = await bcrypt.hash(password, 12);
+    if (hashPassword) {
+      return hashPassword;
+    } else {
+      return null;
+    }
   },
 
-  decrypt: (hashed) => {
-    const decipher = crypto.createDecipher("aes192", process.env.HASH_KEY);
-    let decrypted = decipher.update(`${hashed}`, "hex", "utf8");
-    decrypted += decipher.final("utf8");
-
-    return decrypted;
+  funcComparePassword: async (reqBodyPassword, dbPassword) => {
+    const verifiedPassword = await bcrypt.compare(reqBodyPassword, dbPassword);
+    if (verifiedPassword) {
+      return verifiedPassword;
+    } else {
+      return false;
+    }
   },
 };
 
@@ -49,7 +69,10 @@ const userModel = {
             return reject(new Error("User already exists", err));
           } else {
             // const hashedPassword = await bcrypt.hash(`${user.password}`, 10);
-            const hashedPassword = await mycrypto.encrypt(user.password);
+            // const hashedPassword = await mycrypto.encrypt(user.password);
+            const hashedPassword = await mycrypto.funcHashPassword(
+              user.password
+            );
             console.log("hashedPassword", hashedPassword);
             const sql = `INSERT into users (first_name,last_name, email, mobile, password, roleId_fk) values ('${user.firstName}','${user.lastName}','${user.email}','${user.mobile}','${hashedPassword}',1)`;
             con.query(sql, async (err, res) => {
@@ -377,9 +400,18 @@ const userModel = {
               //   hashedPassword
               // );
               let validPass = 0;
-              const decrypted = await mycrypto.decrypt(hashedPassword);
+              // const decrypted = await mycrypto.decrypt(hashedPassword);
+              const verifiedCompare = await mycrypto.funcComparePassword(
+                user.password,
+                hashedPassword
+              );
 
-              if (decrypted === user.password) {
+              // if (decrypted === user.password) {
+              //   validPass = true;
+              // } else {
+              //   validPass = false;
+              // }
+              if (verifiedCompare) {
                 validPass = true;
               } else {
                 validPass = false;
@@ -770,7 +802,7 @@ const userModel = {
     await new Promise(async (resolve, reject) => {
       console.log("password", password);
       console.log("userId", userId);
-      const hashedPassword = await mycrypto.encrypt(password);
+      const hashedPassword = await mycrypto.funcHashPassword(password);
       // await bcrypt.hash(`${password}`, 10);
       con.query(
         `select * from users where id='${userId}' LIMIT 1`,
