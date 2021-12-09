@@ -65,7 +65,7 @@ userRouter.post("/getreporturl", (req, res) => {
 /**
  * Get Report URL
  * @returns userObj
- * @type POST
+ * @type GET
  * @params testId
  * @route [http://192.168.18.62/api/user/get-qrid]
  */

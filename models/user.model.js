@@ -784,6 +784,20 @@ const userModel = {
       );
     }),
 
+  getQrId: (testId) =>
+    new Promise((resolve, reject) => {
+      con.query(
+        `SELECT qr_id FROM test_info WHERE id = ${testId};`,
+        async (err, res) => {
+          if (res && res.length) {
+            return resolve(res);
+          } else {
+            return reject(new Error("No Qr-ID found"));
+          }
+        }
+      );
+    }),
+
   updatePassword: async (password, userId) =>
     await new Promise(async (resolve, reject) => {
       console.log("password", password);
