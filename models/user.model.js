@@ -560,7 +560,7 @@ const userModel = {
           } else if (err) {
             return reject(new Error("Something went wrong --- ", err));
           } else {
-            let image =userData.profileImage || res.image || "";
+            let image = userData.profileImage || res.image || "";
             // if (file) {
             //   image = file.path;
             //   // image =
@@ -625,6 +625,7 @@ const userModel = {
         }
       );
     }),
+
   resendCode: (email) =>
     new Promise((resolve, reject) => {
       console.log("email", email);
@@ -671,6 +672,7 @@ const userModel = {
         }
       });
     }),
+
   sendForgotPasswordMail: async (user) =>
     await new Promise((resolve, reject) => {
       console.log("user email: ", user.email);
