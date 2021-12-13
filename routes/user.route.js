@@ -1,29 +1,29 @@
-const express = require("express");
+const express = require('express');
 const userRouter = express.Router();
-const passport = require("passport");
-const multer = require("multer");
-const userModel = require("../models/user.model");
-const sessionModel = require("../models/session.model");
-const { verifyRefreshToken } = require("../helpers/jwt.helpers");
-const { verifyToken } = require("../middlewares/auth.middleware");
+const passport = require('passport');
+const multer = require('multer');
+const userModel = require('../models/user.model');
+const sessionModel = require('../models/session.model');
+const { verifyRefreshToken } = require('../helpers/jwt.helpers');
+const { verifyToken } = require('../middlewares/auth.middleware');
 // const sqlHelper = require('../helpers/sqlHeplers')
-const jwt = require("jsonwebtoken");
-const { body, param, validationResult } = require("express-validator");
+const jwt = require('jsonwebtoken');
+const { body, param, validationResult } = require('express-validator');
 
 // multer file store start
 const storage = multer.diskStorage({
   destination(req, file, cb) {
-    cb(null, "./uploads/profileImages/");
+    cb(null, './uploads/profileImages/');
   },
   filename(req, file, cb) {
     cb(null, `test-${Date.now()}${file.originalname}.png`);
   },
 });
 const fileFilter = (req, file, cb) => {
-  if (file.mimetype === "image/jpeg" || file.mimetype === "image/png") {
+  if (file.mimetype === 'image/jpeg' || file.mimetype === 'image/png') {
     cb(null, true);
   } else {
-    cb(new Error("file have different extension"), false);
+    cb(new Error('file have different extension'), false);
   }
 };
 const upload = multer({
@@ -42,18 +42,45 @@ const upload = multer({
  * @params testId
  * @route [http://192.168.18.62/api/user/getreporturl]
  */
-userRouter.post("/getreporturl", (req, res) => {
+userRouter.post('/getreporturl', (req, res) => {
   userModel
     .getReportUrl(req.body.testId)
     .then((repObj) => {
       res.json({
         data: repObj,
         success: true,
-        message: "Report Testing URL Generated",
+        message: 'Report Testing URL Generated',
       });
     })
     .catch((err) => {
-      console.log("Get report url ::>> err", err);
+      console.log('Get report url ::>> err', err);
+      res.json({
+        data: err,
+        success: false,
+        message: err.message,
+      });
+    });
+});
+
+/**
+ * Get Report URL
+ * @returns userObj
+ * @type POST
+ * @params testId
+ * @route [http://192.168.18.62/api/user/getreporturl]
+ */
+userRouter.post('/getcustomreportdata', (req, res) => {
+  userModel
+    .getCustomReportData(req.body.testId)
+    .then((repObj) => {
+      res.json({
+        data: repObj,
+        success: true,
+        message: 'Custom Report data found',
+      });
+    })
+    .catch((err) => {
+      console.log('Get report url ::>> err', err);
       res.json({
         data: err,
         success: false,
@@ -69,18 +96,18 @@ userRouter.post("/getreporturl", (req, res) => {
  * @params testId
  * @route [http://192.168.18.62/api/user/get-qrid]
  */
-userRouter.get("/get-qrid", (req, res) => {
+userRouter.get('/get-qrid', (req, res) => {
   userModel
     .getQrId(req.body.testId)
     .then((repObj) => {
       res.json({
         data: repObj,
         success: true,
-        message: "QR-ID found",
+        message: 'QR-ID found',
       });
     })
     .catch((err) => {
-      console.log("QR-ID ::>> err", err);
+      console.log('QR-ID ::>> err', err);
       res.json({
         data: err,
         success: false,
@@ -97,13 +124,13 @@ userRouter.get("/get-qrid", (req, res) => {
  * @route [http://192.168.18.62/api/user/register]
  */
 userRouter.post(
-  "/register",
+  '/register',
   [
-    body("firstName").not().isEmpty(),
-    body("lastName").not().isEmpty(),
-    body("password").not().isEmpty(),
-    body("email").not().isEmpty(),
-    body("mobile").not().isEmpty().isNumeric(),
+    body('firstName').not().isEmpty(),
+    body('lastName').not().isEmpty(),
+    body('password').not().isEmpty(),
+    body('email').not().isEmpty(),
+    body('mobile').not().isEmpty().isNumeric(),
   ],
   (req, res) => {
     const errors = validationResult(req);
@@ -117,12 +144,12 @@ userRouter.post(
             data: userObj,
             success: true,
             message:
-              "A verification link has been sent to your email. Please verify your account in order to login",
+              'A verification link has been sent to your email. Please verify your account in order to login',
           });
-          console.log("register ::>> res", userObj);
+          console.log('register ::>> res', userObj);
         })
         .catch((err) => {
-          console.log("register ::>> err", err);
+          console.log('register ::>> err', err);
           // console.log(sqlHelper.consoleSQLException(err))
           res.json({
             data: err,
@@ -142,11 +169,11 @@ userRouter.post(
  * @route [http://192.168.18.62/api/user/register/gmail]
  */
 userRouter.post(
-  "/register/gmail",
+  '/register/gmail',
   [
-    body("firstName").not().isEmpty(),
-    body("lastName").not().isEmpty(),
-    body("email").not().isEmpty(),
+    body('firstName').not().isEmpty(),
+    body('lastName').not().isEmpty(),
+    body('email').not().isEmpty(),
   ],
   (req, res) => {
     const errors = validationResult(req);
@@ -156,15 +183,15 @@ userRouter.post(
       userModel
         .registerGmail(req.body)
         .then((userObj) => {
-          console.log("userObj: ", userObj);
+          console.log('userObj: ', userObj);
           res.json({
             data: userObj,
             success: true,
-            message: "User inserted successfully",
+            message: 'User inserted successfully',
           });
         })
         .catch((err) => {
-          console.log("register ::>> err", err);
+          console.log('register ::>> err', err);
           // console.log(sqlHelper.consoleSQLException(err))
           res.json({
             data: err,
@@ -182,14 +209,14 @@ userRouter.post(
  * @type GET
  * @route [http://192.168.18.62/api/user/confirmation/:token]
  */
-userRouter.get("/confirmation/:token", verifyToken, async (req, res) => {
+userRouter.get('/confirmation/:token', verifyToken, async (req, res) => {
   try {
     userModel
       .verifyEmail(req.user)
       .then(() => {
         res.json({
           success: true,
-          message: "User verified successfully",
+          message: 'User verified successfully',
         });
       })
       .catch((err) => {
@@ -197,7 +224,7 @@ userRouter.get("/confirmation/:token", verifyToken, async (req, res) => {
         res.json({
           error: err,
           success: false,
-          message: "Something went wrong",
+          message: 'Something went wrong',
         });
       });
   } catch (err) {
@@ -214,8 +241,8 @@ userRouter.get("/confirmation/:token", verifyToken, async (req, res) => {
  * @route [http://192.168.18.62/api/user/login]
  */
 userRouter.post(
-  "/login",
-  [body("password").not().isEmpty(), body("email").not().isEmpty()],
+  '/login',
+  [body('password').not().isEmpty(), body('email').not().isEmpty()],
   (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -224,20 +251,20 @@ userRouter.post(
       userModel
         .login(req.body)
         .then(async (payload) => {
-          console.log("login ::>> res", payload);
+          console.log('login ::>> res', payload);
           res.json({
             data: payload.userId,
             sessionId: payload.sessionId,
             accessToken: payload.accessToken,
             refreshToken: payload.refreshToken,
             success: true,
-            message: "User logged in successfully",
+            message: 'User logged in successfully',
           });
         })
         .catch((err) => {
-          console.log("login ::>> err", err);
+          console.log('login ::>> err', err);
           if (err.valid === false) {
-            console.log("false");
+            console.log('false');
             res.json({
               success: false,
               message: err.message,
@@ -261,22 +288,22 @@ userRouter.post(
  * @type POST
  * @route [http://192.168.18.62/api/user/logout]
  */
-userRouter.post("/logout", async (req, res) => {
+userRouter.post('/logout', async (req, res) => {
   try {
     const { refreshToken } = req.body;
-    if (!refreshToken) throw new Error("Bad Request");
+    if (!refreshToken) throw new Error('Bad Request');
     const verifiedToken = await verifyRefreshToken(refreshToken);
     await sessionModel.invalidateSession(verifiedToken.payload.userId);
     res.json({
       success: true,
-      message: "User logged out successfully",
+      message: 'User logged out successfully',
     });
     // delete from db
   } catch (err) {
     res.json({
       data: err,
       success: false,
-      message: "Something went wrong",
+      message: 'Something went wrong',
     });
   }
 });
@@ -287,7 +314,7 @@ userRouter.post("/logout", async (req, res) => {
  * @type POST
  * @route [http://192.168.18.62/api/user/login/gmail]
  */
-userRouter.post("/login/gmail", [body("email").not().isEmpty()], (req, res) => {
+userRouter.post('/login/gmail', [body('email').not().isEmpty()], (req, res) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res.status(422).jsonp(errors.array());
@@ -295,20 +322,20 @@ userRouter.post("/login/gmail", [body("email").not().isEmpty()], (req, res) => {
     userModel
       .loginGmail(req.body)
       .then((userObj) => {
-        console.log("login ::>> res", userObj);
+        console.log('login ::>> res', userObj);
         res.json({
           data: userObj,
           success: true,
-          message: "User logged in successfully",
+          message: 'User logged in successfully',
         });
       })
       .catch((err) => {
-        console.log("login ::>> err", err);
+        console.log('login ::>> err', err);
         if (err.valid === false) {
-          console.log("false");
+          console.log('false');
           res.json({
             success: false,
-            message: "Email or Password is incorrect",
+            message: 'Email or Password is incorrect',
           });
         } else {
           res.json({
@@ -330,23 +357,23 @@ userRouter.post("/login/gmail", [body("email").not().isEmpty()], (req, res) => {
  * @route [http://192.168.18.62/api/user/profile]
  */
 userRouter.get(
-  "/profile",
+  '/profile',
   verifyToken,
 
   (req, res) => {
-    console.log("req", req.user);
+    console.log('req', req.user);
     userModel
       .getProfile(req.user)
       .then((userObj) => {
-        console.log("getProfile ::>> res", userObj);
+        console.log('getProfile ::>> res', userObj);
         res.json({
           data: userObj,
           success: true,
-          message: "User Profile Fetched successfully",
+          message: 'User Profile Fetched successfully',
         });
       })
       .catch((err) => {
-        console.log("getProfile ::>> err", err);
+        console.log('getProfile ::>> err', err);
         res.json({
           data: err,
           success: false,
@@ -366,24 +393,24 @@ userRouter.get(
  * @route [http://192.168.18.62/api/user/profile/edit]
  */
 userRouter.put(
-  "/profile/edit",
+  '/profile/edit',
   verifyToken,
   // upload.single("profileImage"),
   (req, res) => {
     userModel
       .updateProfile(req.user, req.body)
       .then((userObj) => {
-        console.log("in updATE PROFILE");
+        console.log('in updATE PROFILE');
 
         res.json({
           success: true,
-          message: "User updated successfully",
+          message: 'User updated successfully',
         });
-        console.log("UpdateProfile ::>> res", userObj);
+        console.log('UpdateProfile ::>> res', userObj);
       })
       .catch((err) => {
-        console.log("IN PROFILE UPDATE ASDASDASDSAD");
-        console.log("UpdateProfile ::>> err", err);
+        console.log('IN PROFILE UPDATE ASDASDASDSAD');
+        console.log('UpdateProfile ::>> err', err);
         // console.log(sqlHelper.consoleSQLException(err))
         res.json({
           data: err,
@@ -403,8 +430,8 @@ userRouter.put(
  * @route [http://192.168.18.62/api/user/forgot-password]
  */
 userRouter.post(
-  "/forgot-password",
-  [body("email").not().isEmpty()],
+  '/forgot-password',
+  [body('email').not().isEmpty()],
   (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -415,12 +442,12 @@ userRouter.post(
         .then((userObj) => {
           res.json({
             success: true,
-            message: "Password reset email sent successfully",
+            message: 'Password reset email sent successfully',
           });
           // console.log("Password Reset ::>> res", userObj);
         })
         .catch((err) => {
-          console.log("Password Reset ::>> err", err);
+          console.log('Password Reset ::>> err', err);
           // console.log(sqlHelper.consoleSQLException(err))
           res.json({
             data: err,
@@ -438,7 +465,7 @@ userRouter.post(
  * @type get
  * @route [http://192.168.18.62/api/user/reset-password/:token]
  */
-userRouter.get("/reset-password/:token", async (req, res) => {
+userRouter.get('/reset-password/:token', async (req, res) => {
   userModel
     .resetPasswordVerify(req.params.token)
     .then((userObj) => {
@@ -446,7 +473,7 @@ userRouter.get("/reset-password/:token", async (req, res) => {
       res.json({
         success: true,
         data: userObj[0].id,
-        message: "Code Verified Successfully",
+        message: 'Code Verified Successfully',
       });
     })
     .catch((err) => {
@@ -465,7 +492,7 @@ userRouter.get("/reset-password/:token", async (req, res) => {
  * @params email
  * @route [http://192.168.18.62/api/user/resend-code]
  */
-userRouter.post("/resend-code", async (req, res) => {
+userRouter.post('/resend-code', async (req, res) => {
   userModel
     .resendCode(req.body.email)
     .then((userObj) => {
@@ -473,7 +500,7 @@ userRouter.post("/resend-code", async (req, res) => {
       res.json({
         success: true,
         // data: userObj,
-        message: "Code sent successfully",
+        message: 'Code sent successfully',
       });
     })
     .catch((err) => {
@@ -492,10 +519,10 @@ userRouter.post("/resend-code", async (req, res) => {
  * @params refreshToken
  * @route [http://192.168.18.62/api/user/refresh-token]
  */
-userRouter.post("/refresh-token", async (req, res) => {
+userRouter.post('/refresh-token', async (req, res) => {
   try {
     const { refreshToken } = req.body;
-    if (!refreshToken) throw new Error("Bad Request");
+    if (!refreshToken) throw new Error('Bad Request');
     const token = await verifyRefreshToken(refreshToken);
     if (token.payload.accessToken && token.payload.refreshToken) {
       res.status(200).json({
@@ -506,11 +533,11 @@ userRouter.post("/refresh-token", async (req, res) => {
       res.json({
         success: false,
         data: {},
-        message: "Invalid refresh token",
+        message: 'Invalid refresh token',
       });
     }
   } catch (err) {
-    res.status(500).json({ data: err, message: "Invalid/Expired token" });
+    res.status(500).json({ data: err, message: 'Invalid/Expired token' });
   }
 });
 
@@ -521,18 +548,18 @@ userRouter.post("/refresh-token", async (req, res) => {
  * @params id,password
  * @route [http://192.168.18.62/api/user/update-password]
  */
-userRouter.put("/update-password", async (req, res) => {
+userRouter.put('/update-password', async (req, res) => {
   userModel
     .updatePassword(req.body.password, req.body.id)
     .then((updatedPassword) => {
       // console.log("updated password", updatedPassword);
       res.status(200).json({
         success: true,
-        message: "Password Updated Successfully",
+        message: 'Password Updated Successfully',
       });
     })
     .catch((err) => {
-      console.log("error", err);
+      console.log('error', err);
       res.json({
         success: false,
         error: err,
@@ -547,7 +574,7 @@ userRouter.put("/update-password", async (req, res) => {
  * @returns data
  * @route [http://192.168.18.14/api/user/test]
  */
-userRouter.get("/test", verifyToken, async (req, res) => {
+userRouter.get('/test', verifyToken, async (req, res) => {
   // console.log("test");
 
   userModel
@@ -560,7 +587,7 @@ userRouter.get("/test", verifyToken, async (req, res) => {
       });
     })
     .catch((err) => {
-      console.log("error", err);
+      console.log('error', err);
       res.json({
         success: false,
         error: err,

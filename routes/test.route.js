@@ -100,6 +100,32 @@ testRouter.put('/upload-test-image', (req, res) => {
     });
 });
 
+testRouter.put('/upload-test-report-url', (req, res) => {
+  testModel
+    .reportURL(req.body.link, req.body.testId)
+    .then((fileObj) => {
+      console.log('image stored ', fileObj);
+      res
+        .status(200)
+        .send({ success: true, message: 'link uploaded successfully' });
+    })
+    .catch((err) => {
+      res.status(500).send({ success: false, message: err });
+    });
+});
+testRouter.put('/upload-custom-report-url', (req, res) => {
+  testModel
+    .customReportURL(req.body.link, req.body.testId)
+    .then((fileObj) => {
+      console.log('image stored ', fileObj);
+      res
+        .status(200)
+        .send({ success: true, message: 'link uploaded successfully' });
+    })
+    .catch((err) => {
+      res.status(500).send({ success: false, message: err });
+    });
+});
 testRouter.put('/upload-test-video', (req, res) => {
   console.log(req);
   console.log(req.body);
@@ -136,7 +162,7 @@ testRouter.get('/result', async (req, res) => {
     });
     var config = {
       method: 'post',
-      url: process.env.IMAGE_DECTECTION+'/get_test_result',
+      url: process.env.IMAGE_DECTECTION + '/get_test_result',
       headers: {
         'Content-Type': 'application/json',
       },

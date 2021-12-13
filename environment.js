@@ -5,14 +5,14 @@ let dbConnections;
 let dbUser;
 let dbPassword;
 
-dbHost = "xana";
-dbName = "xana";
+dbHost = 'xana';
+dbName = 'xana';
 dbPort = 3306;
 dbConnections = 10;
-dbUser = "root";
-dbPassword = "root";
-// dbUser = "codistanxana";
-// dbPassword = "Codistan@132";
+// dbUser = "root";
+// dbPassword = "root";
+dbUser = 'codistanxana';
+dbPassword = 'Codistan@132';
 
 module.exports = {
   dbHost,

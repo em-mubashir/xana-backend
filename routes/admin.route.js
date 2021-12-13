@@ -1,8 +1,8 @@
-const express = require("express");
+const express = require('express');
 const adminRouter = express.Router();
-const adminModel = require("../models/admin.model");
-const { body, validationResult, errors } = require("express-validator");
-const { verifyToken } = require("../middlewares/auth.middleware");
+const adminModel = require('../models/admin.model');
+const { body, validationResult, errors } = require('express-validator');
+const { verifyToken } = require('../middlewares/auth.middleware');
 
 /**
  * Get All Reports
@@ -11,14 +11,14 @@ const { verifyToken } = require("../middlewares/auth.middleware");
  * @required access_token
  * @route [http://192.168.18.62/api/admin/all-reports]
  */
-adminRouter.get("/all-reports", (req, res) => {
+adminRouter.get('/all-reports', (req, res) => {
   adminModel
     .getAllReports()
     .then((reportsObj) => {
       res.json({
         data: reportsObj,
         success: true,
-        message: "Got all reports successfully",
+        message: 'Got all reports successfully',
       });
     })
     .catch((err) => {
@@ -33,14 +33,14 @@ adminRouter.get("/all-reports", (req, res) => {
  * @required access_token
  * @route [http://192.168.18.14/api/admin/all-reports]
  */
-adminRouter.get("/all-users", (req, res) => {
+adminRouter.get('/all-users', (req, res) => {
   adminModel
     .getAllUsers()
     .then((adminObj) => {
       res.json({
         data: adminObj,
         success: true,
-        message: "User data fetch successfully",
+        message: 'User data fetch successfully',
       });
     })
     .catch((err) => {
@@ -55,14 +55,14 @@ adminRouter.get("/all-users", (req, res) => {
  * @required access_token
  * @route [http://192.168.18.14/api/admin/all-reports]
  */
-adminRouter.get("/test", verifyToken, (req, res) => {
+adminRouter.get('/test', verifyToken, (req, res) => {
   adminModel
     .getAllTest()
     .then((reportsObj) => {
       res.json({
         data: reportsObj,
         success: true,
-        message: "Got all test successfully",
+        message: 'Got all test successfully',
       });
     })
     .catch((err) => {
@@ -77,14 +77,14 @@ adminRouter.get("/test", verifyToken, (req, res) => {
  * @required access_token
  * @route [http://192.168.18.14/api/admin/all-reports]
  */
-adminRouter.get("/customreport", verifyToken, (req, res) => {
+adminRouter.get('/customreport', verifyToken, (req, res) => {
   adminModel
     .getAllCustomReport()
     .then((reportsObj) => {
       res.json({
         data: reportsObj,
         success: true,
-        message: "Got all custom reports successfully",
+        message: 'Got all custom reports successfully',
       });
     })
     .catch((err) => {
@@ -99,14 +99,14 @@ adminRouter.get("/customreport", verifyToken, (req, res) => {
  * @required access_token
  * @route [http://192.168.18.14/api/admin/add-custom-report]
  */
-adminRouter.post("/add-custom-report", (req, res) => {
+adminRouter.post('/add-custom-report', (req, res) => {
   adminModel
     .addCustomReport(req.body)
     .then((reportsObj) => {
       res.json({
         data: reportsObj,
         success: true,
-        message: "Report data inserted successfully",
+        message: 'Report data inserted successfully',
       });
     })
     .catch((err) => {
@@ -121,7 +121,7 @@ adminRouter.post("/add-custom-report", (req, res) => {
  * @required access_token
  * @route [http://192.168.18.62/api/admin/report-detail/:id]
  */
-adminRouter.get("/report-detail/:id", (req, res) => {
+adminRouter.get('/report-detail/:id', (req, res) => {
   const reportId = req.params.id;
   adminModel
     .getReportDetail(reportId)
@@ -129,7 +129,7 @@ adminRouter.get("/report-detail/:id", (req, res) => {
       res.json({
         data: reportsObj,
         success: true,
-        message: "Got report detail successfully",
+        message: 'Got report detail successfully',
       });
     })
     .catch((err) => {
@@ -145,8 +145,8 @@ adminRouter.get("/report-detail/:id", (req, res) => {
  * @route [http://192.168.18.62/api/admin/login]
  */
 adminRouter.post(
-  "/login",
-  [body("password").not().isEmpty(), body("email").not().isEmpty()],
+  '/login',
+  [body('password').not().isEmpty(), body('email').not().isEmpty()],
   async (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -159,7 +159,7 @@ adminRouter.post(
             data: userObj.data,
             payload: userObj.payload,
             success: true,
-            message: "Admin logged in successfully",
+            message: 'Admin logged in successfully',
           });
         })
         .catch((err) => {
@@ -175,6 +175,43 @@ adminRouter.post(
               message: err.message,
             });
           }
+        });
+    }
+  }
+);
+/**
+ * Forgot password
+ * @returns success
+ * @type post
+ * @params email
+ * @required access_token
+ * @route [http://192.168.18.62/api/admin/forgot-password]
+ */
+adminRouter.post(
+  '/forgot-password',
+  [body('email').not().isEmpty()],
+  (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(422).jsonp(errors.array());
+    } else {
+      adminModel
+        .sendForgotPasswordMail(req.body)
+        .then((userObj) => {
+          res.json({
+            success: true,
+            message: 'Password reset email sent successfully',
+          });
+          // console.log("Password Reset ::>> res", userObj);
+        })
+        .catch((err) => {
+          console.log('Password Reset ::>> err', err);
+          // console.log(sqlHelper.consoleSQLException(err))
+          res.json({
+            data: err,
+            success: false,
+            message: err.message,
+          });
         });
     }
   }
@@ -188,13 +225,13 @@ adminRouter.post(
  * @route [http://192.168.18.62/api/admin/admin-singup]
  */
 adminRouter.post(
-  "/admin-signup",
+  '/admin-signup',
   [
-    body("fname").not().isEmpty(),
-    body("lname").not().isEmpty(),
-    body("email").not().isEmpty(),
-    body("mobile").not().isEmpty().isNumeric(),
-    body("password").not().isEmpty(),
+    body('fname').not().isEmpty(),
+    body('lname').not().isEmpty(),
+    body('email').not().isEmpty(),
+    body('mobile').not().isEmpty().isNumeric(),
+    body('password').not().isEmpty(),
   ],
   (req, res) => {
     const errors = validationResult(req);
@@ -207,7 +244,7 @@ adminRouter.post(
           res.json({
             data: userObj.data,
             success: true,
-            message: "Admin signed up successfully",
+            message: 'Admin signed up successfully',
           });
         })
         .catch((err) => {
@@ -237,8 +274,8 @@ adminRouter.post(
  * @route [http://192.168.18.62/api/admin/update-report-status]
  */
 adminRouter.put(
-  "/update-report-status",
-  [body("result").not().isEmpty(), body("id").not().isEmpty()],
+  '/update-report-status',
+  [body('result').not().isEmpty(), body('id').not().isEmpty()],
   (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -250,7 +287,7 @@ adminRouter.put(
           res.json({
             data: reportsObj.data,
             success: true,
-            message: "Test Result Status Updated Successfully",
+            message: 'Test Result Status Updated Successfully',
           });
         })
         .catch((err) => {
@@ -280,8 +317,8 @@ adminRouter.put(
  * @route [http://192.168.18.62/api/admin/update-report-status]
  */
 adminRouter.put(
-  "/update-custom-report-status",
-  [body("result").not().isEmpty(), body("id").not().isEmpty()],
+  '/update-custom-report-status',
+  [body('result').not().isEmpty(), body('id').not().isEmpty()],
   (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -293,7 +330,7 @@ adminRouter.put(
           res.json({
             data: reportsObj.data,
             success: true,
-            message: "Custom Report Status Updated Successfully",
+            message: 'Custom Report Status Updated Successfully',
           });
         })
         .catch((err) => {
@@ -322,14 +359,14 @@ adminRouter.put(
 //  * @params status,id
  * @route [http://192.168.18.62/api/admin/generate-qr]
  */
-adminRouter.post("/generate-qr", (req, res) => {
+adminRouter.post('/generate-qr', (req, res) => {
   adminModel
     .generateQr(req.body)
     .then((userObj) => {
       res.json({
         data: userObj.data,
         success: true,
-        message: "Qr Codes Generated successfully",
+        message: 'Qr Codes Generated successfully',
       });
     })
     .catch((err) => {

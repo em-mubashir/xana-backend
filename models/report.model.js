@@ -1,11 +1,11 @@
-const con = require("../config/mysql");
-const nodemailer = require("nodemailer");
-const fileSystemUtils = require("../utils/fileSystemUtils");
+const con = require('../config/mysql');
+const nodemailer = require('nodemailer');
+const fileSystemUtils = require('../utils/fileSystemUtils');
 const reportModel = {
   sendCustomReport: async (imagePath, pdfPath, userEmail) => {
     try {
       console.log(userEmail);
-      console.log("insdide");
+      console.log('insdide');
 
       // GMAIL_SERVICE_NAME = gmail
       // GMAIL_SERVICE_HOST = smtp.gmail.com
@@ -15,14 +15,14 @@ const reportModel = {
       // GMAIL_USER_PASSWORD = ZP ? []~1F6M) _
       const transporter = nodemailer.createTransport({
         // host: process.env.HOST,
-        host: "smtp-relay.sendinblue.com",
+        host: 'smtp-relay.sendinblue.com',
         port: 587,
         secure: false,
         auth: {
           // user: process.env.FROM,
-          user: "info@landofsneakers.com",
+          user: 'info@landofsneakers.com',
           // pass: process.env.PASSWORD,
-          pass: "0b8pEBjPtFRK2Txy",
+          pass: '0b8pEBjPtFRK2Txy',
         },
       });
       const mailOptions = {
@@ -31,27 +31,27 @@ const reportModel = {
         // HOST=smtp-relay.sendinblue.com
         // EMAIL_PORT=587
 
-        from: "info@landofsneakers.com",
+        from: 'info@landofsneakers.com',
         // from: "info@landofsneakers.com",
-        to: "beenishkhan603@gmail.com",
-        cc: "beenishkhan603@gmail.com",
-        subject: "Result Of Report",
-        html: "<html><h1>Ahmed Kabeer </h1></html>",
+        to: userEmail,
+        cc: 'beenishkhan603@gmail.com',
+        subject: 'Result Of Report',
+        html: '<html><h1>PFA. The Attachment consist of the result of the test </h1></html>',
         attachments: [
           {
-            filename: "report.pdf",
+            filename: 'report.pdf',
             path: pdfPath,
-            contentType: "application/pdf",
+            contentType: 'application/pdf',
           },
-          { filename: "report.png", path: imagePath, contentType: "image/png" },
+          { filename: 'report.png', path: imagePath, contentType: 'image/png' },
         ],
       };
       const res = await transporter.sendMail(mailOptions);
       const reportImage = await fileSystemUtils.unlinkFileAsync(imagePath);
       const reportPdf = await fileSystemUtils.unlinkFileAsync(pdfPath);
-      console.log("res,", res.accepted);
-      console.log("res,", res.rejected);
-      console.log("res,", res.response);
+      console.log('res,', res.accepted);
+      console.log('res,', res.rejected);
+      console.log('res,', res.response);
       return res;
     } catch (err) {
       console.log(err.message);
@@ -67,7 +67,7 @@ const reportModel = {
           if (res) {
             return resolve(res);
           } else {
-            return reject(new err("Something went wrong", err));
+            return reject(new err('Something went wrong', err));
           }
         }
       );
@@ -81,7 +81,7 @@ const reportModel = {
           if (res) {
             return resolve(res);
           } else {
-            return reject(new err("Report not found", err));
+            return reject(new err('Report not found', err));
           }
         }
       );
@@ -112,23 +112,23 @@ const reportModel = {
           (userId, firstName, lastName, dob, passportNo, testName, testManufacturer, testDescription, testPerformance, testAuthorization, sampleDate, sampleTime, resultDate, resultTime, result, status)
           VALUES
           ( ${userData[0].id}, '${userData[0].first_name}','${
-              userData[0].last_name || ""
-            }', '${userData[0].dob || ""}', '${
+              userData[0].last_name || ''
+            }', '${userData[0].dob || ''}', '${
               userData[0].passportNo || 0
             }', '${data.testName}', '${data.testManufacturer}', '${
               data.testDescription
             }', '${data.testPerformance}', '${data.testAuthorization}', '${
-              data.sampleDate || ""
-            }','${data.sampleTime || ""}', '${data.resultDate || ""}', '${
-              data.resultTime || ""
-            }','${data.result || ""}', 'completed' ) `,
+              data.sampleDate || ''
+            }','${data.sampleTime || ''}', '${data.resultDate || ''}', '${
+              data.resultTime || ''
+            }','${data.result || ''}', 'completed' ) `,
             (err, res) => {
               if (res) {
                 if (res.affectedRows > 0) {
                   return resolve(res);
                 }
               } else {
-                return reject(new err("Something went wrong", err));
+                return reject(new err('Something went wrong', err));
               }
             }
           );

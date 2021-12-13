@@ -1,18 +1,16 @@
-const con = require("../config/mysql");
-// const crypto = require("crypto");
-const QRCode = require("qrcode");
-
-const bcrypt = require("bcryptjs");
-
+const con = require('../config/mysql');
+const QRCode = require('qrcode');
+const jwt = require('jsonwebtoken');
+var nodemailer = require('nodemailer');
+const bcrypt = require('bcryptjs');
 const {
   signJwt,
   signRefreshToken,
   signEmailToken,
-} = require("../helpers/jwt.helpers");
-
-const sessionModel = require("./session.model");
-const { dbPassword } = require("../environment");
-require("colors");
+} = require('../helpers/jwt.helpers');
+const sessionModel = require('./session.model');
+const { dbPassword } = require('../environment');
+require('colors');
 
 // const iv = crypto.randomBytes(16);
 const mycrypto = {
@@ -33,52 +31,6 @@ const mycrypto = {
       return false;
     }
   },
-
-  // encrypt: (password) => {
-  //   const cipher = crypto.createCipher("aes192", process.env.HASH_KEY);
-  //   let hashedPassword = cipher.update(`${password}`, "utf8", "hex");
-  //   hashedPassword += cipher.final("hex");
-  //   return hashedPassword;
-  // },
-  // ******************************************************************************
-  // encrypt: (password) => {
-  //   const cipher = crypto.createCipheriv(
-  //     "aes-256-ctr",
-  //     process.env.HASH_KEY,
-  //     iv
-  //   );
-  //   let hashedPassword = Buffer.concat([
-  //     cipher.update(password),
-  //     cipher.final(),
-  //   ]);
-  //   return hashedPassword.toString("hex");
-  // return {
-  //   iv: iv.toString("hex"),
-  //   hashedPassword: hashedPassword.toString("hex"),
-  // };
-  // },
-  // ******************************************************************************************************************************************
-  // decrypt: (hashed) => {
-  //   const decipher = crypto.createDecipher("aes192", process.env.HASH_KEY);
-  //   let decrypted = decipher.update(`${hashed}`, "hex", "utf8");
-  //   decrypted += decipher.final("utf8");
-  //   return decrypted;
-  // },
-  // ******************************************************************************
-  // decrypt: (hashed) => {
-  //   const decipher = crypto.createDecipheriv(
-  //     "aes-256-ctr",
-  //     process.env.HASH_KEY,
-  //     iv
-  //     // Buffer.from(hashed.iv, "hex")
-  //   );
-  //   let decrypted = Buffer.concat([
-  //     decipher.update(Buffer.from(hashed, "hex")),
-  //     // decipher.update(Buffer.from(hashed.hashedPassword, "hex")),
-  //     decipher.final(),
-  //   ]);
-  //   return decrypted.toString();
-  // },
 };
 
 const adminModel = {
@@ -175,20 +127,20 @@ const adminModel = {
           console.log(err);
           console.log(res);
           if (res) {
-            console.log("In if");
+            console.log('In if');
             console.log(res);
 
             if (res.length !== 0) {
               const { password: hashedPassword } = res[0];
-              console.log("Hashed Password", hashedPassword);
+              console.log('Hashed Password', hashedPassword);
               let validPass = 0;
               // const decrypted = await mycrypto.decrypt(hashedPassword);
               const verifiedCompare = await mycrypto.funcComparePassword(
                 user.password,
                 hashedPassword
               );
-              console.log("Verified password", verifiedCompare);
-              console.log("user entered password", user.password);
+              console.log('Verified password', verifiedCompare);
+              console.log('user entered password', user.password);
 
               // if (decrypted === user.password) {
               //   validPass = true;
@@ -221,7 +173,7 @@ const adminModel = {
                   data: err,
                   valid: false,
                   status: 500,
-                  message: "Password is incorrect",
+                  message: 'Password is incorrect',
                 });
               }
             } else {
@@ -229,11 +181,11 @@ const adminModel = {
                 data: err,
                 valid: false,
                 status: 404,
-                message: "User is not registered.",
+                message: 'User is not registered.',
               });
             }
           } else {
-            return reject(new Error("Something went wrong", err));
+            return reject(new Error('Something went wrong', err));
           }
         }
       );
@@ -245,7 +197,7 @@ const adminModel = {
         `select * from users where email='${user.email}' LIMIT 1`,
         async (err, res) => {
           if (res !== undefined && res.length !== 0) {
-            return reject(new Error("User already exists", err));
+            return reject(new Error('User already exists', err));
           } else {
             // const hashedPassword = await mycrypto.encrypt(user.password);
             const hashedPassword = await mycrypto.funcHashPassword(
@@ -256,14 +208,89 @@ const adminModel = {
               if (res) {
                 return resolve(res);
               } else {
-                return reject(new Error("Something went wrong", err));
+                return reject(new Error('Something went wrong', err));
               }
             });
           }
         }
       );
     }),
-
+  sendForgotPasswordMail: async (user) =>
+    await new Promise((resolve, reject) => {
+      console.log('user email: ', user.email);
+      // Email duplication check
+      con.query(
+        `select * from users where email='${user.email}' AND roleId_fk=2 LIMIT 1`,
+        async (err, res) => {
+          if (res) {
+            if (res.length === 0) {
+              return reject(new Error('Email not registered'));
+            } else {
+              const userId = res[0]['id'];
+              const code = Math.floor(1000 + Math.random() * 9000);
+              console.log('code::>> ', code);
+              const emailToken = jwt.sign(
+                {
+                  id: userId,
+                  email: user.email,
+                },
+                process.env.JWT_KEY,
+                {
+                  expiresIn: '3h',
+                }
+              );
+              const url = `${process.env.URL}/api/user/reset-password/${emailToken}`;
+              const transporter = nodemailer.createTransport({
+                service: 'gmail',
+                host: 'smtp.gmail.com',
+                auth: {
+                  user: 'mmm28800@gmail.com',
+                  pass: '  1310125897819  ',
+                },
+                // host: "mail.codistan.org",
+                // port: 465,
+                // secure: true, // true for 465, false for other ports
+                // auth: {
+                //   user: "malik.mubashir@codistan.org",
+                //   pass: "Mailk@Mubashir321",
+                // },
+              });
+              const mailOptions = {
+                from: 'mmm28800@gmail.com', // sender address
+                to: user.email, // list of receivers
+                subject: 'Password reset Link', // Subject line
+                html: `<p>Your email verification code is ${code}</p>`, // plain text body
+              };
+              transporter.sendMail(mailOptions, function (err, info) {
+                if (err) {
+                  console.log(err);
+                  return reject(new Error('Something went wrong', err));
+                } else {
+                  console.log('in else');
+                  con.query(
+                    `UPDATE users SET code = '${code}' WHERE id=${userId} `,
+                    (err, res) => {
+                      console.log('res::', res);
+                      console.log('err::', err);
+                      if (err) {
+                        console.log(err);
+                        return reject(new Error('Something went wrong'));
+                      } else {
+                        console.log('info: ' + info);
+                        return resolve(res);
+                      }
+                    }
+                  );
+                }
+              });
+            }
+          } else {
+            console.log(err);
+            return reject(new Error('Something went wrong', err));
+          }
+        }
+      );
+    }),
   updateReportStatus: (status) =>
     new Promise((resolve, reject) => {
       con.query(
@@ -272,7 +299,7 @@ const adminModel = {
           if (res) {
             return resolve(res);
           } else {
-            return reject(new Error("Something went wrong", err));
+            return reject(new Error('Something went wrong', err));
           }
         }
       );
@@ -281,12 +308,12 @@ const adminModel = {
   updateCustomReportStatus: (status) =>
     new Promise((resolve, reject) => {
       con.query(
-        `update custom_report set result = '${status.result}' where custom_report_id = ${status.id}`,
+        `update custom_report set result = '${status.result}' where id = ${status.id}`,
         (err, res) => {
           if (res) {
             return resolve(res);
           } else {
-            return reject(new Error("Something went wrong", err));
+            return reject(new Error('Something went wrong', err));
           }
         }
       );
@@ -297,11 +324,11 @@ const adminModel = {
       let generatedQr = [];
       for (let i = 0; i < qrObj.length; i++) {
         await QRCode.toDataURL(JSON.stringify(qrObj[i]), {
-          errorCorrectionLevel: "H",
+          errorCorrectionLevel: 'H',
           margin: 1,
           color: {
-            dark: "#000000",
-            light: "#ffffff",
+            dark: '#000000',
+            light: '#ffffff',
           },
         })
           .then((url) => {

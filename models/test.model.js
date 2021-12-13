@@ -1,4 +1,4 @@
-const con = require("../config/mysql");
+const con = require('../config/mysql');
 const testModel = {
   addNew: (testObj, userId) =>
     new Promise(async (resolve, reject) => {
@@ -12,15 +12,15 @@ const testModel = {
 
       let newdate =
         year +
-        "/" +
+        '/' +
         month +
-        "/" +
+        '/' +
         date +
-        " " +
+        ' ' +
         hour +
-        ":" +
+        ':' +
         minute +
-        ":" +
+        ':' +
         seconds;
       console.log(date);
       console.log(month);
@@ -28,7 +28,7 @@ const testModel = {
       console.log(hour);
       console.log(minute);
       console.log(seconds);
-      console.log("dateeeeeeeeeeeeeeeee", newdate);
+      console.log('dateeeeeeeeeeeeeeeee', newdate);
 
       con.query(
         `INSERT INTO test_info (userId, test_name, test_manufacturer,test_image, test_description, test_performance, test_authorisation, date_register, date_conduct, qr_id ,video ) VALUES ('${userId}', '${testObj.testName}','${testObj.Manufacturer}','${testObj.test_image}', '${testObj.Description}', '${testObj.Performance}', '${testObj.Authorisation}','${newdate}','${newdate}','${testObj.qrId}','${testObj.video}')`,
@@ -38,8 +38,8 @@ const testModel = {
               return resolve(res.insertId);
             }
           } else {
-            console.log("err", err);
-            return reject(new Error("Something went wrong", err));
+            console.log('err', err);
+            return reject(new Error('Something went wrong', err));
           }
         }
       );
@@ -47,7 +47,7 @@ const testModel = {
 
   saveImage: (path, id) =>
     new Promise((resolve, reject) => {
-      console.log("save image", path, id);
+      console.log('save image', path, id);
       con.query(
         `UPDATE test_info set test_image = '${path}' where id=${id}`,
 
@@ -56,7 +56,7 @@ const testModel = {
             `UPDATE test_info set test_image = '${path}' where id=${id}`
           );
           if (err) {
-            console.log("error", err);
+            console.log('error', err);
             return reject(new Error(err));
           } else {
             return resolve(res);
@@ -66,7 +66,7 @@ const testModel = {
     }),
   saveVideo: (path, id) =>
     new Promise((resolve, reject) => {
-      console.log("save image", path, id);
+      console.log('save image', path, id);
       con.query(
         `UPDATE test_info set video = '${path}' where id=${id}`,
 
@@ -75,7 +75,7 @@ const testModel = {
             `UPDATE test_info set test_image = '${path}' where id=${id}`
           );
           if (err) {
-            console.log("error", err);
+            console.log('error', err);
             return reject(new Error(err));
           } else {
             return resolve(res);
@@ -91,7 +91,7 @@ const testModel = {
         `select test_image,qr_id from test_info where id=${id}`,
         (err, res) => {
           if (err) {
-            console.log("error", err);
+            console.log('error', err);
             return reject(new Error(err));
           } else {
             return resolve(res[0]);
@@ -106,10 +106,38 @@ const testModel = {
         `update  test_info set result= '${result}' where id=${id}`,
         (err, res) => {
           if (err) {
-            console.log("error", err);
+            console.log('error', err);
             return reject(new Error(err));
           } else {
-            return resolve({ message: "Test updated successfully", result });
+            return resolve({ message: 'Test updated successfully', result });
+          }
+        }
+      );
+    }),
+  reportURL: (link, id) =>
+    new Promise((resolve, reject) => {
+      con.query(
+        `update  test_info set report_url= '${link}' where id=${id}`,
+        (err, res) => {
+          if (err) {
+            console.log('error', err);
+            return reject(new Error(err));
+          } else {
+            return resolve({ message: 'Test updated successfully' });
+          }
+        }
+      );
+    }),
+  customReportURL: (link, id) =>
+    new Promise((resolve, reject) => {
+      con.query(
+        `update custom_report set reportURL= '${link}' where id=${id}`,
+        (err, res) => {
+          if (err) {
+            console.log('error', err);
+            return reject(new Error(err));
+          } else {
+            return resolve({ message: 'Test updated successfully' });
           }
         }
       );

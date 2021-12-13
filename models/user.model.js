@@ -1,43 +1,28 @@
-const con = require("../config/mysql");
-const crypto = require("crypto");
-const jwt = require("jsonwebtoken");
-var nodemailer = require("nodemailer");
+const con = require('../config/mysql');
+const crypto = require('crypto');
+const jwt = require('jsonwebtoken');
+var nodemailer = require('nodemailer');
 
-const bcrypt = require("bcryptjs");
+const bcrypt = require('bcryptjs');
 
-var fs = require("fs");
-var path = require("path");
+var fs = require('fs');
+var path = require('path');
 
-const { use } = require("../routes/user.route");
+const { use } = require('../routes/user.route');
 const {
   signJwt,
   signRefreshToken,
   signEmailToken,
-} = require("../helpers/jwt.helpers");
+} = require('../helpers/jwt.helpers');
 
-const sessionModel = require("./session.model");
-require("colors");
+const sessionModel = require('./session.model');
+require('colors');
 
 const reportData = () => {
-  console.log("Report All data using select with user");
+  console.log('Report All data using select with user');
 };
 
 const mycrypto = {
-  // encrypt: (password) => {
-  //   const cipher = crypto.createCipher("aes192", process.env.HASH_KEY);
-  //   let hashedPassword = cipher.update(`${password}`, "utf8", "hex");
-  //   hashedPassword += cipher.final("hex");
-  //   return hashedPassword;
-  // },
-
-  // decrypt: (hashed) => {
-  //   const decipher = crypto.createDecipher("aes192", process.env.HASH_KEY);
-  //   let decrypted = decipher.update(`${hashed}`, "hex", "utf8");
-  //   decrypted += decipher.final("utf8");
-
-  //   return decrypted;
-  // },
-
   funcHashPassword: async (password) => {
     const hashPassword = await bcrypt.hash(password, 12);
     if (hashPassword) {
@@ -60,23 +45,23 @@ const mycrypto = {
 const userModel = {
   register: (user) =>
     new Promise(async (resolve, reject) => {
-      console.log("user", user);
+      console.log('user', user);
       // Email duplication check
       con.query(
         `select * from users where email='${user.email}' LIMIT 1`,
         async (err, res) => {
           if (res !== undefined && res.length !== 0) {
-            return reject(new Error("User already exists", err));
+            return reject(new Error('User already exists', err));
           } else {
             // const hashedPassword = await bcrypt.hash(`${user.password}`, 10);
             // const hashedPassword = await mycrypto.encrypt(user.password);
             const hashedPassword = await mycrypto.funcHashPassword(
               user.password
             );
-            console.log("hashedPassword", hashedPassword);
+            console.log('hashedPassword', hashedPassword);
             const sql = `INSERT into users (first_name,last_name, email, mobile, password, roleId_fk) values ('${user.firstName}','${user.lastName}','${user.email}','${user.mobile}','${hashedPassword}',1)`;
             con.query(sql, async (err, res) => {
-              console.log("res", res);
+              console.log('res', res);
               if (res) {
                 if (res.affectedRows > 0) {
                   const emailToken = await signEmailToken({
@@ -88,11 +73,11 @@ const userModel = {
                   const url = `https://xanamedtec.page.link/?link=${process.env.EMAIL_URL}/user/verification/${emailToken}&apn=com.xanamedtec
                    `;
                   const transporter = nodemailer.createTransport({
-                    service: "gmail",
-                    host: "smtp.gmail.com",
+                    service: 'gmail',
+                    host: 'smtp.gmail.com',
                     auth: {
-                      user: "mmm28800@gmail.com",
-                      pass: "  1310125897819  ",
+                      user: 'mmm28800@gmail.com',
+                      pass: '  1310125897819  ',
                     },
                     // host: "mail.codistan.org",
                     // port: 465,
@@ -102,11 +87,11 @@ const userModel = {
                     //   pass: "Mailk@Mubashir321",
                     // },
                   });
-                  console.log("user.email :>>", user.email);
+                  console.log('user.email :>>', user.email);
                   const mailOptions = {
-                    from: "malik.mubashir@codistan.org", // sender address
+                    from: 'malik.mubashir@codistan.org', // sender address
                     to: user.email, // list of receivers
-                    subject: "Email verification", // Subject line
+                    subject: 'Email verification', // Subject line
                     html: `<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
                     <html xmlns="http://www.w3.org/1999/xhtml" xmlns:o="urn:schemas-microsoft-com:office:office" style="font-family:roboto, 'helvetica neue', helvetica, arial, sans-serif">
                      <head> 
@@ -308,16 +293,16 @@ const userModel = {
                   transporter.sendMail(mailOptions, function (err, info) {
                     if (err) {
                       console.log(err);
-                      return reject(new Error("Something went wrong", err));
+                      return reject(new Error('Something went wrong', err));
                     } else {
-                      console.log("info: >>>>> " + info);
+                      console.log('info: >>>>> ' + info);
                       return resolve(res);
                     }
                   });
                 }
               } else {
-                console.log("err", err);
-                return reject(new Error("Something went wrong", err));
+                console.log('err', err);
+                return reject(new Error('Something went wrong', err));
               }
             });
           }
@@ -332,12 +317,12 @@ const userModel = {
         `select * from users where email='${user.email}' LIMIT 1`,
         (err, res) => {
           if (res.length !== 0) {
-            return reject("User already exists");
+            return reject('User already exists');
           } else {
             const sql = `INSERT into users (first_name,last_name, email, roleId_fk, confirmed) values ('${user.firstName}','${user.lastName}','${user.email}',1, 1)`;
             con.query(sql, async (err, res) => {
-              console.log("res", res);
-              console.log("error", err);
+              console.log('res', res);
+              console.log('error', err);
               if (res.affectedRows > 0) {
                 const accessToken = await signJwt({
                   payload: res.insertId,
@@ -355,11 +340,11 @@ const userModel = {
                   accessToken,
                   refreshToken,
                 };
-                console.log("payload", payload);
+                console.log('payload', payload);
                 // send user back
                 return resolve(payload);
               } else {
-                return reject(new Error("Error adding user"));
+                return reject(new Error('Error adding user'));
               }
             });
           }
@@ -375,7 +360,7 @@ const userModel = {
             return resolve(res);
           } else {
             console.log(err);
-            return reject(new Error("Something went wrong", err));
+            return reject(new Error('Something went wrong', err));
           }
         }
       );
@@ -385,13 +370,13 @@ const userModel = {
       con.query(
         `select * from users where email='${user.email}' AND roleId_fk=1 LIMIT 1`,
         async (err, res) => {
-          console.log("res", res);
-          console.log("err", err);
+          console.log('res', res);
+          console.log('err', err);
           if (res) {
             if (res.length !== 0) {
-              if (res[0]["confirmed"] != 1) {
+              if (res[0]['confirmed'] != 1) {
                 return reject(
-                  new Error("Please verify your email in order to login")
+                  new Error('Please verify your email in order to login')
                 );
               }
               const { password: hashedPassword } = res[0];
@@ -428,8 +413,8 @@ const userModel = {
                   refreshToken
                 );
 
-                console.log("res[0].id :: ", res[0].id);
-                console.log("session", session);
+                console.log('res[0].id :: ', res[0].id);
+                console.log('session', session);
 
                 const payload = {
                   userId: session.userId,
@@ -447,7 +432,7 @@ const userModel = {
                   data: err,
                   valid: false,
                   status: 500,
-                  message: "Password is incorrect",
+                  message: 'Password is incorrect',
                 });
               }
             } else {
@@ -455,11 +440,11 @@ const userModel = {
                 data: err,
                 valid: false,
                 status: 404,
-                message: "Invalid email/password",
+                message: 'Invalid email/password',
               });
             }
           } else {
-            return reject(new Error("Something went wrong", err));
+            return reject(new Error('Something went wrong', err));
           }
         }
       );
@@ -484,8 +469,8 @@ const userModel = {
                 refreshToken
               );
 
-              console.log("res[0].id :: ", res[0].id);
-              console.log("session", session);
+              console.log('res[0].id :: ', res[0].id);
+              console.log('session', session);
 
               const payload = {
                 userId: session.userId,
@@ -497,10 +482,10 @@ const userModel = {
               // send user back
               return resolve(payload);
             } else {
-              reject(new Error("Email not registered", err));
+              reject(new Error('Email not registered', err));
             }
           } else {
-            return reject(new Error("Something went wrong", err));
+            return reject(new Error('Something went wrong', err));
           }
         }
       );
@@ -515,22 +500,27 @@ const userModel = {
             if (res.length !== 0) {
               return resolve(res);
             } else {
-              console.log("err", err);
-              return reject(new Error("Invalid User Id", err));
+              console.log('err', err);
+              return reject(new Error('Invalid User Id', err));
             }
           }
         );
       } else {
-        return reject(new Error("Invalid user id in token"));
+        return reject(new Error('Invalid user id in token'));
       }
     }),
 
   getReportUrl: (testId) =>
     new Promise((resolve, reject) => {
-      reportData();
-
+      //  reportData();
+      console.log(testId);
+      console.log(`SELECT test_info.id, users.first_name, users.last_name, users.dob, users.passport_number, test_info.test_name, test_info.test_description, test_info.test_performance, test_info.test_authorisation, test_info.date_register, test_info.date_conduct,test_info.result,test_info.test_manufacturer
+      FROM test_info
+      INNER JOIN users
+      ON test_info.userId= users.id
+      WHERE test_info.id = ${testId} LIMIT 1`);
       con.query(
-        `SELECT test_info.id, users.first_name, users.last_name, users.dob, users.passport_number, test_info.test_name, test_info.test_description, test_info.test_performance, test_info.test_authorisation, test_info.date_register, test_info.date_conduct
+        `SELECT test_info.id, users.first_name, users.last_name, users.dob, users.passport_number,users.image, test_info.test_name, test_info.test_description, test_info.test_performance, test_info.test_authorisation, test_info.date_register, test_info.date_conduct,test_info.result,test_info.test_manufacturer
       FROM test_info
       INNER JOIN users
       ON test_info.userId= users.id
@@ -541,8 +531,25 @@ const userModel = {
           if (res && res.length > 0) {
             return resolve(res);
           } else {
-            console.log("err", err);
-            return reject(new Error("No test found", err));
+            console.log('err', err);
+            return reject(new Error('No test found', err));
+          }
+        }
+      );
+    }),
+
+  getCustomReportData: (testId) =>
+    new Promise((resolve, reject) => {
+      con.query(
+        `SELECT * FROM custom_report WHERE id = ${testId} LIMIT 1;
+      `,
+        async (err, res) => {
+          console.log(res);
+          if (res && res.length > 0) {
+            return resolve(res);
+          } else {
+            console.log('err', err);
+            return reject(new Error('No test found', err));
           }
         }
       );
@@ -554,58 +561,58 @@ const userModel = {
       con.query(
         `select * from users where id='${userId}' LIMIT 1`,
         async (err, res) => {
-          console.log("result", res);
+          console.log('result', res);
           if (res.length === 0) {
-            return reject(new Error("User not exists"));
+            return reject(new Error('User not exists'));
           } else if (err) {
-            return reject(new Error("Something went wrong --- ", err));
+            return reject(new Error('Something went wrong --- ', err));
           } else {
-            let image = userData.profileImage || res.image || "";
+            let image = userData.profileImage || res.image || '';
             // if (file) {
             //   image = file.path;
             //   // image =
             //   //   process.env.IMAGE + image.substring(image.indexOf("/") + 1);
             // }
-            const firstName = userData.firstName || res.first_name || "";
-            const lastName = userData.lastName || res.last_name || "";
-            const middleName = userData.middleName || res.middle_name || "";
-            const mobile = userData.mobile || res.mobile || "";
-            const dob = userData.dob || res.dob || "";
+            const firstName = userData.firstName || res.first_name || '';
+            const lastName = userData.lastName || res.last_name || '';
+            const middleName = userData.middleName || res.middle_name || '';
+            const mobile = userData.mobile || res.mobile || '';
+            const dob = userData.dob || res.dob || '';
             const passportNumber =
               userData.passportNumber || res.passport_number || 0;
-            console.log("PASSPORT");
+            console.log('PASSPORT');
             console.log(passportNumber);
-            const gender = userData.gender || res.gender || "";
-            const company = userData.company || res.company || "";
-            const address = userData.address || res.address || "";
+            const gender = userData.gender || res.gender || '';
+            const company = userData.company || res.company || '';
+            const address = userData.address || res.address || '';
             const password = userData.password
               ? await mycrypto.encrypt(userData.password || res.password)
-              : res.password || "";
+              : res.password || '';
             const sql = `UPDATE users SET first_name='${firstName}',last_name='${lastName}',middle_name='${middleName}',mobile='${mobile}',password='${password}',image='${image}', address='${address}', dob='${dob}', passport_number=${passportNumber}, gender='${gender}', company='${company}' WHERE id='${userId}'`;
             console.log(
-              "**********************************************************************"
+              '**********************************************************************'
             );
             console.log(
-              "**********************************************************************"
+              '**********************************************************************'
             );
             console.log(
-              "**********************************************************************"
+              '**********************************************************************'
             );
             console.log(
-              "**********************************************************************"
+              '**********************************************************************'
             );
             console.log(sql);
             console.log(
-              "**********************************************************************"
+              '**********************************************************************'
             );
             console.log(
-              "**********************************************************************"
+              '**********************************************************************'
             );
             console.log(
-              "**********************************************************************"
+              '**********************************************************************'
             );
             console.log(
-              "**********************************************************************"
+              '**********************************************************************'
             );
 
             con.query(sql, (err, res) => {
@@ -617,8 +624,8 @@ const userModel = {
                   return resolve(res);
                 }
               } else {
-                console.log("err", err);
-                return reject(new Error("Something went wrong", err));
+                console.log('err', err);
+                return reject(new Error('Something went wrong', err));
               }
             });
           }
@@ -628,14 +635,14 @@ const userModel = {
 
   resendCode: (email) =>
     new Promise((resolve, reject) => {
-      console.log("email", email);
+      console.log('email', email);
       const code = Math.floor(1000 + Math.random() * 9000);
       const transporter = nodemailer.createTransport({
-        service: "gmail",
-        host: "smtp.gmail.com",
+        service: 'gmail',
+        host: 'smtp.gmail.com',
         auth: {
-          user: "mmm28800@gmail.com",
-          pass: "  1310125897819  ",
+          user: 'mmm28800@gmail.com',
+          pass: '  1310125897819  ',
         },
         // host: "mail.codistan.org",
         // port: 465,
@@ -646,25 +653,25 @@ const userModel = {
         // },
       });
       const mailOptions = {
-        from: "mmm28800@gmail.com", // sender address
+        from: 'mmm28800@gmail.com', // sender address
         to: email, // list of receivers
-        subject: "Password reset Link", // Subject line
+        subject: 'Password reset Link', // Subject line
         html: `<p>Your new email verification code is ${code}</p>`, // plain text body
       };
       transporter.sendMail(mailOptions, function (err, info) {
         if (err) {
           console.log(err);
-          return reject(new Error("Something went wrong", err));
+          return reject(new Error('Something went wrong', err));
         } else {
-          console.log("new code ", code);
+          console.log('new code ', code);
           con.query(
             `UPDATE users SET code = '${code}' WHERE email='${email}'`,
             (err, res) => {
               if (err) {
                 console.log(err);
-                return reject(new Error("Something went wrong"));
+                return reject(new Error('Something went wrong'));
               } else {
-                console.log("info: " + info);
+                console.log('info: ' + info);
                 return resolve(res);
               }
             }
@@ -675,18 +682,18 @@ const userModel = {
 
   sendForgotPasswordMail: async (user) =>
     await new Promise((resolve, reject) => {
-      console.log("user email: ", user.email);
+      console.log('user email: ', user.email);
       // Email duplication check
       con.query(
         `select * from users where email='${user.email}' LIMIT 1`,
         async (err, res) => {
           if (res) {
             if (res.length === 0) {
-              return reject(new Error("Email not registered"));
+              return reject(new Error('Email not registered'));
             } else {
-              const userId = res[0]["id"];
+              const userId = res[0]['id'];
               const code = Math.floor(1000 + Math.random() * 9000);
-              console.log("code::>> ", code);
+              console.log('code::>> ', code);
               const emailToken = jwt.sign(
                 {
                   id: userId,
@@ -694,16 +701,16 @@ const userModel = {
                 },
                 process.env.JWT_KEY,
                 {
-                  expiresIn: "3h",
+                  expiresIn: '3h',
                 }
               );
               const url = `${process.env.URL}/api/user/reset-password/${emailToken}`;
               const transporter = nodemailer.createTransport({
-                service: "gmail",
-                host: "smtp.gmail.com",
+                service: 'gmail',
+                host: 'smtp.gmail.com',
                 auth: {
-                  user: "mmm28800@gmail.com",
-                  pass: "  1310125897819  ",
+                  user: 'mmm28800@gmail.com',
+                  pass: '  1310125897819  ',
                 },
                 // host: "mail.codistan.org",
                 // port: 465,
@@ -714,27 +721,27 @@ const userModel = {
                 // },
               });
               const mailOptions = {
-                from: "mmm28800@gmail.com", // sender address
+                from: 'mmm28800@gmail.com', // sender address
                 to: user.email, // list of receivers
-                subject: "Password reset Link", // Subject line
+                subject: 'Password reset Link', // Subject line
                 html: `<p>Your email verification code is ${code}</p>`, // plain text body
               };
               transporter.sendMail(mailOptions, function (err, info) {
                 if (err) {
                   console.log(err);
-                  return reject(new Error("Something went wrong", err));
+                  return reject(new Error('Something went wrong', err));
                 } else {
-                  console.log("in else");
+                  console.log('in else');
                   con.query(
                     `UPDATE users SET code = '${code}' WHERE id=${userId} `,
                     (err, res) => {
-                      console.log("res::", res);
-                      console.log("err::", err);
+                      console.log('res::', res);
+                      console.log('err::', err);
                       if (err) {
                         console.log(err);
-                        return reject(new Error("Something went wrong"));
+                        return reject(new Error('Something went wrong'));
                       } else {
-                        console.log("info: " + info);
+                        console.log('info: ' + info);
                         return resolve(res);
                       }
                     }
@@ -744,7 +751,7 @@ const userModel = {
             }
           } else {
             console.log(err);
-            return reject(new Error("Something went wrong", err));
+            return reject(new Error('Something went wrong', err));
           }
         }
       );
@@ -752,7 +759,7 @@ const userModel = {
 
   resetPasswordVerify: async (token) =>
     await new Promise((resolve, reject) => {
-      console.log("token", token);
+      console.log('token', token);
 
       con.query(
         `select * from users where code='${token}' LIMIT 1`,
@@ -761,7 +768,7 @@ const userModel = {
             return resolve(res);
           } else {
             console.log(err);
-            return reject(new Error("Invalid verification code", err));
+            return reject(new Error('Invalid verification code', err));
           }
         }
       );
@@ -769,7 +776,7 @@ const userModel = {
 
   getUserTest: async (token) =>
     await new Promise((resolve, reject) => {
-      console.log("token", token);
+      console.log('token', token);
       console.log(`select * from test where userId=${token}`);
       con.query(
         `select * from test_info where userId=${token}`,
@@ -778,7 +785,7 @@ const userModel = {
             return resolve(res);
           } else {
             console.log(err);
-            return reject(new Error("No Result found", err));
+            return reject(new Error('No Result found', err));
           }
         }
       );
@@ -792,7 +799,7 @@ const userModel = {
           if (res && res.length) {
             return resolve(res);
           } else {
-            return reject(new Error("No Qr-ID found"));
+            return reject(new Error('No Qr-ID found'));
           }
         }
       );
@@ -800,17 +807,17 @@ const userModel = {
 
   updatePassword: async (password, userId) =>
     await new Promise(async (resolve, reject) => {
-      console.log("password", password);
-      console.log("userId", userId);
+      console.log('password', password);
+      console.log('userId', userId);
       const hashedPassword = await mycrypto.funcHashPassword(password);
       // await bcrypt.hash(`${password}`, 10);
       con.query(
         `select * from users where id='${userId}' LIMIT 1`,
         (error, result) => {
           if (error) {
-            console.log("error", error);
+            console.log('error', error);
             return reject(
-              new Error("Something went wrong while updating password", error)
+              new Error('Something went wrong while updating password', error)
             );
           } else {
             con.query(
@@ -819,10 +826,10 @@ const userModel = {
                 if (res) {
                   return resolve(res);
                 } else {
-                  console.log("error", err);
+                  console.log('error', err);
                   return reject(
                     new Error(
-                      "Something went wrong while updating password",
+                      'Something went wrong while updating password',
                       err
                     )
                   );
