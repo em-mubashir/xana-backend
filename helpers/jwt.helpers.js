@@ -1,5 +1,5 @@
-const jwt = require("jsonwebtoken");
-const sessionModel = require("../models/session.model");
+const jwt = require('jsonwebtoken');
+const sessionModel = require('../models/session.model');
 const accessToken = `-----BEGIN RSA PRIVATE KEY-----
 MIICXgIBAAKBgQCDT049RMX4sqXwwYpSvnIi1ztDTVvYRlQsOgWMahQfMxhPDFgn
 lki9jIGtDAtAGeLoRGPkR3E0gbreC0KV60jn5i24dC8KpoDVbLhKIPL5sDeRRWaS
@@ -53,23 +53,23 @@ C0kcgqbNwQ3R4XWEXoIBAkEAjL5VGsDUmUjOt/dtqH2cKHF/qzqgZfYJp7ZYleVS
 //sign access token
 const signJwt = (payload) => {
   return jwt.sign(payload, accessToken, {
-    algorithm: "RS256",
-    expiresIn: "4h",
+    algorithm: 'RS256',
+    expiresIn: '4h',
   });
 };
 
 //sign email token
 const signEmailToken = (payload) => {
   return jwt.sign(payload, emailToken, {
-    algorithm: "RS256",
-    expiresIn: "4h",
+    algorithm: 'RS256',
+    expiresIn: '4h',
   });
 };
 
 //verify jwt
 const verifyJwt = (token) => {
   try {
-    const decoded = jwt.verify(token, accessToken, { algorithms: ["RS256"] });
+    const decoded = jwt.verify(token, accessToken, { algorithms: ['RS256'] });
     return { payload: decoded, expired: false };
   } catch (err) {
     return { payload: null, expired: err.message };
@@ -79,15 +79,15 @@ const verifyJwt = (token) => {
 //sign refresh token
 const signRefreshToken = (payload) => {
   return jwt.sign(payload, refreshToken, {
-    algorithm: "RS256",
-    expiresIn: "1y",
+    algorithm: 'RS256',
+    expiresIn: '1y',
   });
 };
 
 //verify Email Token
 const verifyEmailToken = (token) => {
   try {
-    const decoded = jwt.verify(token, emailToken, { algorithms: ["RS256"] });
+    const decoded = jwt.verify(token, emailToken, { algorithms: ['RS256'] });
     return { payload: decoded, expired: false };
   } catch (err) {
     return { payload: null, expired: err.message };
@@ -98,7 +98,7 @@ const verifyEmailToken = (token) => {
 const verifyRefreshToken = async (refToken) => {
   try {
     const decoded = jwt.verify(refToken, refreshToken, {
-      algorithms: ["RS256"],
+      algorithms: ['RS256'],
     });
     const session = await sessionModel.verifySession(decoded.payload);
     if (session.session_token === refToken) {
@@ -117,7 +117,7 @@ const verifyRefreshToken = async (refToken) => {
         error: null,
       };
     } else {
-      return { payload: null, error: "Invalid refresh token" };
+      return { payload: null, error: 'Invalid refresh token' };
     }
   } catch (err) {
     return { payload: null, expired: err.message };
