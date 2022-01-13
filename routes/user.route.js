@@ -581,6 +581,7 @@ userRouter.get('/test', verifyToken, async (req, res) => {
     .getUserTest(req.user)
     .then((testObj) => {
       //   console.log("updated password", testObj);
+      console.log('result nullllllll', testObj);
       res.status(200).json({
         success: true,
         data: testObj,

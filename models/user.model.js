@@ -513,12 +513,6 @@ const userModel = {
   getReportUrl: (testId) =>
     new Promise((resolve, reject) => {
       //  reportData();
-      console.log(testId);
-      console.log(`SELECT test_info.id, users.first_name, users.last_name, users.dob, users.passport_number, test_info.test_name, test_info.test_description, test_info.test_performance, test_info.test_authorisation, test_info.date_register, test_info.date_conduct,test_info.result,test_info.test_manufacturer
-      FROM test_info
-      INNER JOIN users
-      ON test_info.userId= users.id
-      WHERE test_info.id = ${testId} LIMIT 1`);
       con.query(
         `SELECT test_info.id, users.first_name, users.last_name, users.dob, users.passport_number,users.image, test_info.test_name, test_info.test_description, test_info.test_performance, test_info.test_authorisation, test_info.date_register, test_info.date_conduct,test_info.result,test_info.test_manufacturer
       FROM test_info
@@ -561,12 +555,13 @@ const userModel = {
       con.query(
         `select * from users where id='${userId}' LIMIT 1`,
         async (err, res) => {
-          console.log('result', res);
           if (res.length === 0) {
             return reject(new Error('User not exists'));
           } else if (err) {
             return reject(new Error('Something went wrong --- ', err));
           } else {
+            console.log('updateProfile', res);
+            console.log('jKHDkasjdh', userData);
             let image = userData.profileImage || res.image || '';
             // if (file) {
             //   image = file.path;
@@ -589,32 +584,6 @@ const userModel = {
               ? await mycrypto.encrypt(userData.password || res.password)
               : res.password || '';
             const sql = `UPDATE users SET first_name='${firstName}',last_name='${lastName}',middle_name='${middleName}',mobile='${mobile}',password='${password}',image='${image}', address='${address}', dob='${dob}', passport_number=${passportNumber}, gender='${gender}', company='${company}' WHERE id='${userId}'`;
-            console.log(
-              '**********************************************************************'
-            );
-            console.log(
-              '**********************************************************************'
-            );
-            console.log(
-              '**********************************************************************'
-            );
-            console.log(
-              '**********************************************************************'
-            );
-            console.log(sql);
-            console.log(
-              '**********************************************************************'
-            );
-            console.log(
-              '**********************************************************************'
-            );
-            console.log(
-              '**********************************************************************'
-            );
-            console.log(
-              '**********************************************************************'
-            );
-
             con.query(sql, (err, res) => {
               if (res) {
                 console.log(`Affected Rows: ${res.affectedRows}`.yellow.bold);

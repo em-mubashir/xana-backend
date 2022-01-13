@@ -123,7 +123,7 @@ const testModel = {
             console.log('error', err);
             return reject(new Error(err));
           } else {
-            return resolve({ message: 'Test updated successfully' });
+            return resolve({ message: 'Test report url updated successfully' });
           }
         }
       );

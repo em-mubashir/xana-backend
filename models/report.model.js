@@ -14,29 +14,19 @@ const reportModel = {
       // GMAIL_USER_NAME = maliksblr92@gmail.com
       // GMAIL_USER_PASSWORD = ZP ? []~1F6M) _
       const transporter = nodemailer.createTransport({
-        // host: process.env.HOST,
-        host: 'smtp-relay.sendinblue.com',
-        port: 587,
+        host: process.env.HOST,
+        port: 2525,
         secure: false,
         auth: {
-          // user: process.env.FROM,
-          user: 'info@landofsneakers.com',
-          // pass: process.env.PASSWORD,
-          pass: '0b8pEBjPtFRK2Txy',
+          user: process.env.FROM,
+          pass: process.env.PASSWORD,
         },
       });
       const mailOptions = {
-        // FROM=info@landofsneakers.com
-        // PASSWORD=0b8pEBjPtFRK2Txy
-        // HOST=smtp-relay.sendinblue.com
-        // EMAIL_PORT=587
-
-        from: 'info@landofsneakers.com',
-        // from: "info@landofsneakers.com",
+        from: process.env.FROM,
         to: userEmail,
-        cc: 'beenishkhan603@gmail.com',
         subject: 'Result Of Report',
-        html: '<html><h1>PFA. The Attachment consist of the result of the test </h1></html>',
+        html: '<html><p>PFA. The Attachment consist of the result of the test </p></html>',
         attachments: [
           {
             filename: 'report.pdf',
@@ -89,8 +79,8 @@ const reportModel = {
 
   addCustomReport: async (data) => {
     return new Promise((resolve, reject) => {
-      const query = `INSERT INTO custom_report (first_name, last_name, email, dob, passport, sample_date, sample_time, result_date, result_time, order_id, result, test_name, test_manufacturer, test_authorization, test_description, test_image, reportURL) VALUES (
-          '${data.first_name}','${data.last_name}','${data.email}', '${data.dob}', '${data.passport}', '${data.sample_date}', '${data.sample_time}',  '${data.result_date}', '${data.result_time}' , '${data.order_id}', '${data.result}', '${data.test_name}', '${data.test_manufacturer}', '${data.test_authorization}', '${data.test_description}', '${data.test_image}', '${data.reportURL}'
+      const query = `INSERT INTO custom_report (first_name, last_name, email, dob, passport, sample_date, sample_time, result_date, result_time, order_id, result, test_name,type, test_manufacturer, test_authorization, test_description, test_image, reportURL) VALUES (
+          '${data.first_name}','${data.last_name}','${data.email}', '${data.dob}', '${data.passport}', '${data.sample_date}', '${data.sample_time}',  '${data.result_date}', '${data.result_time}' , '${data.order_id}', '${data.result}', '${data.test_name}','${data.test_type}', '${data.test_manufacturer}', '${data.test_authorization}', '${data.test_description}', '${data.test_image}', '${data.reportURL}'
         )`;
       return con.query(query, (err, rows) => {
         if (!err) {

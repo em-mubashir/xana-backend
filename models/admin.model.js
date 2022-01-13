@@ -47,7 +47,7 @@ const adminModel = {
 
   getAllTest: () =>
     new Promise((resolve, reject) => {
-      con.query(`select * from test_info`, (err, res) => {
+      con.query(`select * from test_info ORDER BY id DESC`, (err, res) => {
         if (err) {
           return reject(err);
         } else {
@@ -58,7 +58,7 @@ const adminModel = {
 
   getAllCustomReport: () =>
     new Promise((resolve, reject) => {
-      con.query(`select * from custom_report`, (err, res) => {
+      con.query(`select * from custom_report ORDER BY id DESC`, (err, res) => {
         if (err) {
           return reject(err);
         } else {
@@ -83,7 +83,7 @@ const adminModel = {
 
   getAllUsers: () =>
     new Promise((resolve, reject) => {
-      con.query(`select * from users`, (err, res) => {
+      con.query(`select * from users ORDER BY id DESC`, (err, res) => {
         if (err) {
           return reject(err);
         } else {

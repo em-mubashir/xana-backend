@@ -151,14 +151,13 @@ testRouter.put('/upload-test-video', (req, res) => {
  */
 testRouter.get('/result', async (req, res) => {
   console.log('req.query ::: ', req.query.id);
-
   try {
     const { qr_id, test_image } = await testModel.getUserTestImg(req.query.id);
-    console.log('res', qr_id, test_image);
     var data = JSON.stringify({
       qr_id: qr_id,
       img: test_image,
       test_id: req.query.id,
+      test_type: 0,
     });
     var config = {
       method: 'post',
@@ -168,12 +167,35 @@ testRouter.get('/result', async (req, res) => {
       },
       data: data,
     };
-    const results = await axios(config)
+    const results1 = await axios(config)
       .then(async function (response) {
-        console.log(JSON.stringify(response.data));
         const { results } = response.data;
+        console.log('results are here', results);
         if (results) {
           await testModel.addReportResult(results, req.query.id);
+
+          var dataReportURL = JSON.stringify({
+            test_id: req.query.id,
+            test_type: 0,
+          });
+          var configReport = {
+            method: 'post',
+            url: process.env.IMAGE_DECTECTION + '/get_test_report',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            data: dataReportURL,
+          };
+          const results2 = await axios(configReport)
+            .then(async function (response) {
+              console.log('result hhjcsdjbcskcs', response.data);
+              if (response.data) {
+                await testModel.reportURL(response.data, req.query.id);
+              }
+            })
+            .catch(function (error) {
+              console.log('inner catch result', response.data);
+            });
         }
       })
       .catch(function (error) {
