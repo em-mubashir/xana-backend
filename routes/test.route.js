@@ -113,6 +113,7 @@ testRouter.put('/upload-test-report-url', (req, res) => {
       res.status(500).send({ success: false, message: err });
     });
 });
+
 testRouter.put('/upload-custom-report-url', (req, res) => {
   testModel
     .customReportURL(req.body.link, req.body.testId)
@@ -126,6 +127,7 @@ testRouter.put('/upload-custom-report-url', (req, res) => {
       res.status(500).send({ success: false, message: err });
     });
 });
+
 testRouter.put('/upload-test-video', (req, res) => {
   console.log(req);
   console.log(req.body);
@@ -150,7 +152,7 @@ testRouter.put('/upload-test-video', (req, res) => {
  * @route [http://192.168.18.14/api/test/result?id=1]
  */
 testRouter.get('/result', async (req, res) => {
-  console.log('req.query ::: ', req.query.id);
+  // console.log('req.query ::: ', req.query.id);
   try {
     const { qr_id, test_image } = await testModel.getUserTestImg(req.query.id);
     var data = JSON.stringify({
@@ -169,6 +171,8 @@ testRouter.get('/result', async (req, res) => {
     };
     const results1 = await axios(config)
       .then(async function (response) {
+        console.log('response are here', response);
+
         const { results } = response.data;
         console.log('results are here', results);
         if (results) {

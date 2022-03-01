@@ -1,4 +1,4 @@
-const mysql = require("mysql");
+const mysql = require('mysql');
 const {
   dbHost,
   dbName,
@@ -6,7 +6,7 @@ const {
   dbConnections,
   dbUser,
   dbPassword,
-} = require("../environment");
+} = require('../environment');
 
 const transaction = mysql.createPool({
   connectionLimit: dbConnections,
@@ -16,5 +16,5 @@ const transaction = mysql.createPool({
   password: dbPassword,
   database: dbName,
 });
-
+console.log(transaction);
 module.exports = transaction;

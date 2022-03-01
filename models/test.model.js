@@ -86,13 +86,13 @@ const testModel = {
 
   getUserTestImg: (id) =>
     new Promise((resolve, reject) => {
-      console.log(`select test_image from test_info where id=${id}`);
+      // console.log(`select test_image from test_info where id=${id}`);
       con.query(
         `select test_image,qr_id from test_info where id=${id}`,
         (err, res) => {
           if (err) {
             console.log('error', err);
-            return reject(new Error(err));
+            return reject(err);
           } else {
             return resolve(res[0]);
           }

@@ -574,16 +574,15 @@ const userModel = {
             const mobile = userData.mobile || res.mobile || '';
             const dob = userData.dob || res.dob || '';
             const passportNumber =
-              userData.passportNumber || res.passport_number || 0;
-            console.log('PASSPORT');
-            console.log(passportNumber);
+              userData.passportNumber || res.passport_number || '';
+            console.log('PASSPORT', passportNumber);
             const gender = userData.gender || res.gender || '';
             const company = userData.company || res.company || '';
             const address = userData.address || res.address || '';
             const password = userData.password
               ? await mycrypto.encrypt(userData.password || res.password)
               : res.password || '';
-            const sql = `UPDATE users SET first_name='${firstName}',last_name='${lastName}',middle_name='${middleName}',mobile='${mobile}',password='${password}',image='${image}', address='${address}', dob='${dob}', passport_number=${passportNumber}, gender='${gender}', company='${company}' WHERE id='${userId}'`;
+            const sql = `UPDATE users SET first_name='${firstName}',last_name='${lastName}',middle_name='${middleName}',mobile='${mobile}',password='${password}',image='${image}', address='${address}', dob='${dob}', passport_number='${passportNumber}', gender='${gender}', company='${company}' WHERE id='${userId}'`;
             con.query(sql, (err, res) => {
               if (res) {
                 console.log(`Affected Rows: ${res.affectedRows}`.yellow.bold);

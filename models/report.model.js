@@ -79,9 +79,8 @@ const reportModel = {
 
   addCustomReport: async (data) => {
     return new Promise((resolve, reject) => {
-      const query = `INSERT INTO custom_report (first_name, last_name, email, dob, passport, sample_date, sample_time, result_date, result_time, order_id, result, test_name,type, test_manufacturer, test_authorization, test_description, test_image, reportURL) VALUES (
-          '${data.first_name}','${data.last_name}','${data.email}', '${data.dob}', '${data.passport}', '${data.sample_date}', '${data.sample_time}',  '${data.result_date}', '${data.result_time}' , '${data.order_id}', '${data.result}', '${data.test_name}','${data.test_type}', '${data.test_manufacturer}', '${data.test_authorization}', '${data.test_description}', '${data.test_image}', '${data.reportURL}'
-        )`;
+      console.log('in add custom eport');
+      const query = `INSERT INTO custom_report (first_name, last_name, email, dob, passport, sample_date, sample_time, result_date, result_time, order_id, result, test_name,type, test_manufacturer, test_authorization, test_description, test_image, reportURL) VALUES ('${data.first_name}','${data.last_name}','${data.email}', '${data.dob}', '${data.passport}', '${data.sample_date}', '${data.sample_time}',  '${data.result_date}', '${data.result_time}' , '${data.order_id}', '${data.result}', '${data.test_name}','${data.test_type}', '${data.test_manufacturer}', '${data.test_authorization}', '${data.test_description}', '${data.test_image}', '${data.reportURL}')`;
       return con.query(query, (err, rows) => {
         if (!err) {
           return resolve(rows);

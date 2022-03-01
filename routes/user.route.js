@@ -322,7 +322,7 @@ userRouter.post('/login/gmail', [body('email').not().isEmpty()], (req, res) => {
     userModel
       .loginGmail(req.body)
       .then((userObj) => {
-        console.log('login ::>> res', userObj);
+        console.log('login/gmail ::>> res', userObj);
         res.json({
           data: userObj,
           success: true,
@@ -330,7 +330,7 @@ userRouter.post('/login/gmail', [body('email').not().isEmpty()], (req, res) => {
         });
       })
       .catch((err) => {
-        console.log('login ::>> err', err);
+        console.log('login/gmail ::>> err', err);
         if (err.valid === false) {
           console.log('false');
           res.json({
